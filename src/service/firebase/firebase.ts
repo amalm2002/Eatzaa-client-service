@@ -3,13 +3,14 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC3im2I567nuvZsT5wCgsAO-ahrrk8Eldo",
-  authDomain: "eatzaa-1fd86.firebaseapp.com",
-  projectId: "eatzaa-1fd86",
-  storageBucket: "eatzaa-1fd86.firebasestorage.app",
-  messagingSenderId: "628049608572",
-  appId: "1:628049608572:web:8308e9f4994430d80eaef9",
-  measurementId: "G-Y1PBFH4166"
+  // apiKey: "AIzaSyC3im2I567nuvZsT5wCgsAO-ahrrk8Eldo",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGININ_SENDING_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
@@ -21,4 +22,4 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 auth.useDeviceLanguage();
 
-export {app,auth}
+export { app, auth }
