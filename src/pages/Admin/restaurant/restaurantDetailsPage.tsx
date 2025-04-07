@@ -14,10 +14,6 @@ interface RestaurantDetailsProps {
 const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) => {
   const [restaurant, setRestaurant] = useState<any>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [isRejected, setIsRejected] = useState(() => {
-    const storedValue = localStorage.getItem(`isRejected_${restaurantId}`);
-    return storedValue ? JSON.parse(storedValue) : false;
-  });
   const [rejectionReason, setRejectionReason] = useState('');
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
@@ -33,13 +29,9 @@ const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) =
   ];
 
   useEffect(() => {
-    localStorage.setItem(`isRejected_${restaurantId}`, JSON.stringify(isRejected));
-  }, [isRejected, restaurantId]);
-
-  useEffect(() => {
     const fetchRestaurantDetails = async () => {
       try {
-        // console.log('details page ', restaurantId);
+   
         const response = await axiosInstance.get(`/getRestaurant/${restaurantId}`);
         console.log('response from the backend ', response);
 
@@ -51,6 +43,7 @@ const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) =
             email: data.email,
             mobile: data.mobile,
             isVerified: data.isVerified || false,
+            isRejected: data.rejectionReason ? true : false,
             location: {
               longitude: data.location?.longitude,
               latitude: data.location?.latitude,
@@ -95,7 +88,7 @@ const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) =
     }
   };
 
-  console.log(isRejected, 'rejectedddddddddd');
+
   const handleReject = async () => {
     const restaurantId = restaurant.id;
 
@@ -105,12 +98,10 @@ const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) =
         rejectionReason,
       });
 
-      console.log(response, 'rejection response');
-      console.log('trueeeeeeeeee', response.data.isRejected);
-
       if (response.data.message === 'success') {
-        setIsRejected(response.data.isRejected);
+
         toast.success('Restaurant has been rejected successfully!');
+        
       } else {
         toast.error('Failed to reject restaurant');
       }
@@ -149,21 +140,21 @@ const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) =
                     <span
                       className={`inline-flex items-center px-4 py-1.5 rounded-xl text-sm font-semibold text-white shadow-md ${restaurant.isVerified
                         ? 'bg-green-600'
-                        : isRejected
+                        :restaurant.isRejected
                           ? 'bg-red-600'
                           : 'bg-yellow-500'
                         }`}
                     >
                       {restaurant.isVerified
                         ? 'Verified'
-                        : isRejected
+                        :restaurant.isRejected
                           ? 'Rejected'
                           : 'Pending'}
                     </span>
 
                   </div>
                   <div className="flex gap-4">
-                    {!restaurant.isVerified && !isRejected ? (
+                    {!restaurant.isVerified && !restaurant.isRejected ? (
                       <>
                         <button
                           onClick={handleVerify}
@@ -190,7 +181,7 @@ const RestaurantDetails: React.FC<RestaurantDetailsProps> = ({ restaurantId }) =
                           className="bg-red-600 text-white font-medium px-6 py-2 rounded-xl shadow-sm opacity-70 cursor-not-allowed"
                           disabled
                         >
-                          <X className="w-4 h-4 inline mr-2" /> {isRejected ? 'Rejected' : 'Reject'}
+                          <X className="w-4 h-4 inline mr-2" /> {restaurant.isRejected ? 'Rejected' : 'Reject'}
                         </button>
                       </>
                     )}

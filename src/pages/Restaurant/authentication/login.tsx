@@ -457,6 +457,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { restaurantLogin } from "../../../service/redux/slices/restaurantSlice";
 import { deleteFromCloudinary } from "../../../utils/deleteFromCloudinary";
+import { toast } from "sonner";
 
 declare global {
   interface Window {
@@ -826,18 +827,15 @@ const Login = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      console.log('resubmit doc response :', response);
-
-
       if (response.data.message === 'success') {
-        alert('Documents resubmitted successfully!');
+        toast.success('Documents resubmitted successfully!');
         setShowResubmitModal(false);
         setShowRejectionPopup(false);
         setRestaurant(response.data.restaurant);
       }
     } catch (error) {
       console.error('Error resubmitting documents:', error);
-      alert('Failed to resubmit documents');
+      toast.error('Failed to resubmit documents');
     }
   };
 

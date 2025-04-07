@@ -3,7 +3,6 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  // apiKey: "AIzaSyC3im2I567nuvZsT5wCgsAO-ahrrk8Eldo",
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
