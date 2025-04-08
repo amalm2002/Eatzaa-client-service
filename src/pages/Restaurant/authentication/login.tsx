@@ -458,6 +458,8 @@ import { useDispatch } from "react-redux";
 import { restaurantLogin } from "../../../service/redux/slices/restaurantSlice";
 import { deleteFromCloudinary } from "../../../utils/deleteFromCloudinary";
 import { toast } from "sonner";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+
 
 declare global {
   interface Window {
@@ -490,10 +492,11 @@ const Login = () => {
 
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [timer, setTimer] = useState(30);
-  const [isResendDisabled, setIsResendDisabled] = useState(true);
-  const [showVerificationPopup, setShowVerificationPopup] = useState(false);
-  const [showRejectionPopup, setShowRejectionPopup] = useState(false);
-  const [showResubmitModal, setShowResubmitModal] = useState(false);
+  const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
+  const [showVerificationPopup, setShowVerificationPopup] = useState<boolean>(false);
+  const [showRejectionPopup, setShowRejectionPopup] = useState<boolean>(false);
+  const [showResubmitModal, setShowResubmitModal] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [restaurant, setRestaurant] = useState<null | {
     _id: string;
     email: string;
@@ -778,10 +781,12 @@ const Login = () => {
 
   const handleResubmitDocuments = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const formDataToSend = new FormData();
     formDataToSend.append('restaurantId', restaurant?._id ?? '');
 
     try {
+      setIsLoading(true)
       // Handle ID Proof
       if (resubmitData.idProof && restaurant?.restaurantDocuments.idProofUrl) {
         try {
@@ -836,6 +841,8 @@ const Login = () => {
     } catch (error) {
       console.error('Error resubmitting documents:', error);
       toast.error('Failed to resubmit documents');
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -1220,6 +1227,16 @@ const Login = () => {
           </div>
         </div>
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 bg-white/15 bg-opacity-70 z-50 flex justify-center items-center">
+          <DotLottieReact
+            src="https://lottie.host/4bb05fdc-1d61-4219-b2eb-96365755cdd5/clhETaNW1v.lottie"
+            loop
+            autoplay
+            style={{ width: "250px", height: "250px" }}
+          />
+        </div>
+      )}
     </div>
   );
 };

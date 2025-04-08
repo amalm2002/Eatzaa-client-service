@@ -10,6 +10,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 // import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 // import { jwtDecode } from 'jwt-decode'
 // import { userLogin } from "../../redux/slices/userAuthSlice";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 
 interface FormData {
   name: string;
@@ -28,6 +29,7 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   // const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -63,6 +65,7 @@ const SignupPage: React.FC = () => {
       const axiosInstance = createAxios()
 
       try {
+        setIsLoading(true)
 
         const response = await axiosInstance.post('/checkUser', { email: formData.email, name: formData.name })
 
@@ -80,6 +83,11 @@ const SignupPage: React.FC = () => {
 
       } catch (error: any) {
         toast.error(error.response?.data?.message || "Signup failed");
+      } finally {
+        // setIsLoading(false)
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 5000);
       }
 
     }
@@ -230,7 +238,19 @@ const SignupPage: React.FC = () => {
             </div>
           </div>
         </div>
+        {isLoading && (
+          <div className="fixed inset-0 bg-white/15 bg-opacity-70 z-50 flex justify-center items-center">
+            <DotLottieReact
+              src="https://lottie.host/462a8621-e5ac-48c4-b8d0-1055ba28ab8d/K1RLg3Jf8G.lottie"
+              loop
+              autoplay
+              style={{ width: "350px", height: "350px" }}
+            />
+          </div>
+        )}
+
       </div>
+
     </>
   );
 };

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Upload, CreditCard, FileText, X } from "lucide-react";
 import createAxios from "../../../service/axiousServices/restaurantAxious";
 import { validateRestaurantDocument } from "../../../utils/validation";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 
 interface DocumentData {
     idProof: File | null;
@@ -31,7 +32,7 @@ interface ValidationErrors {
 }
 
 // const DocumentUploadPage = ({ formData, navigate, setStep }: DocumentUploadPageProps) => {
-const DocumentUploadPage = ({ formData,  setStep }: DocumentUploadPageProps) => {
+const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
 
     const [error, setError] = useState<string | null>(null);
     const [documentData, setDocumentData] = useState<DocumentData>({
@@ -44,6 +45,7 @@ const DocumentUploadPage = ({ formData,  setStep }: DocumentUploadPageProps) => 
     });
 
     const [docFeildError, setDocFeildError] = useState<ValidationErrors>({})
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const axiosInstance = createAxios();
 
@@ -86,7 +88,7 @@ const DocumentUploadPage = ({ formData,  setStep }: DocumentUploadPageProps) => 
         }
 
         try {
-
+            setIsLoading(true)
             //upload files to cloudinary return the URL
             const extractImageName = (url: string) => url ? url.split('/').pop() || '' : '';
 
@@ -132,6 +134,8 @@ const DocumentUploadPage = ({ formData,  setStep }: DocumentUploadPageProps) => 
         } catch (error: any) {
             console.error("Error submitting documents:", error);
             setError("An error occurred while submitting documents.");
+        } finally {
+            setIsLoading(false)
         }
     };
 
@@ -344,6 +348,17 @@ const DocumentUploadPage = ({ formData,  setStep }: DocumentUploadPageProps) => 
 
                 </div>
             </motion.div>
+            {isLoading && (
+                <div className="fixed inset-0 bg-white/15 bg-opacity-70 z-50 flex justify-center items-center">
+                    <DotLottieReact
+                        src="https://lottie.host/4bb05fdc-1d61-4219-b2eb-96365755cdd5/clhETaNW1v.lottie"
+                        loop
+                        autoplay
+                        style={{ width: "250px", height: "250px" }}
+                    />
+                </div>
+            )}
+
         </div>
     );
 };

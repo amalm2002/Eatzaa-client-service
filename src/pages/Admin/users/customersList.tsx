@@ -4,6 +4,7 @@ import { createAxios } from '../../../service/axiousServices/adminAxious';
 import { useDispatch } from 'react-redux';
 
 
+
 interface User {
   id: number;
   name: string;
@@ -53,8 +54,8 @@ const UserList: React.FC = () => {
     fetchUsers();
   }, []);
 
-  console.log('this is show on the user State Data :',users);
-  
+  console.log('this is show on the user State Data :', users);
+
 
   const toggleBlockStatus = async (userId: string) => {
     console.log(userId);
@@ -74,7 +75,7 @@ const UserList: React.FC = () => {
     }
   };
 
- 
+
   const filteredUsers = users.filter(user =>
     (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

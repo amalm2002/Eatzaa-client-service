@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { CheckCircle, Mail, Phone, Store, Utensils, ChefHat, Clock, Calendar, Users } from "lucide-react";
 import createAxios from "../../../service/axiousServices/restaurantAxious";
-import { validateRestaurantRegister } from "../../../utils/validation";
 import { useNavigate } from "react-router-dom";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import { validateRestaurantRegister } from "../../../utils/validation";
 
 import DocumentUploadPage from "../documents/documentUploadPage";
 import RestaurntLocation from "../location/restaurantLocation";
@@ -27,13 +28,13 @@ const Register = () => {
   });
 
   const [step, setStep] = useState<"credentials" | "otp" | "documents" | "location">("credentials");
-  // const [step, setStep] = useState<"credentials" | "otp" | "documents">("documents");
   const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
   const [timer, setTimer] = useState(60);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [isExpired, setIsExpired] = useState<boolean>(false);
   const [otpToken, setOtpToken] = useState<string | null>(null);
+  const [showAnimation, setShowAnimation] = useState<boolean>(false)
 
 
   const axiosInstance = createAxios();
@@ -54,10 +55,14 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setShowAnimation(true)
 
     const errors: ValidationErrors = validateRestaurantRegister(formData);
     setValidationErrors(errors);
-    if (Object.keys(errors).length > 0) return;
+    if (Object.keys(errors).length > 0) {
+      setShowAnimation(false)
+      return;
+    }
 
     try {
       const response = await axiosInstance.post("/restaurant-checking", { email: formData.email, mobile: formData.mobile });
@@ -82,6 +87,8 @@ const Register = () => {
     } catch (error: any) {
       console.error("Error:", error);
       alert("Error: Server issue");
+    } finally {
+      setTimeout(() => setShowAnimation(false), 2000);
     }
   };
 
@@ -335,10 +342,20 @@ const Register = () => {
                 )}
               </div>
 
-              <div className="pt-2">
+              {/* <div className="pt-2">
                 <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-800 text-white py-3 md:py-4 rounded-lg font-medium text-lg hover:from-blue-600 hover:to-blue-900 transition duration-300 shadow-lg"
+                >
+                  Register Now
+                </button>
+              </div> */}
+
+              <div className="pt-2 relative">
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-800 text-white py-3 md:py-4 rounded-lg font-medium text-lg hover:from-blue-600 hover:to-blue-900 transition duration-300 shadow-lg"
+                  disabled={showAnimation}
                 >
                   Register Now
                 </button>
@@ -372,6 +389,7 @@ const Register = () => {
                 <span className="text-blue-600 font-medium cursor-pointer hover:underline"><a href="/restaurant-login">Login instead</a></span>
               </p>
             </div>
+
           </div>
         </div>
       )}
@@ -379,6 +397,32 @@ const Register = () => {
       {step === "otp" && <OtpPage />}
       {step === "documents" && <DocumentUploadPage formData={formData} navigate={navigate} setStep={setStep} />}
       {step === "location" && <RestaurntLocation />}
+
+      {showAnimation && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-white/10">
+        <div className="absolute w-[400px] h-[400px]">
+          <div className="absolute w-[350px] h-[350px] rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{
+              boxShadow: "0 0 20px 20px rgba(255, 255, 255, 255), 0 0 40px 20px rgba(255, 255, 255, 255)",
+              filter: "blur(0px)"
+            }}
+          />
+        </div>
+        <div className="relative w-[360px] h-[360px] rounded-full bg-white  backdrop-blur-xl flex items-center justify-center z-10">
+          <div className="absolute w-full h-full rounded-full bg-white opacity-10" />
+          <DotLottieReact
+            src="https://lottie.host/ec9503d3-e9c6-4cc6-bc47-3fb25bb5540c/PNPeHobbCt.lottie"
+            loop
+            autoplay
+            style={{
+              width: 250,
+              height: 250,
+            }}
+          />
+        </div>
+      </div>
+      )}
+
     </div>
   );
 };
