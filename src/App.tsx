@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux'
 import Login from './pages/Restaurant/authentication/login'
 import RestaurantDashboard from './pages/Restaurant/dashboard'
 import AdminDashboard from './pages/Admin/admindashboard'
+import { AddMenuItems } from './pages/Restaurant/addMenu/addMenus'
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
     '/restaurant-login',
     '/restaurant-dashboard',
     '/restaurant-location',
+    '/restaurant-add-menu',
     '/admin-dashboard',
     '/admin/restaurants',
     '/admin/customers',
@@ -53,6 +55,7 @@ function App() {
             <Route path="/restaurant-register" element={restaurant ? <Navigate to={'/restaurant-dashboard'} /> : <Register />} />
             <Route path="/restaurant-login" element={restaurant ? <Navigate to={'/restaurant-dashboard'} /> : <Login />} />
             <Route path="/restaurant-dashboard" element={<RestaurantDashboard />} />
+            <Route path="/restaurant-add-menu" element={<AddMenuItems />} />
 
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/admin/customers" element={<AdminDashboard initialPage="Customers" />} />

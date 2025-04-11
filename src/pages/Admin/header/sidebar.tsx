@@ -25,17 +25,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
   return (
     <>
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-teal-900 text-white rounded-lg"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-orange-500 text-white rounded-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
       </button>
       <div className={`
-        fixed h-screen bg-gradient-to-b from-teal-900 to-teal-800 text-white shadow-lg transition-all duration-300 z-40
+        fixed h-screen bg-gradient-to-b from-orange-500 to-orange-400 text-white shadow-lg transition-all duration-300 z-40
         ${isOpen ? 'w-64 left-0' : 'w-0 -left-64 md:left-0 md:w-64'}
       `}>
         <div className="p-6 flex items-center space-x-3">
-          <FiShoppingBag className="h-8 w-8 text-teal-300" />
+          <FiShoppingBag className="h-8 w-8 text-orange-100" />
           <span className="text-xl font-bold">Eatzaa</span>
         </div>
         <nav className="mt-4">
@@ -44,8 +44,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
               key={index}
               className={`flex items-center space-x-3 w-full px-6 py-3 text-left transition-all duration-200 ${
                 activePage === item.text 
-                  ? 'bg-teal-700 text-white border-l-4 border-teal-400' 
-                  : 'text-teal-100 hover:bg-teal-700 hover:text-white'
+                  ? 'bg-orange-400 text-white border-l-4 border-orange-200' 
+                  : 'text-orange-100 hover:bg-orange-400 hover:text-white'
               }`}
               onClick={() => {
                 setActivePage(item.text);
@@ -60,7 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
       </div>
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 md:hidden z-30"
+          className="fixed inset-0 bg-white/10 bg-opacity-50 md:hidden z-30"
           onClick={() => setIsOpen(false)}
         />
       )}

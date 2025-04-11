@@ -190,6 +190,7 @@ import { Sidebar } from './header/sidebar';
 import UserList from './users/customersList';
 import RestaurantListPage from './restaurant/restaurantList';
 import RestaurantDetails from './restaurant/restaurantDetailsPage';
+import { Header } from './header/header';
 
 type OrderStatus = 'Pending' | 'Processing' | 'Delivered' | 'Cancelled';
 
@@ -261,6 +262,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
 
   return (
     <div className="flex min-h-screen bg-gray-100">
+      <Header/>
       <Sidebar activePage={activePage} setActivePage={handleSetActivePage} />
       <div className="flex-1 md:ml-64">
         {activePage === 'Customers' ? (
@@ -275,7 +277,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
               {/* Order Overview */}
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Overview</h2>
-                <div className="text-3xl font-bold text-teal-600 mb-2">
+                <div className="text-3xl font-bold text-orange-400 mb-2">
                   {orderStats.active}
                   <span className="text-sm text-gray-500 font-normal ml-2">Active Orders</span>
                 </div>
@@ -291,7 +293,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Sources</h2>
                 <div className="space-y-4">
                   {[
-                    { name: 'App', value: orderSources.app, color: 'teal-500' },
+                    { name: 'App', value: orderSources.app, color: 'orange-500' },
                     { name: 'Website', value: orderSources.website, color: 'blue-500' },
                     { name: 'Phone', value: orderSources.phone, color: 'purple-500' },
                   ].map((source) => (
@@ -338,7 +340,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                             <div className="text-xs text-gray-500">#{index + 1}</div>
                           </div>
                         </div>
-                        <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded-full">Active</span>
+                        <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">Active</span>
                       </div>
                       <div className="text-2xl font-bold text-gray-800">{category.totalOrders}k</div>
                       <div className="text-xs text-gray-500">Orders</div>
@@ -352,7 +354,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                   <h2 className="text-lg font-semibold text-gray-800">Order Schedule</h2>
                   <div className="flex space-x-3">
-                    <button className="px-4 py-2 text-sm rounded-lg bg-teal-500 text-white hover:bg-teal-600 transition-colors">
+                    <button className="px-4 py-2 text-sm rounded-lg bg-orange-400 text-white hover:bg-orange-500 transition-colors">
                       Filter
                     </button>
                     <button className="px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
@@ -391,7 +393,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                             <span
                               className={`px-2 py-1 text-xs rounded-full ${
                                 order.status === 'Pending'
-                                  ? 'bg-yellow-100 text-yellow-800'
+                                  ? 'bg-yellow-100 text-yellow-600'
                                   : order.status === 'Processing'
                                   ? 'bg-blue-100 text-blue-800'
                                   : 'bg-green-100 text-green-800'
@@ -402,7 +404,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{order.dateTime}</td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <button className="text-gray-400 hover:text-teal-500 transition-colors">
+                            <button className="text-gray-400 hover:text-orange-400 transition-colors">
                               {/* Add action icon here */}
                             </button>
                           </td>
