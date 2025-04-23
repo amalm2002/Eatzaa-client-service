@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from "../../components/Navbar";
-import { validateSignup } from "../../utils/validation";
+import Navbar from "../../../components/Navbar";
+import { validateSignup } from "../../../utils/validation";
 import { useNavigate } from "react-router-dom";
-import createAxios from "../../service/axiousServices/userAxious";
+import createAxios from "../../../service/axiousServices/userAxious";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 // import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 // import { jwtDecode } from 'jwt-decode'
 // import { userLogin } from "../../redux/slices/userAuthSlice";
@@ -31,7 +31,7 @@ const SignupPage: React.FC = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +62,7 @@ const SignupPage: React.FC = () => {
         });
       });
     } else {
-      const axiosInstance = createAxios()
+      const axiosInstance = createAxios(dispatch)
 
       try {
         setIsLoading(true)

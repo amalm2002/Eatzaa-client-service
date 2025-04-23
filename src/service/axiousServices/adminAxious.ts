@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { adminLogout } from '../redux/slices/adminSlice';
+import logoutLocalStorage from '../../utils/localStorage';
 
 export const createAxios = (dispatch: any) => {
   const axiosAdminInstance = axios.create({
@@ -13,6 +14,7 @@ export const createAxios = (dispatch: any) => {
   axiosAdminInstance.interceptors.request.use(
     (config: any) => {
       const token = localStorage.getItem('adminToken'); 
+     
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -34,7 +36,8 @@ export const createAxios = (dispatch: any) => {
           originalRequest._retry = true;
           const refreshToken = localStorage.getItem('adminRefreshToken');
           if (!refreshToken) {
-            localStorage.removeItem('adminToken');
+            // localStorage.removeItem('adminToken');
+            logoutLocalStorage('Admin')
             dispatch(adminLogout());
             window.location.href = '/login';
             return Promise.reject(error);
@@ -55,8 +58,9 @@ export const createAxios = (dispatch: any) => {
           return axiosAdminInstance(originalRequest);
         } catch (refreshError) {
           console.error('Refresh token error:', refreshError);
-          localStorage.removeItem('adminToken');
-          localStorage.removeItem('adminRefreshToken');
+          // localStorage.removeItem('adminToken');
+          // localStorage.removeItem('adminRefreshToken');
+          logoutLocalStorage('Admin')
           dispatch(adminLogout());
           window.location.href = '/login';
           return Promise.reject(refreshError);

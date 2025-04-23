@@ -17,7 +17,7 @@ function RestaurntLocation() {
     const [longitude, setLongitude] = useState(79.17271614074708);
     const [latitude, setLatitude] = useState(23.226390067116835);
 
-    const axiosInstance = createAxios()
+    const axiosInstance = createAxios(dispatch)
 
     const handleGeolocation = (lat: number, lng: number, status: any) => {
         setLocation(status);

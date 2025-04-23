@@ -17,7 +17,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-gradient-to-r from-gray-200 to-gray-300 shadow-md">
+        <nav className="bg-gradient-to-r from-gray-200  to-gray-300 shadow-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     <div className="text-2xl font-bold text-gray-800">Eatzaa</div>

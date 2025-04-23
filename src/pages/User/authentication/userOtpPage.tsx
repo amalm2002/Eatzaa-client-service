@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import createAxios from "../../service/axiousServices/userAxious";
+import createAxios from "../../../service/axiousServices/userAxious";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 
 
 const OtpPage: React.FC = () => {
 
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExpired, setIsExpired] = useState(false);
 
+  const dispatch=useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +23,7 @@ const OtpPage: React.FC = () => {
 
     if (savedStartTime) {
       const elapsedTime = Math.floor((Date.now() - parseInt(savedStartTime)) / 1000);
-      const remainingTime = Math.max(30 - elapsedTime, 0);
+      const remainingTime = Math.max(60 - elapsedTime, 0);
       setTimer(remainingTime);
       if (remainingTime === 0) {
         setIsExpired(true);
@@ -65,7 +68,7 @@ const OtpPage: React.FC = () => {
     }
 
     const enteredOtp = otp.join("");
-    const axiosInstance = createAxios();
+    const axiosInstance = createAxios(dispatch);
 
     if (enteredOtp.length === 4) {
       try {
@@ -99,15 +102,15 @@ const OtpPage: React.FC = () => {
 
   const handleResendOtp = async () => {
     setOtp(["", "", "", ""]);
-    setTimer(30);
+    setTimer(60);
     setIsResendDisabled(true);
     setIsExpired(false);
     setError(null);
     localStorage.setItem("otpTimerStart", Date.now().toString());
-    alert("OTP Resent!");
+    toast.success("OTP Resent successfully!");
 
     try {
-      const axiosInstance = createAxios();
+      const axiosInstance = createAxios(dispatch);
       const response = await axiosInstance.post("/resendOtp", {
         email: location.state?.email,
         formData: location.state?.formData,

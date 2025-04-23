@@ -1,19 +1,22 @@
-import Navbar from "../../components/Navbar";
-import createAxios from "../../service/axiousServices/userAxious";
+import Navbar from "../../../components/Navbar";
+import createAxios from "../../../service/axiousServices/userAxious";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { userLogin } from "../../service/redux/slices/userAuthSlice";
-import { validateSignin } from "../../utils/validation";
+import { userLogin } from "../../../service/redux/slices/userAuthSlice";
+import { validateSignin } from "../../../utils/validation";
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { toast } from "react-toastify";
 import { jwtDecode } from 'jwt-decode'
-import { adminLogin } from "../../service/redux/slices/adminSlice";
+import { adminLogin } from "../../../service/redux/slices/adminSlice";
 
 
 interface FormData {
   email: string;
   password: string;
+  userToken: string;
+  refreshToken: string;
+  role: 'User' | 'Admin'
 }
 
 interface ValidationErrors {
@@ -24,7 +27,10 @@ const SigninPage: React.FC = () => {
 
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    password: ''
+    password: '',
+    userToken: '',
+    refreshToken: '',
+    role: 'User'
   });
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -62,7 +68,7 @@ const SigninPage: React.FC = () => {
       return;
     }
 
-    const axiosInstance = createAxios();
+    const axiosInstance = createAxios(dispatch);
 
     try {
       const response = await axiosInstance.post('/login', formData);
@@ -79,31 +85,37 @@ const SigninPage: React.FC = () => {
 
         setServerError(`You don't have any account please SignUp`)
 
-      } else if (!response.data.isAdmin) {
+      } else if (response.data.isActive === false) {
+        setServerError('your Account has been blocked by the admin')
+      } else if (!response.data.isAdmin && response.data.role === 'User') {
         const userData = {
           user: response.data.user,
           user_id: response.data.user_id,
-          isLogin: true
+          isLogin: true,
+          role: response.data.role
         };
 
         dispatch(userLogin(userData));
+        localStorage.setItem('role', response.data.role)
         localStorage.setItem('userToken', response.data.token)
         localStorage.setItem('refreshToken', response.data.refreshToken)
         navigate('/');
-      } else if (response.data.isAdmin) {
+      } else if (response.data.isAdmin && response.data.role === 'Admin') {
         const adminData = {
           admin: response.data.user,
-          isLogin: true
+          isLogin: true,
+          role: response.data.role
         }
 
         dispatch(adminLogin(adminData))
+        localStorage.setItem('role', response.data.role)
         localStorage.setItem('adminToken', response.data.token)
         localStorage.setItem('adminRefreshToken', response.data.refreshToken)
         console.log('userSignin adminRefresh token', localStorage.getItem('adminRefreshToken'));
 
         navigate('/admin-dashboard')
       }
-      
+
     } catch (error: any) {
       console.log('error on the login page ', (error as Error));
       if (error.response && error.response.data && error.response.data.message) {
@@ -116,47 +128,63 @@ const SigninPage: React.FC = () => {
     }
   };
 
-
   const googleSignIn = async (data: CredentialResponse) => {
-    const axiosInstance = createAxios()
+    const axiosInstance = createAxios(dispatch);
     try {
-      const token: string | undefined = data.credential
-
+      const token: string | undefined = data.credential;
+  
       if (token) {
-        const decode = jwtDecode(token) as any
+        const decode = jwtDecode(token) as any;
         console.log('Decoded Google Data:', decode);
-
+  
         const response = await axiosInstance.post('/checkGoogleLoginUser', {
           email: decode.email,
-        })
-
+        });
+  
         console.log('Google login response:', response.data);
-
+  
         if (response.data.message === 'No user found') {
-          setServerError('No account found. Please sign up.')
+          setServerError('No account found. Please sign up.');
+          return;
+        } else if (response.data.isActive === false) {
+          setServerError('Your account has been blocked by the admin.');
           return;
         } else if (response.data.message === 'Success') {
-
-          const userData = {
-            user: response.data.user,
-            user_id: response.data.user_id,
-            isLogin: true
+          const { role, user, user_id, token, refreshToken } = response.data;
+  
+          if (role === 'User') {
+            const userData = {
+              user,
+              user_id,
+              isLogin: true,
+              role,
+            };
+            dispatch(userLogin(userData));
+            localStorage.setItem('role', role);
+            localStorage.setItem('userToken', token);
+            localStorage.setItem('refreshToken', refreshToken);
+            navigate('/');
+          } else if (role === 'Admin') {
+            const adminData = {
+              admin: user,
+              isLogin: true,
+              role,
+            };
+            dispatch(adminLogin(adminData));
+            localStorage.setItem('role', role);
+            localStorage.setItem('adminToken', token);
+            localStorage.setItem('adminRefreshToken', refreshToken);
+            navigate('/admin-dashboard');
+          } else {
+            setServerError('Invalid role received. Please contact support.');
           }
-
-          dispatch(userLogin(userData))
-          localStorage.setItem('userToken', response.data.token)
-          localStorage.setItem('refreshToken', response.data.refreshToken)
-          navigate('/')
         }
-
       }
-
     } catch (error: any) {
       console.log('Google login error:', error);
       toast.error(error.response?.data?.message || 'Something went wrong.');
     }
   };
-
 
   return (
     <>
@@ -242,6 +270,9 @@ const SigninPage: React.FC = () => {
 
               <p className="text-center text-gray-700 mt-4">
                 Don't have an account? <a href="/signup" className="text-[rgb(60,110,113)]">Sign up</a>
+              </p>
+              <p className="text-center text-gray-700 mt-4">
+               <a href="/forgot-password" className="text-[rgb(60,110,113)]">forgot password</a>
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
-interface UsePaginatedFetchProps<T> {
+interface UsePaginatedFetchProps {
   url: string;
   queryParams?: Record<string, any>;
   pageSize?: number;
@@ -11,7 +11,7 @@ export function usePaginatedFetch<T>({
   url,
   queryParams = {},
   pageSize = 10,
-}: UsePaginatedFetchProps<T>) {
+}: UsePaginatedFetchProps) {
   const [data, setData] = useState<T[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(1);

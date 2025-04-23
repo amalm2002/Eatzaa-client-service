@@ -4,11 +4,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 const storedAsmin = localStorage.getItem('adminAuth')
 const initialState: AdminState = storedAsmin
     ? JSON.parse(storedAsmin)
-    : { admin: '', isLogin: false }
+    : { admin: '', isLogin: false, role: '' }
 
 interface AdminState {
     admin: string,
-    isLogin: boolean
+    isLogin: boolean,
+    role: 'Admin' | '';
 }
 
 export const adminAuthSlice = createSlice({
@@ -19,12 +20,16 @@ export const adminAuthSlice = createSlice({
             console.log("Reducer received payload:", action.payload);
             state.admin = action.payload.admin;
             state.isLogin = action.payload.isLogin;
+            state.role = action.payload.role;
             localStorage.setItem("adminAuth", JSON.stringify(state));
         },
         adminLogout: (state) => {
             state.admin = "";
             state.isLogin = false;
+            state.role = '';
             localStorage.removeItem("adminAuth");
+            localStorage.removeItem('role')
+            localStorage.removeItem('adminRefreshToken')
         }
     }
 })

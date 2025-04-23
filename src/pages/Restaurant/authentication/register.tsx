@@ -7,6 +7,7 @@ import { validateRestaurantRegister } from "../../../utils/validation";
 
 import DocumentUploadPage from "../documents/documentUploadPage";
 import RestaurntLocation from "../location/restaurantLocation";
+import { useDispatch } from "react-redux";
 
 interface FormData {
   restaurantName: string;
@@ -37,8 +38,9 @@ const Register = () => {
   const [showAnimation, setShowAnimation] = useState<boolean>(false)
 
 
-  const axiosInstance = createAxios();
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const axiosInstance = createAxios(dispatch);
 
 
 
@@ -399,28 +401,28 @@ const Register = () => {
       {step === "location" && <RestaurntLocation />}
 
       {showAnimation && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-white/10">
-        <div className="absolute w-[400px] h-[400px]">
-          <div className="absolute w-[350px] h-[350px] rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{
-              boxShadow: "0 0 20px 20px rgba(255, 255, 255, 255), 0 0 40px 20px rgba(255, 255, 255, 255)",
-              filter: "blur(0px)"
-            }}
-          />
+        <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-white/10">
+          <div className="absolute w-[400px] h-[400px]">
+            <div className="absolute w-[350px] h-[350px] rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{
+                boxShadow: "0 0 20px 20px rgba(255, 255, 255, 255), 0 0 40px 20px rgba(255, 255, 255, 255)",
+                filter: "blur(0px)"
+              }}
+            />
+          </div>
+          <div className="relative w-[360px] h-[360px] rounded-full bg-white  backdrop-blur-xl flex items-center justify-center z-10">
+            <div className="absolute w-full h-full rounded-full bg-white opacity-10" />
+            <DotLottieReact
+              src="https://lottie.host/ec9503d3-e9c6-4cc6-bc47-3fb25bb5540c/PNPeHobbCt.lottie"
+              loop
+              autoplay
+              style={{
+                width: 250,
+                height: 250,
+              }}
+            />
+          </div>
         </div>
-        <div className="relative w-[360px] h-[360px] rounded-full bg-white  backdrop-blur-xl flex items-center justify-center z-10">
-          <div className="absolute w-full h-full rounded-full bg-white opacity-10" />
-          <DotLottieReact
-            src="https://lottie.host/ec9503d3-e9c6-4cc6-bc47-3fb25bb5540c/PNPeHobbCt.lottie"
-            loop
-            autoplay
-            style={{
-              width: 250,
-              height: 250,
-            }}
-          />
-        </div>
-      </div>
       )}
 
     </div>

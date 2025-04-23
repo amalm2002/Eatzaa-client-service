@@ -1,9 +1,8 @@
-
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { userLogout } from "../redux/slices/userAuthSlice";
+import logoutLocalStorage from "../../utils/localStorage";
 
-const createAxios = () => {
+const createAxios = (dispatch: any) => {
     const axiosUser = axios.create({
         baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/user`,
         withCredentials: true,
@@ -15,7 +14,7 @@ const createAxios = () => {
     axiosUser.interceptors.request.use(
         (config: any) => {
             const token = localStorage.getItem('userToken');
-            console.log('user axious inside ------------- ',token);
+            console.log('user axios inside ------------- ', token);
             
             return {
                 ...config,
@@ -38,33 +37,35 @@ const createAxios = () => {
             console.log(error);
 
             const originalRequest = error.config;
-            const dispatch = useDispatch()
 
             if (error.response.status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;
-                const refreshToken = localStorage.getItem('refreshToken');
-                console.log("refresh token", refreshToken);
-                if (!refreshToken) {
-                    localStorage.removeItem('userToken');
-                    dispatch(userLogout())
+                const refresh_token = localStorage.getItem('refreshToken');
+                console.log("refresh token", refresh_token);
+                if (!refresh_token) {
+                    logoutLocalStorage('User');
+                    dispatch(userLogout());
                     window.location.href = '/login';
                     return Promise.reject(error);
                 }
 
                 try {
-                    const response = await axios.post(`${import.meta.env.VITE_API_GATEWAY_URL}/auth/refresh`, { token: refreshToken });
-                    if (response.status === 200) {
-                        const newAccessToken = response.data.accessToken;
-                        localStorage.setItem('userToken', newAccessToken);
-                        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                        return axiosUser(originalRequest);
+                    const response = await axios.post(`${import.meta.env.VITE_API_GATEWAY_URL}/auth/refresh`, { token: refresh_token });
+                    console.log('responseeeeeeeeeeeeee :', response);
+
+                    const { accessToken, refreshToken, role } = response.data;
+                    if (role !== 'User') {
+                        throw new Error('Invalid role received');
                     }
+                    localStorage.setItem('userToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+
+                    originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+                    return axiosUser(originalRequest);
+
                 } catch (refreshError) {
                     console.error("Refresh token failed", refreshError);
-                    
-                    // Clear tokens and logout
-                    localStorage.removeItem('userToken');
-                    // localStorage.removeItem('refreshToken');
+                    logoutLocalStorage('User');
                     dispatch(userLogout());
                     window.location.href = '/login';
                     return Promise.reject(refreshError);
@@ -72,9 +73,10 @@ const createAxios = () => {
             }
 
             return Promise.reject(error);
-        })
+        }
+    );
 
     return axiosUser;
-}
+};
 
-export default createAxios
+export default createAxios;

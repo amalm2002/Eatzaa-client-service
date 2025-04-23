@@ -4,6 +4,7 @@ import { Upload, CreditCard, FileText, X } from "lucide-react";
 import createAxios from "../../../service/axiousServices/restaurantAxious";
 import { validateRestaurantDocument } from "../../../utils/validation";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import { useDispatch } from "react-redux";
 
 interface DocumentData {
     idProof: File | null;
@@ -47,7 +48,8 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
     const [docFeildError, setDocFeildError] = useState<ValidationErrors>({})
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const axiosInstance = createAxios();
+    const dispatch=useDispatch()
+    const axiosInstance = createAxios(dispatch);
 
     const uploadToCloudinary = async (file: File): Promise<string> => {
 

@@ -6,29 +6,40 @@ import Swal from 'sweetalert2';
 const useRestaurantStatus = () => {
   const [isOnline, setIsOnline] = useState(false);
   const dispatch = useDispatch();
-  const restaurant_id = useSelector((store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id);
-  const axiousInstance = createAxios();
+  const restaurant_id = useSelector(
+    (store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id
+  );
+  const axiosInstance = createAxios(dispatch);
 
   useEffect(() => {
-    const token = localStorage.getItem('restaurantToken');
-    if (token) {
-      Swal.fire({
-        title: 'Welcome Back!',
-        text: 'Please turn on your online status to start receiving orders.',
-        icon: 'info',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#6589f6',
-      });
-      setIsOnline(false); 
-    }
-  }, []);
+    const fetchOnlineStatus = async () => {
+      try {
+        const response = await axiosInstance.get(`/get-online-status/${restaurant_id}`);
+        setIsOnline(response.data.isOnline);
+
+        const token = localStorage.getItem('restaurantToken');
+        if (token && !response.data.isOnline) {
+          Swal.fire({
+            title: 'Welcome Back!',
+            text: 'Please turn on your online status to start receiving orders.',
+            icon: 'info',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#6589f6',
+          });
+        }
+      } catch (error: any) {
+        console.error('Error fetching online status:', error.message);
+      }
+    };
+
+    fetchOnlineStatus();
+  }, [restaurant_id]);
 
   const handleToggleOnline = async () => {
-    const token = localStorage.getItem('restaurantToken');
     try {
-      const response = await axiousInstance.patch('/update-online-status', {
+      const response = await axiosInstance.patch('/update-online-status', {
         restaurant_id,
-        isOnline: !isOnline
+        isOnline: !isOnline,
       });
 
       if (response.data.message === 'Online status updated successfully') {
@@ -53,7 +64,19 @@ const useRestaurantStatus = () => {
     }
   };
 
-  return { isOnline, handleToggleOnline };
+  const handleBeforeLogout = async () => {
+    if (isOnline) {
+      await Swal.fire({
+        title: 'Reminder!',
+        text: 'Please turn off your online status before logging out.',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#d33',
+      });
+    }
+  };
+
+  return { isOnline, handleToggleOnline, handleBeforeLogout };
 };
 
 export default useRestaurantStatus;

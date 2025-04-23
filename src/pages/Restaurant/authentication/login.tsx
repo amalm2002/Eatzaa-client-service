@@ -1,452 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { Mail, Phone, Store, Utensils, ChefHat, HeartCrack, X, LockKeyhole, Coffee, ArrowRight, Loader2 } from "lucide-react";
-// import { sendOtp } from "../../../hooks/auth";
-// import { ConfirmationResult, RecaptchaVerifier } from "firebase/auth";
-// import { auth } from "../../../service/firebase/firebase";
-// import createAxios from "../../../service/axiousServices/restaurantAxious";
-// import { useNavigate } from "react-router-dom";
-// import { useDispatch } from "react-redux";
-// import { restaurantLogin } from "../../../service/redux/slices/restaurantSlice";
-
-// declare global {
-//   interface Window {
-//     recaptchaVerifier?: RecaptchaVerifier;
-//   }
-// }
-
-// if (window.recaptchaVerifier) {
-//   window.recaptchaVerifier.clear();
-// }
-
-// const Login = () => {
-//   const [loginStep, setLoginStep] = useState("credentials")
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     mobile: "",
-//     otp: ["", "", "", "", "", ""],
-//     restaurantName: "",
-//     restaurantId: "",
-//     token: "",
-//     refreshToken: ""
-//   });
-
-//   const [errors, setErrors] = useState({
-//     email: "",
-//     mobile: "",
-//     otp: "",
-//   });
-
-//   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null)
-//   const [timer, setTimer] = useState(30)
-//   const [isResendDisabled, setIsResendDisabled] = useState(true)
-//   const [showPopup, setShowPopup] = useState(false);
-
-//   const navigate = useNavigate()
-//   const dispatch = useDispatch()
-
-//   useEffect(() => {
-//     if (loginStep === 'otp' && timer > 0) {
-//       const countDowen = setInterval(() => {
-//         setTimer((prev) => prev - 1)
-//       }, 1000);
-
-//       return () => clearInterval(countDowen)
-//     }
-
-//     if (timer === 0) {
-//       setIsResendDisabled(false)
-//     }
-//   })
-
-//   const axiousInstance = createAxios()
-
-//   const handleChange = async (e: any) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-
-//     if (e.target.name === "email" && e.target.value.trim()) {
-//       setErrors((prev) => ({ ...prev, email: "" }));
-//     }
-//     if (e.target.name === "mobile" && /^[1-9][0-9]{9}$/.test(e.target.value)) {
-//       setErrors((prev) => ({ ...prev, mobile: "" }));
-//     }
-//   };
-
-//   const handleOtpChange = (index: number, value: string) => {
-//     if (!/^\d?$/.test(value)) return;
-//     const newOtp = [...formData.otp];
-//     newOtp[index] = value;
-//     setFormData({ ...formData, otp: newOtp });
-
-
-//     if (value && index < 5) {
-//       const nextInput = document.getElementById(`otp-${index + 1}`) as HTMLInputElement;
-//       if (nextInput) {
-//         nextInput.focus();
-//       }
-//     }
-
-
-//   };
-
-//   // const handleSubmitCredentials = async (e: any) => {
-//   //   e.preventDefault();
-//   //   const { data } = await axiousInstance.post("/restaurant-login", formData);
-//   //   console.log('==============', data);
-
-//   //   if (data.message === "Success") {
-//   //     if (!data.isVerified) {
-//   //       setShowPopup(true)
-//   //       return
-//   //     }
-
-//   //     console.log("Sending OTP to:", formData.email, formData.mobile);
-//   //     sendOtp(setLoginStep, auth, formData.mobile, setConfirmationResult);
-
-//   //     setFormData((prev) => ({
-//   //       ...prev,
-//   //       restaurantName: data.restaurantName || "",
-//   //       restaurantId: data._id || "",
-//   //       token: data.token || "",
-//   //       refreshToken: data.refreshToken || "",
-//   //       isOnline: data.isOnline
-//   //     }));
-//   //   }
-
-//   // };
-
-
-//   const handleSubmitCredentials = async (e: any) => {
-//     e.preventDefault();
-//     let valid = true;
-//     let newErrors = { email: "", mobile: "", otp: "" };
-
-//     if (!formData.email.trim()) {
-//       newErrors.email = "Email is required";
-//       valid = false;
-//     }
-
-//     if (!formData.mobile.trim()) {
-//       newErrors.mobile = "Mobile number is required";
-//       valid = false;
-//     } else if (!/^[1-9]\d{9}$/.test(formData.mobile)) {
-//       newErrors.mobile = "Enter a valid 10-digit mobile number without leading 0";
-//       valid = false;
-//     }
-
-//     setErrors(newErrors);
-//     if (!valid) return;
-
-//     try {
-//       const { data } = await axiousInstance.post("/restaurant-login", formData);
-//       console.log('login data from the backend :', data);
-
-//       if (data.message === "Success") {
-//         if (!data.isVerified) {
-//           setShowPopup(true);
-//           return;
-//         }
-
-//         sendOtp(setLoginStep, auth, formData.mobile, setConfirmationResult);
-//         setFormData((prev) => ({
-//           ...prev,
-//           restaurantName: data.restaurantName || "",
-//           restaurantId: data._id || "",
-//           token: data.token || "",
-//           refreshToken: data.refreshToken || "",
-//           isOnline: data.isOnline,
-//         }));
-//       }
-//     } catch (error) {
-//       console.log("Login failed. Please try again.", (error as Error).message);
-//     }
-//   };
-
-//   // const handleSubmitOtp = (e: any) => {
-//   //   e.preventDefault();
-//   //   console.log(confirmationResult, 'conformation result is here');
-
-//   //   if (formData.otp && confirmationResult) {
-
-//   //     const otpValue: string = formData.otp.join('');
-
-//   //     confirmationResult.confirm(otpValue)
-//   //       .then(async () => {
-//   //         const restaurantData = {
-//   //           restaurant: formData.restaurantName,
-//   //           restaurant_id: formData.restaurantId,
-//   //           isLogin: true,
-//   //           isOnline: false
-//   //         };
-
-//   //         dispatch(restaurantLogin(restaurantData));
-//   //         localStorage.setItem('restaurantToken', formData.token);
-//   //         localStorage.setItem('restaurantRefreshToken', formData.refreshToken);
-
-//   //         navigate("/restaurant-dashboard");
-//   //       })
-//   //       .catch(() => {
-//   //         alert("Enter a valid OTP");
-//   //       });
-
-//   //   } else {
-//   //     alert("Enter a valid otp");
-//   //   }
-//   //   setTimeout(() => {
-//   //     console.log("OTP Verified:", formData.otp.join(""));
-
-//   //   }, 1500);
-//   // };
-
-
-//   const handleSubmitOtp = (e: any) => {
-//     e.preventDefault();
-//     let otpValue = formData.otp.join("").trim();
-
-//     if (otpValue.length !== 6) {
-//       setErrors((prev) => ({ ...prev, otp: "Enter a valid 6-digit OTP" }));
-//       return;
-//     }
-
-//     if (timer === 0) {
-//       alert("OTP has expired. Please request a new OTP.");
-//       return;
-//     }
-//     if (formData.otp && confirmationResult) {
-
-//       const otpValue: string = formData.otp.join('');
-
-//       confirmationResult.confirm(otpValue)
-//         .then(async () => {
-//           const restaurantData = {
-//             restaurant: formData.restaurantName,
-//             restaurant_id: formData.restaurantId,
-//             isLogin: true,
-//             isOnline: false
-//           };
-
-//           dispatch(restaurantLogin(restaurantData));
-//           localStorage.setItem('restaurantToken', formData.token);
-//           localStorage.setItem('restaurantRefreshToken', formData.refreshToken);
-
-//           navigate("/restaurant-dashboard");
-//         })
-//         .catch(() => {
-//           setErrors((prev) => ({ ...prev, otp: "Invalid OTP. Try again." }));
-//         });
-//     } else {
-//       setErrors((prev) => ({ ...prev, otp: "Invalid OTP. Try again." }));
-//     }
-//   };
-
-//   const handleResendOtp = () => {
-//     setIsResendDisabled(true)
-//     setTimer(30)
-//     sendOtp(setLoginStep, auth, formData.mobile, setConfirmationResult)
-//   }
-
-//   return (
-//     <div className="flex flex-col md:flex-row min-h-screen">
-//       {/* Left Section - Form now on left side */}
-//       <div className="md:w-1/2 bg-gradient-to-br from-indigo-900 to-blue-800 text-white flex flex-col justify-center p-6 py-10 relative">
-
-//         {/* Top restaurant icon */}
-//         <div className="absolute top-4 left-4 flex items-center">
-//           <ChefHat className="w-6 h-6 md:w-8 md:h-8 text-orange-300 mr-2" />
-//           <span className="font-extrabold text-lg md:text-xl">Eatzaa</span>
-//         </div>
-
-
-//         {/* Form Container */}
-//         <div className="mx-auto w-full max-w-md px-4 py-8 rounded-xl bg-white/10 backdrop-blur-sm">
-//           <div className="text-center mb-8">
-//             <div className="inline-block p-3 bg-blue-200/20 rounded-full mb-3">
-//               <Coffee className="w-10 h-10 md:w-12 md:h-12 text-orange-300" />
-//             </div>
-//             <h2 className="text-2xl md:text-3xl font-bold">Welcome Back</h2>
-//             <p className="text-blue-100 mt-2">Log in to manage your restaurant</p>
-//           </div>
-
-//           {showPopup && (
-//             <div className="flex justify-center mb-6">
-//               <div className="bg-gradient-to-r from-red-600 to-red-400 text-white p-5 rounded-2xl shadow-xl flex items-start gap-4 animate-fadeIn w-full max-w-md">
-//                 <HeartCrack className="w-7 h-7 text-white animate-pulse" />
-//                 <div className="flex-1">
-//                   <p className="font-extrabold text-lg">Registration Pending!</p>
-//                   <p className="text-sm opacity-90">
-//                     Your request is under review. Please wait for admin verification. <br />
-//                     Check your email for approval updates.
-//                   </p>
-//                 </div>
-//                 <X
-//                   className="w-6 h-6 cursor-pointer opacity-70 hover:opacity-100 transition"
-//                   onClick={() => setShowPopup(false)}
-//                 />
-//               </div>
-//             </div>
-//           )}
-
-//           {loginStep === "credentials" && (
-//             <form onSubmit={handleSubmitCredentials} className="space-y-4">
-//               <div>
-//                 <label className="block text-blue-100 font-medium mb-1">Email Address</label>
-//                 <div className="flex items-center border-2 border-blue-300/30 rounded-lg p-3 transition-all duration-300 focus-within:border-blue-300 focus-within:ring-2 focus-within:ring-blue-300/20 bg-white/5">
-//                   <Mail className="text-blue-300 mr-2" />
-//                   <input
-//                     type="email"
-//                     name="email"
-//                     value={formData.email}
-//                     onChange={handleChange}
-//                     className="w-full focus:outline-none bg-transparent text-white placeholder-blue-200/50"
-//                     placeholder="your@email.com"
-//                   />
-//                 </div>
-//               </div>
-//               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-
-//               <div>
-//                 <label className="block text-blue-100 font-medium mb-1">Mobile Number</label>
-//                 <div className="flex items-center border-2 border-blue-300/30 rounded-lg p-3 transition-all duration-300 focus-within:border-blue-300 focus-within:ring-2 focus-within:ring-blue-300/20 bg-white/5">
-//                   <Phone className="text-blue-300 mr-2" />
-//                   <input
-//                     type="tel"
-//                     name="mobile"
-//                     value={formData.mobile}
-//                     onChange={handleChange}
-//                     placeholder="+91 Enter 10-digit mobile number"
-//                     className="w-full focus:outline-none bg-transparent text-white placeholder-blue-200/50"
-//                   />
-//                 </div>
-//               </div>
-
-//               {errors.mobile && <p className="text-red-500 text-sm">{errors.mobile}</p>}
-
-//               <div className="pt-4">
-//                 <button
-//                   type="submit"
-//                   className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-medium text-lg hover:from-orange-600 hover:to-orange-700 transition duration-300 flex items-center justify-center gap-2"
-//                 >
-//                   <span>Get OTP</span>
-//                   <ArrowRight className="w-5 h-5" />
-//                 </button>
-//               </div>
-//               <div id="recaptcha-container"></div>
-
-//             </form>
-//           )}
-
-//           {loginStep === "otp" && (
-//             <form onSubmit={handleSubmitOtp} className="space-y-6">
-//               <div>
-//                 <label className="block text-blue-100 font-medium mb-1 text-center">
-//                   Enter 6-digit OTP sent to your mobile
-//                 </label>
-//                 <p className="text-blue-200/70 text-sm text-center mb-4">
-//                   We've sent a verification code to {formData.mobile}
-//                 </p>
-//                 {errors.otp && <p className="text-red-500 text-sm text-center">{errors.otp}</p>}
-//                 <div className="flex justify-center gap-2 my-6 flex-wrap">
-//                   {[0, 1, 2, 3, 4, 5].map((index) => (
-//                     <input
-//                       id={`otp-${index}`}
-//                       key={index}
-//                       type="text"
-//                       maxLength={1}
-//                       value={formData.otp[index]}
-//                       onChange={(e) => handleOtpChange(index, e.target.value)}
-//                       className="w-12 h-12 text-center text-xl font-bold bg-white/10 border-2 border-blue-300/30 rounded-lg focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-300/30 transition-all duration-300 text-white"
-//                     />
-//                   ))}
-//                 </div>
-//                 <p className="text-blue-200 text-sm text-center">
-//                   Didn't receive code?
-//                   <button
-//                     onClick={handleResendOtp}
-//                     disabled={isResendDisabled}
-//                     className={`text-orange-300 font-medium cursor-pointer hover:underline ${isResendDisabled ? "opacity-50 cursor-not-allowed" : ""
-//                       }`}
-//                   >
-//                     {isResendDisabled ? `Resend OTP in ${timer}s` : "Resend OTP"}
-//                   </button>
-//                 </p>
-//               </div>
-
-//               <div className="pt-2">
-//                 <button
-//                   type="submit"
-//                   className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-medium text-lg hover:from-orange-600 hover:to-orange-700 transition duration-300 shadow-lg flex items-center justify-center gap-2"
-//                 >
-//                   <LockKeyhole className="w-5 h-5" />
-//                   <span>Verify & Login</span>
-//                 </button>
-//               </div>
-//               <div id="recaptcha-container"></div>
-//             </form>
-//           )}
-
-//           {loginStep === "verifying" && (
-//             <div className="flex flex-col items-center justify-center py-8">
-//               <Loader2 className="w-12 h-12 text-blue-300 animate-spin mb-4" />
-//               <p className="text-blue-100 text-lg">Verifying your account...</p>
-//             </div>
-//           )}
-
-//           <div className="mt-6 text-center">
-//             <p className="text-blue-200/70 text-sm">
-//               New to Eatzaa Food Venture? <span className="text-orange-300 font-medium cursor-pointer"><a href="/restaurant-register">Register your restaurant</a></span>
-//             </p>
-//             <p className="text-blue-200/70 text-sm mt-2">
-//               Need help? <span className="text-orange-300 font-medium cursor-pointer hover:underline">Contact support</span>
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Right Section - Visual display */}
-//       <div className="md:w-1/2 flex flex-col justify-center items-center p-6 md:p-8 bg-gray-50 relative overflow-hidden">
-//         {/* Decorative elements */}
-//         <div className="absolute top-0 right-0 -mt-16 -mr-16 opacity-10">
-//           <Utensils className="w-64 h-64 text-blue-900" />
-//         </div>
-//         <div className="absolute bottom-0 left-0 -mb-16 -ml-16 opacity-10">
-//           <Store className="w-64 h-64 text-blue-900" />
-//         </div>
-
-//         {/* Main content */}
-//         <div className="max-w-md text-center z-10">
-//           <h2 className="text-3xl font-bold text-gray-800 mb-4">Manage Your Restaurant With Ease</h2>
-//           <p className="text-gray-600 mb-6">
-//             Access your restaurant dashboard, update your menu, check orders, and gain valuable insights
-//             about your customers' preferences.
-//           </p>
-
-//           <div className="grid grid-cols-2 gap-4 mt-8">
-//             <div className="bg-blue-50 p-4 rounded-lg">
-//               <h3 className="font-semibold text-blue-800 mb-2">Real-time Orders</h3>
-//               <p className="text-gray-600 text-sm">Receive and manage orders in real-time with instant notifications</p>
-//             </div>
-//             <div className="bg-green-50 p-4 rounded-lg">
-//               <h3 className="font-semibold text-green-700 mb-2">Menu Management</h3>
-//               <p className="text-gray-600 text-sm">Update your menu items, prices, and availability with ease</p>
-//             </div>
-//             <div className="bg-purple-50 p-4 rounded-lg">
-//               <h3 className="font-semibold text-purple-700 mb-2">Customer Insights</h3>
-//               <p className="text-gray-600 text-sm">Understand your customers better with detailed analytics</p>
-//             </div>
-//             <div className="bg-orange-50 p-4 rounded-lg">
-//               <h3 className="font-semibold text-orange-700 mb-2">Table Reservations</h3>
-//               <p className="text-gray-600 text-sm">Manage bookings and optimize your seating arrangements</p>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
-
-
 import { useEffect, useRef, useState } from "react";
 import { Mail, Phone, Store, Utensils, ChefHat, HeartCrack, X, LockKeyhole, Coffee, ArrowRight, Loader2, Upload, Clock } from "lucide-react";
 import { sendOtp } from "../../../hooks/auth";
@@ -481,7 +32,8 @@ const Login = () => {
     restaurantName: "",
     restaurantId: "",
     token: "",
-    refreshToken: ""
+    refreshToken: "",
+    role: 'Restaurant'
   });
 
   const [errors, setErrors] = useState({
@@ -535,7 +87,7 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const axiosInstance = createAxios();
+  const axiosInstance = createAxios(dispatch);
 
   useEffect(() => {
     if (loginStep === 'otp' && timer > 0) {
@@ -563,7 +115,7 @@ const Login = () => {
         fssaiLicense: restaurant.restaurantDocuments.fssaiLicenseUrl || "",
         businessCertificate: restaurant.restaurantDocuments.businessCertificateUrl || ""
       });
-      console.log("Loaded restaurant:", restaurant);
+      // console.log("Loaded restaurant:", restaurant);
     }
   }, [restaurant])
 
@@ -610,9 +162,20 @@ const Login = () => {
 
     try {
       const { data } = await axiosInstance.post("/restaurant-login", formData);
-      // console.log('login data from the backend :', data);
+      console.log('login data from the backend :', data);
 
-      if (data.message === "Success") {
+      if (data.message === 'No restaurant found') {
+        toast.warning('Your account is not registered. Please sign up to continue.');
+        return
+      }else if (data.message==='Restaurant registration is pending ') {
+        toast.warning('Your restaurant registration is pending. Please complete it after signing in.')
+        return
+      } else if (data.message === "Success") {
+
+        if (data.role !== 'Restaurant') {
+          toast.error('Access denied: Only restaurant accounts can log in.');
+          return;
+        }
 
         setRestaurant(data.restaurant)
 
@@ -633,6 +196,7 @@ const Login = () => {
           token: data.token || "",
           refreshToken: data.refreshToken || "",
           isOnline: data.isOnline,
+          role: data.role === 'Restaurant' ? 'Restaurant' : '',
         }));
       }
     } catch (error) {
@@ -649,22 +213,26 @@ const Login = () => {
       return;
     }
     if (timer === 0) {
-      alert("OTP has expired. Please request a new OTP.");
+      toast.message("OTP has expired. Please request a new OTP.");
       return;
     }
     if (formData.otp && confirmationResult) {
       confirmationResult.confirm(otpValue)
         .then(async () => {
-          const restaurantData = {
+
+          const restaurantData: any = {
             restaurant: formData.restaurantName,
             restaurant_id: formData.restaurantId,
+            role: formData.role,
             isLogin: true,
-            isOnline: false
+            isOnline: false,
           };
           dispatch(restaurantLogin(restaurantData));
+          localStorage.setItem('role', formData.role)
           localStorage.setItem('restaurantToken', formData.token);
           localStorage.setItem('restaurantRefreshToken', formData.refreshToken);
           navigate("/restaurant-dashboard");
+
         })
         .catch(() => {
           setErrors((prev) => ({ ...prev, otp: "Invalid OTP. Try again." }));
@@ -681,7 +249,6 @@ const Login = () => {
   };
 
   //  handile the re-submit restaurnt dcuments code :
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof resubmitData) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -710,13 +277,13 @@ const Login = () => {
     formData.append('file', file)
     formData.append('upload_preset', 'restaurant_docs')
     formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_NAME);
-    console.log('upload cloudinary func');
+    // console.log('upload cloudinary func');
 
     const response = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_NAME}/image/upload`, {
       method: 'POST',
       body: formData
     })
-    console.log('upload response :', response);
+    // console.log('upload response :', response);
 
     const data = await response.json();
     if (data.secure_url) {
@@ -1168,13 +735,13 @@ const Login = () => {
                     >
                       Submit Documents
                     </button>
-                    <button
+                    {/* <button
                       type="button"
                       onClick={() => setShowResubmitModal(false)}
                       className="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 rounded-xl font-semibold text-lg hover:from-gray-600 hover:to-gray-700 transition duration-300 shadow-lg"
                     >
                       Cancel
-                    </button>
+                    </button> */}
                   </div>
                 </form>
               </div>

@@ -24,6 +24,13 @@ interface RestaurantDocumentFormData {
     ifscCode: string;
 }
 
+interface ForgotPasswordFormData {
+    email: string;
+    otp?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+}
+
 interface ValidationErrors {
     [key: string]: string;
 }
@@ -58,7 +65,6 @@ export const validateSignup = (formData: FormData): ValidationErrors => {
     return errors;
 };
 
-
 export const validateSignin = (formData: SigninFormData): ValidationErrors => {
     const errors: ValidationErrors = {};
 
@@ -76,7 +82,6 @@ export const validateSignin = (formData: SigninFormData): ValidationErrors => {
     return errors;
 };
 
-
 export const validateRestaurantRegister = (formData: RestaurantRegisterFormData): ValidationErrors => {
     const errors: ValidationErrors = {};
 
@@ -92,7 +97,6 @@ export const validateRestaurantRegister = (formData: RestaurantRegisterFormData)
     }
 
     const mobileRegex = /^[1-9]\d{9}$/;
-
     if (!mobileRegex.test(formData.mobile)) {
         errors.mobile = 'Mobile number must be exactly 10 digits, cannot start with 0, and should not contain spaces.';
     } else if (/^([0])\1*$/.test(formData.mobile)) {
@@ -102,9 +106,8 @@ export const validateRestaurantRegister = (formData: RestaurantRegisterFormData)
     return errors;
 };
 
-
 export const validateRestaurantDocument = (formData: RestaurantDocumentFormData): ValidationErrors => {
-    const errors: ValidationErrors = {}
+    const errors: ValidationErrors = {};
 
     if (/[^\d]/.test(formData.bankAccountNumber)) {
         errors.bankAccountNumber = "Bank Account Number should contain only digits (no letters or symbols)";
@@ -117,5 +120,32 @@ export const validateRestaurantDocument = (formData: RestaurantDocumentFormData)
         errors.ifscCode = "Enter a valid IFSC code (e.g., HDFC0001234)";
     }
 
-    return errors
-}
+    return errors;
+};
+
+export const validateForgotPassword = (formData: ForgotPasswordFormData): ValidationErrors => {
+    const errors: ValidationErrors = {};
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+        errors.email = 'Please enter a valid email address.';
+    }
+
+    if (formData.newPassword !== undefined || formData.confirmPassword !== undefined) {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        
+        if (!formData.newPassword) {
+            errors.newPassword = 'New password is required.';
+        } else if (!passwordRegex.test(formData.newPassword)) {
+            errors.newPassword = 'Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.';
+        }
+
+        if (!formData.confirmPassword) {
+            errors.confirmPassword = 'Please confirm your password.';
+        } else if (formData.confirmPassword !== formData.newPassword) {
+            errors.confirmPassword = 'Passwords do not match.';
+        }
+    }
+
+    return errors;
+};
