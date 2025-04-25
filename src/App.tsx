@@ -16,6 +16,7 @@ import { EditMenuItems } from './pages/Restaurant/menu/editMenus'
 import { RootState } from './service/redux/store'
 import ForgotPassword from './pages/User/forgotPassword/forgotPass'
 import FoodDeliveryPage from './pages/User/foodListPage'
+import ProfilePage from './pages/User/profile/userProfilePage'
 
 
 function App() {
@@ -62,9 +63,8 @@ function App() {
             <Route path="/signup" element={user ? <Navigate to={'/'} /> : <SignupPage />} />
             <Route path="/otp" element={user ? <Navigate to={'/'} /> : <OtpPage />} />
             <Route path="/forgot-password" element={user ? <Navigate to={'/'} /> : <ForgotPassword />} />
-            <Route path="/food-list-page" element={user ? <FoodDeliveryPage /> : <Navigate to="/login" />} />
-
-            
+            <Route path="/food-list-page" element={user ? <FoodDeliveryPage /> : <Navigate to="/login" />} />              
+            <Route path="/user-profile-page" element={user ? <ProfilePage /> : <Navigate to="/login" />} />              
 
             {/* ---------- RESTAURANT ROUTES ---------- */}
             <Route path="/restaurant-register" element={restaurant ? <Navigate to="/restaurant-dashboard" /> : <Register />} />

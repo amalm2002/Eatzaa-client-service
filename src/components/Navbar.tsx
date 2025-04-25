@@ -38,7 +38,7 @@ const Navbar = () => {
                                 <User className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900" />
                                 <div className="absolute right-0 mt-2 w-40 bg-white z-50 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <p className="px-4 py-2 text-gray-800">{user}</p>
-                                    <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Profile</Link>
+                                    <Link to="/user-profile-page" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Profile</Link>
                                     <button
                                         onClick={handleLogout}
                                         className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200"

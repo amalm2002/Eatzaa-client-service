@@ -90,7 +90,7 @@ const SigninPage: React.FC = () => {
       } else if (!response.data.isAdmin && response.data.role === 'User') {
         const userData = {
           user: response.data.user,
-          user_id: response.data.user_id,
+          user_id: response.data.userId,
           isLogin: true,
           role: response.data.role
         };
@@ -132,17 +132,17 @@ const SigninPage: React.FC = () => {
     const axiosInstance = createAxios(dispatch);
     try {
       const token: string | undefined = data.credential;
-  
+
       if (token) {
         const decode = jwtDecode(token) as any;
         console.log('Decoded Google Data:', decode);
-  
+
         const response = await axiosInstance.post('/checkGoogleLoginUser', {
           email: decode.email,
         });
-  
+
         console.log('Google login response:', response.data);
-  
+
         if (response.data.message === 'No user found') {
           setServerError('No account found. Please sign up.');
           return;
@@ -151,7 +151,7 @@ const SigninPage: React.FC = () => {
           return;
         } else if (response.data.message === 'Success') {
           const { role, user, user_id, token, refreshToken } = response.data;
-  
+
           if (role === 'User') {
             const userData = {
               user,
@@ -272,7 +272,7 @@ const SigninPage: React.FC = () => {
                 Don't have an account? <a href="/signup" className="text-[rgb(60,110,113)]">Sign up</a>
               </p>
               <p className="text-center text-gray-700 mt-4">
-               <a href="/forgot-password" className="text-[rgb(60,110,113)]">forgot password</a>
+                <a href="/forgot-password" className="text-[rgb(60,110,113)]">forgot password</a>
               </p>
             </div>
           </div>
