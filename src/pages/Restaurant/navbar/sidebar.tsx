@@ -147,7 +147,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuO
 
     const menuItems = [
         { icon: <LayoutGrid size={20} />, label: 'Dashboard', path: '/restaurant-dashboard' },
-        { icon: <BarChart2 size={20} />, label: 'Analytics',path: '/restaurant-dashboard' },
+        { icon: <BarChart2 size={20} />, label: 'Payment',path: '/restaurant-payment' },
         { icon: <ShoppingCart size={20} />, label: 'Orders',path: '/restaurant-dashboard' },
         { icon: <Utensils size={20} />, label: 'Menu Items', path: '/restaurant-menu-list' },
         { icon: <Users size={20} />, label: 'Customers',path: '/restaurant-dashboard' },

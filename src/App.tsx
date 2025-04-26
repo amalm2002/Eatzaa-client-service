@@ -17,6 +17,7 @@ import { RootState } from './service/redux/store'
 import ForgotPassword from './pages/User/forgotPassword/forgotPass'
 import FoodDeliveryPage from './pages/User/foodListPage'
 import ProfilePage from './pages/User/profile/userProfilePage'
+import PaymentPage from './pages/Restaurant/paymentPage'
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
     '/restaurant-register',
     '/restaurant-login',
     '/restaurant-dashboard',
+    '/restaurant-payment',
     '/restaurant-location',
     '/restaurant-add-menu',
     '/restaurant-menu-list',
@@ -44,6 +46,7 @@ function App() {
     '/admin/restaurants',
     '/admin/customers',
     '/admin/restaurants/:id',
+    '/admin/restaurants/subscription',
   ]
   // const showFooter = !hideFooterPaths.includes(location.pathname)
   const showFooter = !hideFooterPaths.some((path) =>
@@ -73,12 +76,14 @@ function App() {
             <Route path="/restaurant-add-menu" element={restaurant ? <AddMenuItems /> : <Navigate to="/restaurant-login" />} />
             <Route path="/restaurant-menu-list" element={restaurant ? <MenuList /> : <Navigate to="/restaurant-login" />} />
             <Route path="/restaurant-edit-menu/:id" element={restaurant ? <EditMenuItems /> : <Navigate to="/restaurant-login" />} />
+            <Route path="/restaurant-payment" element={restaurant ? <PaymentPage /> : <Navigate to="/restaurant-login" />} />
 
             {/* ---------- ADMIN ROUTES ---------- */}
             <Route path="/admin-dashboard" element={admin ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/admin/customers" element={admin ? <AdminDashboard initialPage="Customers" /> : <Navigate to="/" />} />
             <Route path="/admin/restaurants" element={admin ? <AdminDashboard initialPage="Restaurants" /> : <Navigate to="/" />} />
             <Route path="/admin/restaurants/:id" element={admin ? <AdminDashboard initialPage="RestaurantDetails" /> : <Navigate to="/" />} />
+            <Route path="/admin/restaurants/subscription" element={admin ? <AdminDashboard initialPage="Payments" /> : <Navigate to="/" />} />
 
           </Routes>
         </div>
