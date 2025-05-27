@@ -4,8 +4,43 @@ import Header from './navbar/header';
 import Sidebar from './navbar/sidebar';
 import useRestaurantStatus from '../../hooks/useRestaurantStatus';
 import createAxios from '../../service/axiousServices/restaurantAxious';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description?: string;
+  order_id: string;
+  handler?: (response: {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }) => void;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  theme?: {
+    color?: string;
+  };
+}
+
+interface RazorpayInstance {
+  open: () => void;
+  on: (event: string, callback: (response: any) => void) => void;
+}
+
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
 
 interface Plan {
   id: string;
@@ -25,14 +60,32 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const { isOnline, handleToggleOnline } = useRestaurantStatus();
 
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const axiosInstance = createAxios(dispatch);
+
+  const restaurantId = useSelector((store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id)
+
+  // console.log('idddddddddddddddddddd',restaurantId);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchSubscriptionPlans = async () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get('/get-all-plans');
+        // console.log('respose form backend :',response);
+        
         if (response.data.message === 'success') {
           const fetchedPlans: Plan[] = response.data.response.map((plan: any) => ({
             id: plan._id,
@@ -57,10 +110,110 @@ export default function PaymentPage() {
     fetchSubscriptionPlans();
   }, []);
 
-  const handleRazorpayCheckout = (planId: string) => {
-    setSelectedPlan(planId);
-    const plan = plans.find((p) => p.id === planId);
-    alert(`Razorpay checkout would open for ${plan?.name} - ${plan?.price}`);
+  const handleRazorpayCheckout = async (planId: string) => {
+    try {
+      setSelectedPlan(planId);
+      const plan = plans.find((p) => p.id === planId);
+
+      if (!plan) {
+        toast.error('Plan not found!');
+        return;
+      }
+
+      const res = await axiosInstance.get(`/check-plan-exist/${restaurantId}`)
+      console.log('check plan ressssss :', res);
+
+      if (!res.data.allowed) {
+        toast.error(res.data.message);
+        return;
+      }
+
+
+      const planPrice = plan.price.replace('₹', '')
+      const response = await axiosInstance.post('/restaurnt/subscription-plan', {
+        amount: planPrice,
+        planId: plan.id,
+        restaurantId
+      });
+      console.log('resssssssss for payment',response);
+
+      if (response.data.error) {
+        toast.error(response.data.error);
+        return;
+      }
+
+      const { orderId, razorpayKey } = response.data;
+
+      if (!orderId || !razorpayKey) {
+        toast.error('Invalid response from server');
+        return;
+      }
+
+      if (!window.Razorpay) {
+        toast.error('Razorpay SDK not loaded. Please try again.');
+        return;
+      }
+
+      const options = {
+        key: razorpayKey,
+        amount: parseInt(plan.price.replace('₹', '')) * 100,
+        currency: 'INR',
+        name: 'Your Company Name',
+        description: plan.description,
+        order_id: orderId,
+        handler: async function (response: any) {
+          try {
+            console.log(response, '----------------');
+
+            const verifyResponse = await axiosInstance.post('/restaurnt-verify-payment', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              planId: plan.id,
+              restaurantId,
+            });
+
+            toast.success('Payment verified and subscription activated!');
+            navigate(`/restaurant-payment-history`)
+          } catch (error: any) {
+            console.error('Payment verification failed:', error);
+            toast.error('Payment verification failed. Contact support.');
+          }
+        },
+        prefill: {
+          name: 'Eatzaa Food Hub',
+          email: 'eatzaafoodhub@gmail.com',
+          contact: '+91 0495 56765',
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const razor = new window.Razorpay(options);
+      razor.on('payment.failed', async function (response: any) {
+        console.error('Payment failed:', response);
+        try {
+          await axiosInstance.post('/restaurnt-payment-failed', {
+            razorpay_order_id: response.error.metadata.order_id,
+            razorpay_payment_id: response.error.metadata.payment_id,
+            error_code: response.error.code,
+            error_description: response.error.description,
+            planId: plan.id,
+            restaurantId,
+          });
+          toast.error('Payment failed. Please try again.');
+          navigate('/restaurant-payment-history')
+        } catch (error: any) {
+          console.error('Failed to log payment failure:', error);
+          toast.error('Failed to log payment failure. Contact support.');
+        }
+      });
+      razor.open();
+    } catch (error: any) {
+      console.error('Error during payment:', error);
+      toast.error(error.message || 'Payment initiation failed');
+    }
   };
 
   return (
@@ -212,7 +365,6 @@ export default function PaymentPage() {
             </div>
           </div>
         </div>
-
 
         {/* FAQ Section */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

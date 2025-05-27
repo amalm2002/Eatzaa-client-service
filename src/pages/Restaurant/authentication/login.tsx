@@ -167,7 +167,7 @@ const Login = () => {
       if (data.message === 'No restaurant found') {
         toast.warning('Your account is not registered. Please sign up to continue.');
         return
-      }else if (data.message==='Restaurant registration is pending ') {
+      } else if (data.message === 'Restaurant registration is pending ') {
         toast.warning('Your restaurant registration is pending. Please complete it after signing in.')
         return
       } else if (data.message === "Success") {
@@ -187,6 +187,9 @@ const Login = () => {
           setShowRejectionPopup(true);
           return;
         }
+
+        console.log(setLoginStep, '----', auth, 'formdata :', formData.mobile);
+
 
         sendOtp(setLoginStep, auth, formData.mobile, setConfirmationResult);
         setFormData((prev) => ({
@@ -296,55 +299,6 @@ const Login = () => {
   const handleResubmitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setResubmitData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  // const handleResubmitDocuments = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const formDataToSend = new FormData();
-  //   formDataToSend.append('restaurantId', formData.restaurantId);
-
-  //   try {
-
-  //     if (resubmitData.idProof && restaurant?.restaurantDocuments.idProofUrl) {
-  //       await deleteFromCloudinary(restaurant.restaurantDocuments.idProofUrl)
-  //       const idProofName = await uploadToCloudinary(resubmitData.idProof)
-  //       formDataToSend.append('idProof', idProofName)
-  //     } else if (restaurant?.restaurantDocuments.idProofUrl) {
-  //       formDataToSend.append('idProof', restaurant.restaurantDocuments.idProofUrl)
-  //     }
-
-  //     if (resubmitData.fssaiLicense && restaurant?.restaurantDocuments.fssaiLicenseUrl) {
-  //       await deleteFromCloudinary(restaurant.restaurantDocuments.fssaiLicenseUrl)
-  //       const fssaiLicenseName = await uploadToCloudinary(resubmitData.fssaiLicense)
-  //       formDataToSend.append('fssaiLicense', fssaiLicenseName)
-  //     } else if (restaurant?.restaurantDocuments.fssaiLicenseUrl) {
-  //       formDataToSend.append('fssaiLicense', restaurant.restaurantDocuments.fssaiLicenseUrl)
-  //     }
-
-  //     if (resubmitData.businessCertificate && restaurant?.restaurantDocuments.businessCertificateUrl) {
-  //       await deleteFromCloudinary(restaurant.restaurantDocuments.businessCertificateUrl)
-  //       const businessCertificateName = await uploadToCloudinary(resubmitData.businessCertificate)
-  //       formDataToSend.append('businessCertificate', businessCertificateName)
-  //     } else if (restaurant?.restaurantDocuments.businessCertificateUrl) {
-  //       formDataToSend.append('businessCertificate', restaurant.restaurantDocuments.businessCertificateUrl)
-  //     }
-
-  //     formDataToSend.append('bankAccountNumber', resubmitData.bankAccountNumber);
-  //     formDataToSend.append('ifscCode', resubmitData.ifscCode);
-
-  //     const response = await axiosInstance.post('/resubmitRestaurantDocs', formDataToSend, {
-  //       headers: { 'Content-Type': 'multipart/form-data' }
-  //     });
-  //     if (response.data.message === 'success') {
-  //       alert('Documents resubmitted successfully!');
-  //       setShowResubmitModal(false);
-  //       setShowRejectionPopup(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error resubmitting documents:', error);
-  //     alert('Failed to resubmit documents');
-  //   }
-  // };
-
 
   const handleResubmitDocuments = async (e: React.FormEvent) => {
     e.preventDefault();

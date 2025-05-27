@@ -34,10 +34,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
     { icon: FiTruck, text: 'Deliveries' },
     { icon: FiUsers, text: 'Customers' },
     { icon: FiBarChart2, text: 'Restaurants' },
+    { icon: FiTruck, text: 'DeliveryBoy' },
+    { icon: FiDollarSign, text: 'Subscription-Plan' },
+    { icon: FiDollarSign, text: 'Zone-Creation' },
+    { icon: FiTag, text: 'Zone-List' },
     { icon: FiDollarSign, text: 'Payments' },
-    { icon: FiTag, text: 'Promotions' },
-    { icon: FiSettings, text: 'Settings' },
-    { icon: FiHelpCircle, text: 'Help Center' },
+    // { icon: FiSettings, text: 'Settings' },
+    // { icon: FiHelpCircle, text: 'Help Center' },
     { icon: FiLogOut, text: 'Logout' },
   ];
 
@@ -73,11 +76,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
           {menuItems.map((item, index) => (
             <button
               key={index}
-              className={`flex items-center space-x-3 w-full px-6 py-3 text-left transition-all duration-200 ${
-                activePage === item.text
+              className={`flex items-center space-x-3 w-full px-6 py-3 text-left transition-all duration-200 ${activePage === item.text
                   ? 'bg-orange-400 text-white border-l-4 border-orange-200'
                   : 'text-orange-100 hover:bg-orange-400 hover:text-white'
-              }`}
+                }`}
               onClick={() => handleMenuClick(item.text)}
             >
               <item.icon className="h-5 w-5" />

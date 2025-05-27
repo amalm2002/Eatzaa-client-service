@@ -13,6 +13,10 @@ const logoutLocalStorage=(role:Role)=>{
         localStorage.removeItem('restaurantToken')
         localStorage.removeItem('restaurantRefreshToken')
         localStorage.removeItem('restaurantId')
+    }else if (role==='DeliveryBoy') {
+        localStorage.removeItem('deliveryBoyToken')
+        localStorage.removeItem('deliveryBoyRefreshToken')
+        localStorage.removeItem('deliveryBoyId')
     }
 }
 

@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import userAuthReducer from "./slices/userAuthSlice";
 import restaurantAuthReducer from "./slices/restaurantSlice";
 import admnAuthReducer  from "./slices/adminSlice";
+import  deliveryBoyAuthReducer from "./slices/deliveryBoySlice";
 
 export const store = configureStore({
     reducer: {
         userAuth: userAuthReducer,
         restaurantAuth: restaurantAuthReducer,
-        adminAuth:admnAuthReducer
+        adminAuth:admnAuthReducer,
+        deliveryBoyAuth:deliveryBoyAuthReducer
     }
 });
 

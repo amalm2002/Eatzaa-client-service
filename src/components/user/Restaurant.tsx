@@ -65,7 +65,7 @@
 
 
 import { Star, Clock, DollarSign, MapPin, Truck, Award, Percent } from 'lucide-react'
-import { Badge } from './ui/badge'
+import { Badge } from '../ui/badge'
 // import { Link } from 'react-router-dom'
 import { useState } from 'react'
 

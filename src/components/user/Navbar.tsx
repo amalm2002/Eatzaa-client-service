@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ShoppingBag, User } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { userLogout } from "../service/redux/slices/userAuthSlice";
-import { RootState } from "../service/redux/store";
+import { userLogout } from "../../service/redux/slices/userAuthSlice";
+import { RootState } from "../../service/redux/store";
 
 
 const Navbar = () => {
@@ -11,7 +11,7 @@ const Navbar = () => {
     const dispatch = useDispatch();
 
     const { user, isLogin } = useSelector((state: RootState) => state.userAuth);
-   
+
     const handleLogout = () => {
         dispatch(userLogout());
     };
@@ -32,21 +32,23 @@ const Navbar = () => {
 
                     {/* User Authentication & Icons */}
                     <div className="hidden md:flex items-center space-x-4">
-                        <ShoppingBag className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900" />
                         {isLogin ? (
-                            <div className="relative group">
-                                <User className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900" />
-                                <div className="absolute right-0 mt-2 w-40 bg-white z-50 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <p className="px-4 py-2 text-gray-800">{user}</p>
-                                    <Link to="/user-profile-page" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Profile</Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200"
-                                    >
-                                        Logout
-                                    </button>
+                            <>
+                                <Link to="/user-cart-page"> <ShoppingBag className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900" /></Link>
+                                <div className="relative group">
+                                    <User className="w-6 h-6 text-gray-700 cursor-pointer hover:text-gray-900" />
+                                    <div className="absolute right-0 mt-2 w-40 bg-white z-50 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <p className="px-4 py-2 text-gray-800">{user}</p>
+                                        <Link to="/user-profile-page" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Profile</Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200"
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </>
                         ) : (
                             <>
                                 <Link to="/login" className="border border-gray-700 text-gray-700 px-4 py-1.5 rounded-md hover:bg-gray-100 transition">Login</Link>
@@ -78,7 +80,7 @@ const Navbar = () => {
                             {isLogin ? (
                                 <>
                                     <p className="text-center text-gray-800">{user}</p>
-                                    
+
                                     <Link to="/profile" className="text-center border border-gray-700 text-gray-700 px-4 py-1.5 rounded-md hover:bg-gray-100 transition">Profile</Link>
                                     <button
                                         onClick={handleLogout}

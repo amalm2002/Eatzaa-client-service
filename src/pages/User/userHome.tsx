@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar";
-import Categories from "../../components/Categories";
-import Hero from "../../components/Hero";
-import RestaurantCard from "../../components/Restaurant";
-import createAxios from "../../service/axiousServices/restaurantAxious";
+import Navbar from "../../components/user/Navbar";
+import Categories from "../../components/user/Categories";
+import Hero from "../../components/user/Hero";
+import RestaurantCard from "../../components/user/Restaurant";
+import createAxios from "../../service/axiousServices/userAxious";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 

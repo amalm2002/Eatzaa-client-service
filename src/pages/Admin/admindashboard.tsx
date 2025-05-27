@@ -6,6 +6,11 @@ import RestaurantListPage from './restaurant/restaurantList';
 import RestaurantDetails from './restaurant/restaurantDetailsPage';
 import { Header } from './header/header';
 import SubscriptionPlanManagementPage from './restaurant/paymentSubscription';
+import PaymentListPage from './restaurant/restaurantsPayments';
+import DeliveryBoyZoneCreation from './deliveryBoy/deliveryBoyZoneAddPage';
+import DeliveryBoyListPage from './deliveryBoy/deliveryBoyListPage';
+import DeliveryBoyDetails from './deliveryBoy/deliveryBoyDetailsPage';
+import ZoneListPage from './deliveryBoy/listZones';
 
 type OrderStatus = 'Pending' | 'Processing' | 'Delivered' | 'Cancelled';
 
@@ -34,6 +39,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
   useEffect(() => {
     if (initialPage === 'RestaurantDetails' && id) {
       setActivePage('RestaurantDetails');
+    } else if (initialPage === 'DeliveryBoyDetails') {
+      setActivePage('DeliveryBoyDetails');
     } else {
       setActivePage(initialPage);
     }
@@ -45,8 +52,16 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
       navigate('/admin/customers');
     } else if (page === 'Restaurants') {
       navigate('/admin/restaurants');
-    } else if (page === 'Payments') {
+    } else if (page === 'Subscription-Plan') {
       navigate('/admin/restaurants/subscription');
+    } else if (page === 'Payments') {
+      navigate('/admin/payments')
+    } else if (page === 'Zone-Creation') {
+      navigate('/admin/deliveryBoy/zone')
+    } else if (page === 'DeliveryBoy') {
+      navigate('/admin/Delivery-Boy')
+    } else if (page === 'Zone-List') {
+      navigate('/admin/zone-list')
     } else {
       navigate('/admin-dashboard');
     }
@@ -86,10 +101,20 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
           <UserList />
         ) : activePage === 'Restaurants' ? (
           <RestaurantListPage />
+        ) : activePage === 'Zone-Creation' ? (
+          <DeliveryBoyZoneCreation />
+        ) : activePage === 'Zone-List' ? (
+          <ZoneListPage />
+        ) : activePage === 'DeliveryBoy' ? (
+          <DeliveryBoyListPage />
         ) : activePage === 'Payments' ? (
+          <PaymentListPage />
+        ) : activePage === 'Subscription-Plan' ? (
           <SubscriptionPlanManagementPage />
         ) : activePage === 'RestaurantDetails' && id ? (
           <RestaurantDetails activePage={activePage} setActivePage={handleSetActivePage} restaurantId={id} />
+        ) : activePage === 'DeliveryBoyDetails' && id ? (
+          <DeliveryBoyDetails activePage={activePage} setActivePage={handleSetActivePage} deliveryBoyId={id} />
         ) : (
           <main className="pt-20 p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

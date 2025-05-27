@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from "../../../components/Navbar";
+import Navbar from "../../../components/user/Navbar";
 import { validateSignup } from "../../../utils/validation";
 import { useNavigate } from "react-router-dom";
 import createAxios from "../../../service/axiousServices/userAxious";

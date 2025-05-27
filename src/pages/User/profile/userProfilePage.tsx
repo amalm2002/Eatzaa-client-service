@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/UserProfileSidebar';
+import Navbar from '../../../components/user/Navbar';
+import Sidebar from '../../../components/user/UserProfileSidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import createAxios from '../../../service/axiousServices/userAxious';
 import { validateProfileEdit } from '../../../utils/validation';
@@ -155,14 +155,28 @@ const ProfilePage: React.FC = () => {
         e.preventDefault();
         if (profile) {
 
+            const trimmedAddress = {
+                houseName: newAddress.houseName.trim(),
+                street: newAddress.street.trim(),
+                city: newAddress.city.trim(),
+                state: newAddress.state.trim(),
+                pinCode: newAddress.pinCode.trim(),
+            };
+
+
             if (
-                !newAddress.houseName ||
-                !newAddress.street ||
-                !newAddress.city ||
-                !newAddress.state ||
-                !newAddress.pinCode
+                !trimmedAddress.houseName ||
+                !trimmedAddress.street ||
+                !trimmedAddress.city ||
+                !trimmedAddress.state ||
+                !trimmedAddress.pinCode
             ) {
-                alert('All address fields are required.');
+                toast.warning('All address fields are required.');
+                return;
+            }
+
+            if (!/^\d{6}$/.test(trimmedAddress.pinCode)) {
+                toast.warning('Pin code must be a 6-digit number.');
                 return;
             }
 
@@ -570,7 +584,7 @@ const ProfilePage: React.FC = () => {
                         <div>
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-xl font-semibold text-gray-900">Your Addresses</h3>
-                                {!isEditingAddress && (
+                                {!isEditingAddress && profile.address.length < 3 && (
                                     <button
                                         onClick={() => setIsEditingAddress(true)}
                                         className="flex items-center px-4 py-2 rounded-lg border hover:bg-teal-50 transition-colors duration-200"
@@ -718,7 +732,7 @@ const ProfilePage: React.FC = () => {
                                                     />
                                                 </svg>
                                                 <p className="text-sm text-gray-900">
-                                                    {address.houseName}, {address.street}, {address.city}, {address.state}, {address.pinCode},
+                                                    {address.houseName}, {address.street}, {address.city}, {address.state}, {address.pinCode}
                                                 </p>
                                             </div>
                                             <div className="flex space-x-2">
