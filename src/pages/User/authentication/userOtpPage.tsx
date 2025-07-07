@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import createAxios from "../../../service/axiousServices/userAxious";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
-
+import { userApi } from "../../../api/endpoints/userApi";
 
 const OtpPage: React.FC = () => {
 
@@ -14,7 +12,7 @@ const OtpPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isExpired, setIsExpired] = useState(false);
 
-  const dispatch=useDispatch()
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,6 +58,7 @@ const OtpPage: React.FC = () => {
     }
   };
 
+
   const handleVerify = async () => {
     if (isExpired) {
       toast.error("OTP has expired. Please resend.");
@@ -68,26 +67,22 @@ const OtpPage: React.FC = () => {
     }
 
     const enteredOtp = otp.join("");
-    const axiosInstance = createAxios(dispatch);
 
     if (enteredOtp.length === 4) {
       try {
-        const response = await axiosInstance.post("/signup", {
+        const response = await userApi.verifyOtp(dispatch, {
           email: location.state?.email || "",
           otp: enteredOtp,
           formData: location.state?.formData,
           token: location.state?.token,
         });
 
-        // console.log('responeseeeeeeeeeeeeeee', response);
-
-
         toast.success(response.data.message);
-        localStorage.setItem("userToken", response.data.token);
+        localStorage.setItem("userToken", response.data.token || "");
         localStorage.removeItem("otpTimerStart");
 
         if (response.data.message === "invalid otp") {
-          setError(response?.data?.message || "Invalid OTP");
+          setError(response.data.message || "Invalid OTP");
           toast.error(response.data.message);
         } else if (response.data.message === "Success") {
           navigate("/login");
@@ -110,8 +105,7 @@ const OtpPage: React.FC = () => {
     toast.success("OTP Resent successfully!");
 
     try {
-      const axiosInstance = createAxios(dispatch);
-      const response = await axiosInstance.post("/resendOtp", {
+      const response = await userApi.resendOtp(dispatch, {
         email: location.state?.email,
         formData: location.state?.formData,
       });

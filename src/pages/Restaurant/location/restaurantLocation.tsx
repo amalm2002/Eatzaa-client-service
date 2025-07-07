@@ -3,10 +3,10 @@ import RegisterMap from "../map/map";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from 'sonner';
-import createAxios from "../../../service/axiousServices/restaurantAxious";
 import { useNavigate } from "react-router-dom";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useDispatch } from "react-redux";
+import { restaurantApi } from "../../../api/endpoints/restaurantApi";
 
 
 function RestaurntLocation() {
@@ -17,8 +17,6 @@ function RestaurntLocation() {
     const [longitude, setLongitude] = useState(79.17271614074708);
     const [latitude, setLatitude] = useState(23.226390067116835);
 
-    const axiosInstance = createAxios(dispatch)
-
     const handleGeolocation = (lat: number, lng: number, status: any) => {
         setLocation(status);
         setLongitude(lng);
@@ -26,9 +24,6 @@ function RestaurntLocation() {
         formik.setFieldValue("latitude", lat);
         formik.setFieldValue("longitude", lng);
     };
-
-    console.log('restidddd', localStorage.getItem('restaurantId'));
-
 
     const formik = useFormik({
         initialValues: {
@@ -47,23 +42,11 @@ function RestaurntLocation() {
             try {
                 console.log(values);
 
-                const restaurantId = localStorage.getItem("restaurantId");
+                const restaurantId = localStorage.getItem("restaurantId") || "";
 
-
-
-
-                const { data } = await axiosInstance.post(
-                    `/location?restaurantId=${restaurantId}`,
-                    values,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
+                const data = await restaurantApi.submitRestaurantLocation(dispatch, restaurantId, values);
 
                 console.log(data, 'is on the restaurnt location page');
-
 
                 if (data?.success === true) {
                     toast.success("Location updated successfully!");
@@ -79,7 +62,6 @@ function RestaurntLocation() {
                 toast.error(error.message);
             } finally {
                 setSubmitting(false);
-
             }
         },
     });
@@ -135,19 +117,19 @@ function RestaurntLocation() {
                     break;
                 default:
                     toast.error("An error occurred while getting location");
-                    // alert("An error occurred while getting location");
+                // alert("An error occurred while getting location");
             }
 
         };
 
-      
+
         const watchId = navigator.geolocation.watchPosition(
             successCallback,
             errorCallback,
             options
         );
 
-       
+
         setTimeout(() => {
             navigator.geolocation.clearWatch(watchId);
         }, 15000);
@@ -163,7 +145,7 @@ function RestaurntLocation() {
 
     return (
         <>
-           
+
             <div className="driver-registration-container min-h-screen flex justify-center items-center bg-gray-50 py-4">
                 <div className="w-11/12 md:w-4/5 lg:w-4/5 md:h-auto lg:h-4/5 md:flex justify-between bg-white rounded-3xl shadow-xl overflow-hidden">
                     {/* Left side - Content */}

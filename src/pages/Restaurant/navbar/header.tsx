@@ -1,10 +1,5 @@
 import { Bell, User, Menu } from 'lucide-react';
-
-interface HeaderProps {
-  isOnline: boolean;
-  handleToggleOnline: () => void;
-  setIsMobileMenuOpen: (isOpen: boolean) => void;
-}
+import { HeaderProps } from '../../../interfaces/restaurant/layout/header.types';
 
 const Header = ({ isOnline, handleToggleOnline, setIsMobileMenuOpen }: HeaderProps) => {
   return (

@@ -1,13 +1,7 @@
 import leafLet from 'leaflet'
 import useLocalStorage from '../../../hooks/useLocalStorage'
 import { useEffect, useRef } from 'react';
-
-
-interface MapProps {
-    latitude: number;
-    longitude: number,
-    onLocationChange: (lat: number, long: number, status: any) => void
-}
+import { MapProps } from '../../../interfaces/restaurant/map/map.types';
 
 export default function RegisterMap({ latitude, longitude, onLocationChange }: MapProps) {
     const mapRef = useRef<leafLet.Map | null>(null)
@@ -37,25 +31,6 @@ export default function RegisterMap({ latitude, longitude, onLocationChange }: M
             })
         }
     }, [])
-
-    // useEffect(() => {
-    //     if (!mapRef.current) {
-    //         mapRef.current = leafLet.map('map').setView([latitude, longitude], 4);
-
-    //         leafLet.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    //             attribution: '© OpenStreetMap contributors',
-    //         }).addTo(mapRef.current);
-
-    //         mapRef.current.on('click', (e: leafLet.LeafletMouseEvent) => {
-    //             const { lat, lng } = e.latlng;
-    //             setRestaurantPosition({ latitude: lat, longitude: lng });
-    //             onLocationChange(lat, lng, true);
-    //         });
-    //     } else {
-    //         mapRef.current.setView([latitude, longitude], 4);
-    //     }
-    // }, [latitude, longitude]);  
-
 
     useEffect(() => {
         if (mapRef.current) {

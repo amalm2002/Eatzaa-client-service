@@ -7,29 +7,13 @@ import RestaurantDetails from './restaurant/restaurantDetailsPage';
 import { Header } from './header/header';
 import SubscriptionPlanManagementPage from './restaurant/paymentSubscription';
 import PaymentListPage from './restaurant/restaurantsPayments';
-import DeliveryBoyZoneCreation from './deliveryBoy/deliveryBoyZoneAddPage';
-import DeliveryBoyListPage from './deliveryBoy/deliveryBoyListPage';
-import DeliveryBoyDetails from './deliveryBoy/deliveryBoyDetailsPage';
-import ZoneListPage from './deliveryBoy/listZones';
-
-type OrderStatus = 'Pending' | 'Processing' | 'Delivered' | 'Cancelled';
-
-interface OrderSchedule {
-  id: string;
-  type: 'Delivery' | 'Pickup';
-  status: OrderStatus;
-  dateTime: string;
-}
-
-interface FoodCategory {
-  name: string;
-  totalOrders: number;
-  percentageGrowth: number;
-}
-
-interface FoodDeliveryDashboardProps {
-  initialPage?: string;
-}
+import DeliveryBoyZoneCreation from './delivery-boy/deliveryBoyZoneAddPage';
+import DeliveryBoyListPage from './delivery-boy/deliveryBoyListPage';
+import DeliveryBoyDetails from './delivery-boy/deliveryBoyDetailsPage';
+import ZoneListPage from './delivery-boy/zoneList';
+import { OrderSchedule } from '../../interfaces/admin/dashboard/order-schedule.types';
+import { FoodCategory } from '../../interfaces/admin/dashboard/food-category.types';
+import { FoodDeliveryDashboardProps } from '../../interfaces/admin/dashboard/food-delivery-dash.types';
 
 const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPage = 'Dashboard' }) => {
   const [activePage, setActivePage] = useState(initialPage);

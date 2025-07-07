@@ -17,11 +17,12 @@ import {
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { adminLogout } from '../../../service/redux/slices/adminSlice';
+import { SidebarProps } from '../../../interfaces/admin/layout/sidebar.types';
 
-interface SidebarProps {
-  activePage: string;
-  setActivePage: (page: string) => void;
-}
+// interface SidebarProps {
+//   activePage: string;
+//   setActivePage: (page: string) => void;
+// }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) => {
   const [isOpen, setIsOpen] = useState(false);

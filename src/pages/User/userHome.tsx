@@ -1,39 +1,31 @@
 import { useEffect, useState } from "react";
-import Navbar from "../../components/user/Navbar";
-import Categories from "../../components/user/Categories";
-import Hero from "../../components/user/Hero";
-import RestaurantCard from "../../components/user/Restaurant";
-import createAxios from "../../service/axiousServices/userAxious";
+import Navbar from "../../components/user/layouts/Navbar";
+import Categories from "../../components/user/home/Categories";
+import Hero from "../../components/user/home/Hero";
+import RestaurantCard from "../../components/user/home/RestaurantCards";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { userApi } from "../../api/endpoints/userApi";
 
 const Index = () => {
   const [menuItems, setMenuItems] = useState([]);
   const dispatch = useDispatch()
-  const axiosInstance = createAxios(dispatch);
 
   const navigate = useNavigate()
 
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await axiosInstance.get("/restaurant-menus");
-        // console.log("Menu Items Response:", response.data);
+        const response = await userApi.getRestaurantMenus(dispatch)
         setMenuItems(response.data);
       } catch (error) {
         console.error("Error fetching menu items:", error);
       }
     };
     fetchMenuItems();
-
-    // const intervalId = setInterval(fetchMenuItems, 10000);
-
-    // return () => clearInterval(intervalId);
   }, []);
 
   const handleClick = (item: any) => {
-    console.log('helooooooooo');
-    
     navigate('/food-list-page')
   }
 

@@ -1,29 +1,31 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import './App.css'
-import Footer from './components/user/Footer'
-import Index from './pages/User/userHome'
-import SignupPage from './pages/User/authentication/userSignUp'
-import SigninPage from './pages/User/authentication/userSignIn'
-import OtpPage from './pages/User/authentication/userOtpPage'
-import Register from './pages/Restaurant/authentication/register'
+import Footer from './components/user/layouts/Footer'
+import Index from './pages/user/userHome'
+import SignupPage from './pages/user/authentication/userSignUp'
+import SigninPage from './pages/user/authentication/userSignIn'
+import OtpPage from './pages/user/authentication/userOtpPage'
+import Register from './pages/restaurant/authentication/register'
 import { useSelector } from 'react-redux'
-import Login from './pages/Restaurant/authentication/login'
-import RestaurantDashboard from './pages/Restaurant/dashboard'
-import AdminDashboard from './pages/Admin/admindashboard'
-import { AddMenuItems } from './pages/Restaurant/menu/addMenus'
-import MenuList from './pages/Restaurant/menu/menuListPage'
-import { EditMenuItems } from './pages/Restaurant/menu/editMenus'
+import Login from './pages/restaurant/authentication/login'
+import RestaurantDashboard from './pages/restaurant/dashboard'
+import AdminDashboard from './pages/admin/admindashboard'
+import { AddMenuItems } from './pages/restaurant/menu/addMenus'
+import MenuList from './pages/restaurant/menu/menuListPage'
+import { EditMenuItems } from './pages/restaurant/menu/editMenus'
 import { RootState } from './service/redux/store'
-import ForgotPassword from './pages/User/forgotPassword/forgotPass'
-import FoodDeliveryPage from './pages/User/foodListPage'
-import ProfilePage from './pages/User/profile/userProfilePage'
-import PaymentPage from './pages/Restaurant/paymentPage'
-import TransactionHistory from './pages/Restaurant/transactionHistoryPage'
-import TransactionDetails from './pages/Restaurant/transactionDetails'
-import DeliveryBoyLogin from './pages/DeliveryBoy/authentication/login'
-import DeliveryPartnerHomepage from './pages/DeliveryBoy/homePage'
-import CartPage from './pages/User/userCart'
-import Checkout from './pages/User/userCheckOut'
+import ForgotPassword from './pages/user/forgotPassword/forgotPass'
+import FoodDeliveryPage from './pages/user/foodListPage'
+import ProfilePage from './pages/user/profile/userProfilePage'
+import PaymentPage from './pages/restaurant/paymentPage'
+import TransactionHistory from './pages/restaurant/transactionHistoryPage'
+import TransactionDetails from './pages/restaurant/transactionDetails'
+import DeliveryBoyLogin from './pages/delivery-boy/authentication/login'
+import DeliveryPartnerHomepage from './pages/delivery-boy/homePage'
+import CartPage from './pages/user/userCart'
+import Checkout from './pages/user/userCheckOut'
+import OrderList from './pages/restaurant/orderListPage'
+import OrderTrackingUI from './pages/user/profile/orderTrackingPage'
 
 
 
@@ -46,6 +48,7 @@ function App() {
     '/restaurant-add-menu',
     '/restaurant-menu-list',
     '/restaurant-edit-menu/:id',
+    '/order-list-page',
 
     '/admin-dashboard',
     '/admin/restaurants',
@@ -83,6 +86,8 @@ function App() {
             <Route path="/user-profile-page" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
             <Route path="/user-cart-page" element={user ? <CartPage /> : <Navigate to="/login" />} />
             <Route path="/user-check-out-page" element={user ? <Checkout /> : <Navigate to="/login" />} />
+            <Route path="/order-history" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/order-details-page/:id" element={user ? <OrderTrackingUI /> : <Navigate to="/login" />} />
             
 
             {/* ---------- RESTAURANT ROUTES ---------- */}
@@ -95,6 +100,7 @@ function App() {
             <Route path="/restaurant-payment" element={restaurant ? <PaymentPage /> : <Navigate to="/restaurant-login" />} />
             <Route path="/restaurant-payment-history" element={restaurant ? <TransactionHistory /> : <Navigate to="/restaurant-login" />} />
             <Route path="/restaurant-payment-details/:id" element={restaurant ? <TransactionDetails /> : <Navigate to="/restaurant-login" />} />
+            <Route path="/order-list-page" element={restaurant ? <OrderList /> : <Navigate to="/restaurant-login" />} />
 
             {/* ---------- ADMIN ROUTES ---------- */}
             <Route path="/admin-dashboard" element={admin ? <AdminDashboard /> : <Navigate to="/" />} />

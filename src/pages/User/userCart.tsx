@@ -1,72 +1,62 @@
 import { useState, useEffect } from 'react';
-
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import createAxios from '../../service/axiousServices/userAxious';
-import CartItem from '../../components/user/CartItems';
-import PricingSummary from '../../components/user/PricingTypeSummary';
-import CheckoutButton from '../../components/user/CheckoutButton';
-import Navbar from '../../components/user/Navbar';
-import restaurantCreateAxios from '../../service/axiousServices/restaurantAxious'
 import { toast } from 'sonner';
-
-export interface CartItemType {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  image: string;
-  restaurant: string;
-  isVeg: boolean;
-  maxAvailableQty: number;
-}
+import { userApi } from '../../api/endpoints/userApi';
+import CartItem from '../../components/user/cart/CartItems';
+import PricingSummary from '../../components/user/cart/PricingSummary';
+import CheckoutButton from '../../components/user/cart/CheckoutButton';
+import Navbar from '../../components/user/layouts/Navbar';
+import { CartItemType } from '../../interfaces/user/cart/cart-item.types';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const axiosInstance = createAxios(dispatch);
-  const restaurantAxiosInstance = restaurantCreateAxios(dispatch)
   const userId = useSelector((store: { userAuth: { user_id: string } }) => store.userAuth.user_id);
 
-
-  const mapItemsWithImages = async (rawItems: any[]): Promise<CartItemType[]> => {
+  const mapItemsWithQuantity = async (rawItems: any[]): Promise<CartItemType[]> => {
     const mappedItems: CartItemType[] = rawItems.map((item: any) => ({
       id: item.menuId,
       name: item.name,
-      description: item.category === 'veg' ? `Fresh ${item.name} dish` : `Delicious ${item.name} dish`,
+      description: item.description || `Delicious ${item.name} from ${item.restaurantName}`,
       price: item.price,
       quantity: item.quantity,
-      image: '/api/placeholder/150/150',
+      images: item.images || ['/api/placeholder/150/150'],
+      restaurantId: item.restaurantId,
       restaurant: item.restaurantName,
-      isVeg: item.category === 'veg',
+      category: item.category,
+      discount: item.discount || 0,
+      timing: item.timing || 'Daily',
+      rating: item.rating || 4.0,
+      hasVariants: item.variants || false,
+      variants: item.variants || [],
       maxAvailableQty: 10,
     }));
 
     const updatedItems = await Promise.all(
       mappedItems.map(async (item) => {
         try {
-          const res = await restaurantAxiosInstance.get(`/menu-item/${item.id}`);
-          const imageFromMenu = res.data?.images?.[0] || item.image;
-          const availableQty = Math.min(res.data?.quantity || 0, 10);
-          return { ...item, image: imageFromMenu, maxAvailableQty: availableQty };
+          const availableQty = await userApi.getMenuItemQuantity(dispatch, item.id);
+          if (availableQty === 0) {
+            toast.warning('Some products are sold out. Please clear your cart and browse again.');
+            return null;
+          }
+          return { ...item, maxAvailableQty: Math.min(availableQty, 10) };
         } catch (err) {
-          console.error(`Error fetching menu for item ${item.id}`, err);
+          console.error(`Error fetching menu quantity for item ${item.id}`, err);
           return item;
         }
       })
     );
 
-    return updatedItems;
+    return updatedItems.filter((item): item is CartItemType => item !== null);
   };
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axiosInstance.get(`/get-cart/${userId}`);
-        const fetchedItems = response.data.response.items || [];
-        const updatedItems = await mapItemsWithImages(fetchedItems);
+        const fetchedItems = await userApi.getCartItems(dispatch, userId);
+        const updatedItems = await mapItemsWithQuantity(fetchedItems);
         setCartItems(updatedItems);
       } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -77,31 +67,22 @@ const Cart = () => {
     if (userId) {
       fetchCartItems();
     }
-  }, [userId]);
+  }, [userId, dispatch]);
 
   const updateQuantity = async (id: string, newQuantity: number) => {
     const item = cartItems.find((item) => item.id === id);
     if (!item) return;
 
-    const maxQty = item.maxAvailableQty ?? 10;
-    if (newQuantity < 1 || newQuantity > maxQty) {
-      alert(`Please choose a quantity between 1 and ${maxQty}`);
+    if (newQuantity < 1 || newQuantity > item.maxAvailableQty) {
+      toast.warning(`Please choose a quantity between 1 and ${item.maxAvailableQty}`);
       return;
     }
 
     try {
-
-      const response = await axiosInstance.patch(`/update-cart-item/${userId}`, {
-        menuId: id,
-        quantity: newQuantity,
-      });
-
-      if (response.data.message === 'Cart item quantity updated successfully') {
-        toast.success(response.data.message);
-        const updatedItems = await mapItemsWithImages(response.data.response.cart.items);
-        setCartItems(updatedItems);
-      }
-
+      const updatedCartItems = await userApi.updateCartItemQuantity(dispatch, userId, id, newQuantity);
+      toast.success('Cart item quantity updated successfully');
+      const updatedItems = await mapItemsWithQuantity(updatedCartItems);
+      setCartItems(updatedItems);
     } catch (err) {
       console.error('Error updating cart item quantity:', err);
       toast.error((err as Error).message || 'Something went wrong');
@@ -110,21 +91,21 @@ const Cart = () => {
 
   const removeItem = async (id: string) => {
     try {
-      const response = await axiosInstance.delete(`/remove-cart-item/${userId}/${id}`);
-
-      if (response.data.message === 'Item removed from cart successfully') {
-        toast.success(response.data.message);
-        const updatedItems = await mapItemsWithImages(response.data.response.cart.items);
+      const fetchedItems = await userApi.removeCartItem(dispatch, userId, id);
+      toast.success('Item removed from cart successfully');
+      if (fetchedItems.length === 0) {
+        setCartItems([]);
+      } else {
+        const updatedItems = await mapItemsWithQuantity(fetchedItems);
         setCartItems(updatedItems);
       }
-
     } catch (error) {
       console.error('Error removing cart item:', error);
       toast.error('Failed to remove item');
     }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = 40;
   const tax = Math.round(subtotal * 0.05);
   const total = subtotal + deliveryFee + tax;
@@ -133,7 +114,6 @@ const Cart = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-
         <div className="flex flex-col items-center justify-center min-h-96 px-4">
           <div className="text-center">
             <div className="w-32 h-32 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">

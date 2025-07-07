@@ -15,14 +15,8 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { restaurantLogout } from '../../../service/redux/slices/restaurantSlice';
+import { SidebarProps } from '../../../interfaces/restaurant/layout/sidebar.types';
 
-interface SidebarProps {
-    activeMenu: string;
-    setActiveMenu: (menu: string) => void;
-    isMobileMenuOpen: boolean;
-    setIsMobileMenuOpen: (isOpen: boolean) => void;
-    isOnline: boolean;
-}
 
 const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuOpen, isOnline }: SidebarProps) => {
     const dispatch = useDispatch();
@@ -31,13 +25,13 @@ const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuO
 
     const menuItems = [
         { icon: <LayoutGrid size={20} />, label: 'Dashboard', path: '/restaurant-dashboard' },
-        { icon: <BarChart2 size={20} />, label: 'Payment',path: '/restaurant-payment' },
-        { icon: <ShoppingCart size={20} />, label: 'Orders',path: '/restaurant-dashboard' },
+        { icon: <BarChart2 size={20} />, label: 'Payment', path: '/restaurant-payment' },
+        { icon: <ShoppingCart size={20} />, label: 'Orders', path: '/order-list-page' },
         { icon: <Utensils size={20} />, label: 'Menu Items', path: '/restaurant-menu-list' },
-        { icon: <Users size={20} />, label: 'Customers',path: '/restaurant-dashboard' },
-        { icon: <MessageSquare size={20} />, label: 'Messages',path: '/restaurant-dashboard' },
-        { icon: <Settings size={20} />, label: 'Settings',path: '/restaurant-dashboard' },
-        { icon: <History size={20} />, label: 'PaymentHistory',path: '/restaurant-payment-history' },
+        { icon: <Users size={20} />, label: 'Customers', path: '/restaurant-dashboard' },
+        { icon: <MessageSquare size={20} />, label: 'Messages', path: '/restaurant-dashboard' },
+        { icon: <Settings size={20} />, label: 'Settings', path: '/restaurant-dashboard' },
+        { icon: <History size={20} />, label: 'PaymentHistory', path: '/restaurant-payment-history' },
     ];
 
     const handleLogout = () => {
@@ -75,7 +69,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuO
                     <div className="w-8 h-8 bg-[#6589f6] rounded-full flex items-center justify-center">
                         <Utensils className="text-white" size={20} />
                     </div>
-                    <span className="text-lg font-semibold text-gray-800">Dainty Food</span>
+                    <span className="text-lg font-semibold text-gray-800">Eatzaa</span>
                 </Link>
                 <button className="md:hidden" onClick={() => setIsMobileMenuOpen(false)}>
                     <X size={24} className="text-gray-600" />

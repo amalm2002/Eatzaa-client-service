@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import createAxios from '../service/axiousServices/restaurantAxious';
+import createAxios from '../service/axious-services/restaurantAxious';
 import Swal from 'sweetalert2';
 
 const useRestaurantStatus = () => {

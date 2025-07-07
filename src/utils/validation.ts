@@ -40,7 +40,7 @@ interface FormData {
     [key: string]: string;
   }
   
-  // Existing validation functions (unchanged)
+
   export const validateSignup = (formData: FormData): ValidationErrors => {
     const errors: ValidationErrors = {};
   

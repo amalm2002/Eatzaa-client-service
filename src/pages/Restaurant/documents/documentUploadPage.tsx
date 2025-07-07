@@ -1,38 +1,13 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Upload, CreditCard, FileText, X } from "lucide-react";
-import createAxios from "../../../service/axiousServices/restaurantAxious";
 import { validateRestaurantDocument } from "../../../utils/validation";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import { useDispatch } from "react-redux";
+import { DocumentData, DocumentUploadPageProps } from "../../../interfaces/restaurant/documents/document-data.types";
+import { ValidationErrors } from "../../../interfaces/common/validation-errors.types";
+import { restaurantApi } from "../../../api/endpoints/restaurantApi";
 
-interface DocumentData {
-    idProof: File | null;
-    fssaiLicense: File | null;
-    businessCertificate: File | null;
-    bankAccountNumber: string;
-    ifscCode: string;
-    idProofUrl?: string;
-    fassiLicenseUrl?: string;
-    businessCertificateUrl?: string;
-    restaurant_id: string;
-}
-
-interface DocumentUploadPageProps {
-    formData: {
-        restaurantName: string;
-        email: string;
-        mobile: string;
-    };
-    navigate: (path: string) => void;
-    setStep: (step: "credentials" | "otp" | "documents" | "location") => void;
-}
-
-interface ValidationErrors {
-    [key: string]: string
-}
-
-// const DocumentUploadPage = ({ formData, navigate, setStep }: DocumentUploadPageProps) => {
 const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
 
     const [error, setError] = useState<string | null>(null);
@@ -48,8 +23,7 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
     const [docFeildError, setDocFeildError] = useState<ValidationErrors>({})
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const dispatch=useDispatch()
-    const axiosInstance = createAxios(dispatch);
+    const dispatch = useDispatch()
 
     const uploadToCloudinary = async (file: File): Promise<string> => {
 
@@ -63,9 +37,6 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
             body: formData
         })
 
-        console.log(response);
-
-
         const data = await response.json();
         if (data.secure_url) {
             return data.secure_url;
@@ -74,7 +45,7 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
         }
     }
 
-    const handleSubmitDocuments = async () => {
+      const handleSubmitDocuments = async () => {
         const requiredFields = [!documentData.idProof, !documentData.fssaiLicense, !documentData.businessCertificate, !documentData.bankAccountNumber, !documentData.ifscCode];
 
         if (requiredFields.some((field) => field)) {
@@ -111,7 +82,6 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
                 restaurant_id
             }));
 
-
             const formDataToSend = new FormData();
 
             formDataToSend.append("restaurantName", formData.restaurantName);
@@ -124,14 +94,10 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
             formDataToSend.append("ifscCode", documentData.ifscCode);
             formDataToSend.append("restaurant_id", restaurant_id);
 
-            const response = await axiosInstance.post("/restaurant-documents",
-                formDataToSend, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            const response = await restaurantApi.submitRestaurantDocuments(dispatch, formDataToSend);
 
-            // if (response.data.message === "Success") navigate("/restaurant-location");
-            if (response.data.message === "Success") setStep("location")
-            else setError(response.data.error || "Failed to submit documents.");
+            if (response.message === "Success") setStep("location")
+            else setError(response.error || "Failed to submit documents.");
 
         } catch (error: any) {
             console.error("Error submitting documents:", error);
@@ -143,7 +109,6 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
 
     const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, files } = e.target as any;
-
         if (files) {
             setDocumentData((prev) => ({ ...prev, [name]: files[0] }));
         } else {
@@ -165,8 +130,6 @@ const DocumentUploadPage = ({ formData, setStep }: DocumentUploadPageProps) => {
     const businessCertificateRef = useRef<HTMLInputElement>(null)
 
     const removeDocument = (field: keyof DocumentData) => {
-        // console.log('removeeeeeeeeeee document :', field);
-
         setDocumentData((prev) =>
             ({ ...prev, [field]: null }));
 
