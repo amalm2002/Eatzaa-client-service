@@ -1,7 +1,6 @@
 import { Dispatch } from 'redux';
 import { LatLngExpression } from 'leaflet';
 import { createAxios } from '../../service/axious-services/adminAxious';
-import { Plan } from '../../interfaces/admin/restaurants/restaurant-subscription.types';
 
 
 // Centralized API service for admin-related calls
@@ -98,29 +97,43 @@ export const adminApi = {
         }
     },
 
-    addSubscriptionPlan: async (dispatch: Dispatch, plan: Omit<Plan, 'id'>) => {
+    addSubscriptionPlan: async (dispatch: Dispatch, plan: any) => {
         const axiosInstance = createAxios(dispatch);
         try {
             const response = await axiosInstance.post('/addSubscriptionPlan', plan);
-            if (response.data.message !== 'success') {
-                throw new Error(response.data.message || 'Error adding plan');
+            console.log('Add plan response:', response);
+            if (response.data.message !== 'Subscription Plan Created Successfully') {
+                throw new Error(response.data.message || 'Failed to add subscription plan');
             }
-            return response.data;
+            return response.data.data;
         } catch (error: any) {
-            throw new Error(error.response?.data?.message || 'Error adding plan');
+            console.error('Error adding subscription plan:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                headers: error.response?.headers,
+            });
+            throw new Error(error.response?.data?.plan?.message || 'Failed to add subscription plan');
         }
     },
 
-    updateSubscriptionPlan: async (dispatch: Dispatch, planId: string, plan: Omit<Plan, 'id'>) => {
+    updateSubscriptionPlan: async (dispatch: Dispatch, planId: string, plan: any) => {
         const axiosInstance = createAxios(dispatch);
         try {
             const response = await axiosInstance.put(`/updateSubscriptionPlan/${planId}`, plan);
-            if (response.data.message !== 'success') {
-                throw new Error(response.data.message || 'Error updating plan');
+            console.log('Update plan response:', response.data);
+            if (response.data.plan?.message !== 'success') {
+                throw new Error(response.data.plan?.message || 'Failed to update subscription plan');
             }
-            return response.data;
+            return response.data.plan;
         } catch (error: any) {
-            throw new Error(error.response?.data?.message || 'Error updating plan');
+            console.error('Error updating subscription plan:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                headers: error.response?.headers,
+            });
+            throw new Error(error.response?.data?.plan?.message || 'Failed to update subscription plan');
         }
     },
 

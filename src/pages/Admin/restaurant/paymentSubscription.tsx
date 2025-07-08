@@ -66,7 +66,7 @@ const SubscriptionPlanManagementPage: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const newPlan: Omit<Plan, 'id'> = {
+      const newPlan = {
         name: formData.name,
         price: formData.price,
         period: formData.period,
@@ -75,132 +75,132 @@ const SubscriptionPlanManagementPage: React.FC = () => {
         popular: formData.popular,
       };
       const response = await adminApi.addSubscriptionPlan(dispatch, newPlan);
-      const normalizedPlan: Plan = {
-        id: response.plan._id || response.plan.id,
-        name: response.plan.name,
-        price: `₹${response.plan.price}`,
-        period: response.plan.period,
-        description: response.plan.description,
-        features: response.plan.features,
-        popular: response.plan.popular,
-      };
-      setPlans([...plans, normalizedPlan]);
-      setFormData({ name: '', price: '', period: '', description: '', features: '', popular: false });
-      setFormErrors({});
-      toast.success('Plan added successfully');
-    } catch (error: any) {
-      toast.error('Error adding plan');
-      console.error('Error adding plan:', error);
-    }
-  };
-
-  const handleEditPlan = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editPlan || !validateForm()) return;
-
-    try {
-      const updatedPlan: Omit<Plan, 'id'> = {
-        name: formData.name,
-        price: formData.price,
-        period: formData.period,
-        description: formData.description,
-        features: formData.features.split(',').map((f) => f.trim()),
-        popular: formData.popular,
-      };
-
-      setPlans(plans.map((p) => (p.id === editPlan.id ? { ...updatedPlan, id: editPlan.id } : p)));
-      const response = await adminApi.updateSubscriptionPlan(dispatch, editPlan.id, updatedPlan);
-      const normalizedPlan: Plan = {
-        id: response.plan._id || response.plan.id,
-        name: response.plan.name,
-        price: `₹${response.plan.price}`,
-        period: response.plan.period,
-        description: response.plan.description,
-        features: response.plan.features,
-        popular: response.plan.popular,
-      };
-      setPlans(plans.map((p) => (p.id === editPlan.id ? normalizedPlan : p)));
-      setEditPlan(null);
-      setFormData({ name: '', price: '', period: '', description: '', features: '', popular: false });
-      setFormErrors({});
-      toast.success('Plan updated successfully');
-    } catch (error: any) {
-      toast.error('Error updating plan');
-      console.error('Error updating plan:', error);
-    }
-  };
-  const handleDeletePlan = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this plan?')) return;
-
-    try {
-      setPlans(plans.filter((p) => p.id !== id));
-      await adminApi.deleteSubscriptionPlan(dispatch, id);
-      toast.success('Plan deleted successfully');
-    } catch (error: any) {
-      toast.error('Error deleting plan');
-      console.error('Error deleting plan:', error);
-    }
-  };
-
-  const handleSort = (field: keyof Plan) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const sortedPlans = plans.sort((a, b) => {
-    if (sortField === 'price') {
-      const aPrice = parseInt(a.price.replace('₹', ''));
-      const bPrice = parseInt(b.price.replace('₹', ''));
-      return sortDirection === 'asc' ? aPrice - bPrice : bPrice - aPrice;
-    }
-    const aValue = String(a[sortField]).toLowerCase();
-    const bValue = String(b[sortField]).toLowerCase();
-    return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-  });
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-gray-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-          <p className="mt-4 text-gray-700 font-medium">Loading plans...</p>
-        </div>
-      </div>
-    );
+      const normalizedPlan: any = {
+        id: response._id || response.id,
+        name: response.name,
+        price: `₹${response.price}`,
+        period: response.period,
+        description: response.description,
+        features: response.features,
+        popular: response.popular,
+    };
+    setPlans([...plans, normalizedPlan]);
+    setFormData({ name: '', price: '', period: '', description: '', features: '', popular: false });
+    setFormErrors({});
+    toast.success('Plan added successfully');
+  } catch (error: any) {
+    toast.error(error.message || 'Error adding plan');
+    console.error('Error adding plan:', error);
   }
+};
 
+const handleEditPlan = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!editPlan || !validateForm()) return;
+
+  try {
+    const updatedPlan = {
+      name: formData.name,
+      price: formData.price,
+      period: formData.period,
+      description: formData.description,
+      features: formData.features.split(',').map((f) => f.trim()), // Ensure features is an array
+      popular: formData.popular,
+    };
+
+    const response = await adminApi.updateSubscriptionPlan(dispatch, editPlan.id, updatedPlan);
+    const normalizedPlan: any = {
+      id: response.response._id || response.response.id,
+      name: response.response.name,
+      price: `₹${response.response.price}`,
+      period: response.response.period,
+      description: response.response.description,
+      features: response.response.features,
+      popular: response.response.popular,
+    };
+    setPlans(plans.map((p) => (p.id === editPlan.id ? normalizedPlan : p)));
+    setEditPlan(null);
+    setFormData({ name: '', price: '', period: '', description: '', features: '', popular: false });
+    setFormErrors({});
+    toast.success('Plan updated successfully');
+  } catch (error: any) {
+    toast.error(error.message || 'Error updating plan');
+    console.error('Error updating plan:', error);
+  }
+};
+
+const handleDeletePlan = async (id: string) => {
+  if (!window.confirm('Are you sure you want to delete this plan?')) return;
+
+  try {
+    setPlans(plans.filter((p) => p.id !== id));
+    await adminApi.deleteSubscriptionPlan(dispatch, id);
+    toast.success('Plan deleted successfully');
+  } catch (error: any) {
+    toast.error('Error deleting plan');
+    console.error('Error deleting plan:', error);
+  }
+};
+
+const handleSort = (field: keyof Plan) => {
+  if (field === sortField) {
+    setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+  } else {
+    setSortField(field);
+    setSortDirection('asc');
+  }
+};
+
+const sortedPlans = plans.sort((a, b) => {
+  if (sortField === 'price') {
+    const aPrice = parseInt(a.price.replace('₹', ''));
+    const bPrice = parseInt(b.price.replace('₹', ''));
+    return sortDirection === 'asc' ? aPrice - bPrice : bPrice - aPrice;
+  }
+  const aValue = String(a[sortField]).toLowerCase();
+  const bValue = String(b[sortField]).toLowerCase();
+  return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+});
+
+if (loading) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-gray-100">
-      <div className="flex-1 flex flex-col w-full">
-        <main className="flex-1 p-6 mt-16 max-w-[90rem] mx-auto">
-          <SubscriptionPlanHeader />
-          <SubscriptionPlanForm
-            formData={formData}
-            setFormData={setFormData}
-            formErrors={formErrors}
-            editPlan={editPlan}
-            handleAddPlan={handleAddPlan}
-            handleEditPlan={handleEditPlan}
-            setEditPlan={setEditPlan}
-            setFormErrors={setFormErrors}
-          />
-          <SubscriptionPlanList
-            sortedPlans={sortedPlans}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            handleSort={handleSort}
-            handleDeletePlan={handleDeletePlan}
-            setEditPlan={setEditPlan}
-            setFormData={setFormData}
-          />
-        </main>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-50 to-gray-100">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+        <p className="mt-4 text-gray-700 font-medium">Loading plans...</p>
       </div>
     </div>
   );
+}
+
+return (
+  <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-gray-100">
+    <div className="flex-1 flex flex-col w-full">
+      <main className="flex-1 p-6 mt-16 max-w-[90rem] mx-auto">
+        <SubscriptionPlanHeader />
+        <SubscriptionPlanForm
+          formData={formData}
+          setFormData={setFormData}
+          formErrors={formErrors}
+          editPlan={editPlan}
+          handleAddPlan={handleAddPlan}
+          handleEditPlan={handleEditPlan}
+          setEditPlan={setEditPlan}
+          setFormErrors={setFormErrors}
+        />
+        <SubscriptionPlanList
+          sortedPlans={sortedPlans}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          handleSort={handleSort}
+          handleDeletePlan={handleDeletePlan}
+          setEditPlan={setEditPlan}
+          setFormData={setFormData}
+        />
+      </main>
+    </div>
+  </div>
+);
 };
 
 export default SubscriptionPlanManagementPage;

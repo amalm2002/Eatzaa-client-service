@@ -109,6 +109,8 @@ const DeliveryPartnerDashboard = () => {
           latitude: coord.latitude,
           longitude: coord.longitude,
         }));
+        console.log('newLocation :',newLocation);
+        
         const inZone = isPointInPolygon(newLocation, formattedCoordinates);
         setIsInZone(inZone);
         if (!inZone) {

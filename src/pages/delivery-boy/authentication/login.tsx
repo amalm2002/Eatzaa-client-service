@@ -77,6 +77,8 @@ const DeliveryBoyLogin: React.FC = () => {
             // const { data } = await axiosInstance.post('/deliveryBoy-rigister', { mobile });
             // console.log('login data is :', data);
             const data = await deliveryBoyApi.registerDeliveryBoy(dispatch, mobile)
+            console.log('data is :',data);
+            
             setBackendData({
                 token: data.token,
                 refreshToken: data.refreshToken,
