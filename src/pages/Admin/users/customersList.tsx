@@ -3,13 +3,15 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useSocket } from '../../../context/SocketContext';
 import UserListHeader from '../../../components/admin/user/UserListHeader';
-import UserListSearchAndFilter from '../../../components/admin/user/UserListSearchAndFilter';
+// import UserListSearchAndFilter from '../../../components/admin/user/UserListSearchAndFilter';
 import UserListTable from '../../../components/admin/user/UserListTable';
 import UserListConfirmPopup from '../../../components/admin/user/UserListConfirmPopup';
 import UserListSidebar from '../../../components/admin/user/UserListSidebar';
-import UserListPagination from '../../../components/admin/user/UserListPagination';
+// import UserListPagination from '../../../components/admin/user/UserListPagination';
 import { User } from '../../../interfaces/admin/user/user.types';
 import { adminApi } from '../../../api/endpoints/adminApi';
+import { createAxios } from '../../../service/axious-services/adminAxious';
+
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -24,6 +26,7 @@ const UserList: React.FC = () => {
   const { socket, isConnected } = useSocket();
 
   const dispatch = useDispatch();
+  const axiosInstance = createAxios(dispatch)
 
   const fetchUsers = async () => {
     try {
@@ -56,6 +59,44 @@ const UserList: React.FC = () => {
     setShowConfirmPopup(true);
   };
 
+  // const confirmToggleBlock = async () => {
+  //   if (!pendingAction) return;
+  //   setActionLoading(true);
+  //   const previousUsers = [...users];
+  //   setUsers((prevUsers) =>
+  //     prevUsers.map((user) =>
+  //       user.userId === pendingAction.userId
+  //         ? { ...user, isBlocked: pendingAction.action === 'block' }
+  //         : user
+  //     )
+  //   );
+
+  //   try {
+  //     const response = await adminApi.toggleBlockUser(dispatch, pendingAction.userId);
+  //     toast.success(`User ${pendingAction.action === 'block' ? 'blocked' : 'unblocked'} successfully!`, {
+  //       position: 'top-right',
+  //       autoClose: 3000,
+  //     });
+  //     console.log('customer list page respone :', response);
+
+  //     if (!response.success && isConnected && socket) {
+  //       socket.emit('block-user', { userId: response.userId });
+  //     }
+
+  //   } catch (error) {
+  //     console.error('Error blocking/unblocking user:', (error as Error).message);
+  //     setUsers(previousUsers);
+  //     toast.error(`Failed to ${pendingAction.action} user. Please try again.`, {
+  //       position: 'top-right',
+  //       autoClose: 3000,
+  //     });
+  //   } finally {
+  //     setActionLoading(false);
+  //     setShowConfirmPopup(false);
+  //     setPendingAction(null);
+  //   }
+  // };
+
   const confirmToggleBlock = async () => {
     if (!pendingAction) return;
     setActionLoading(true);
@@ -69,14 +110,17 @@ const UserList: React.FC = () => {
     );
 
     try {
-      const response = await adminApi.toggleBlockUser(dispatch, pendingAction.userId);
-      toast.success(`User ${pendingAction.action === 'block' ? 'blocked' : 'unblocked'} successfully!`, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
+      const response = await axiosInstance.patch(`/block-user/${pendingAction.userId}`);
 
-      if (!response.success && isConnected && socket) {
-        socket.emit('block-user', { userId: response.userId });
+      if (response.data.success) {
+        toast.success(`User ${pendingAction.action === 'block' ? 'blocked' : 'unblocked'} successfully!`, {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+      } else if (!response.data.success) {
+        if (isConnected && socket) {
+          socket.emit('block-user', { userId: response.data.userId });
+        }
       }
     } catch (error) {
       console.error('Error blocking/unblocking user:', (error as Error).message);
@@ -108,12 +152,12 @@ const UserList: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-gray-100 flex flex-col">
       <UserListHeader />
       <main className="flex-1 pt-20 sm:pt-24 max-w-[90rem] mx-auto p-4 sm:p-6 space-y-6">
-        <UserListSearchAndFilter
+        {/* <UserListSearchAndFilter
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           filterActive={filterActive}
           setFilterActive={setFilterActive}
-        />
+        /> */}
         <UserListTable
           users={users}
           loading={loading}
@@ -124,7 +168,7 @@ const UserList: React.FC = () => {
           handleToggleBlock={handleToggleBlock}
           actionLoading={actionLoading}
         />
-        {filteredUsers.length > 0 && <UserListPagination users={users} filteredUsers={filteredUsers} />}
+        {/* {filteredUsers.length > 0 && <UserListPagination users={users} filteredUsers={filteredUsers} />} */}
         <UserListConfirmPopup
           showConfirmPopup={showConfirmPopup}
           pendingAction={pendingAction}

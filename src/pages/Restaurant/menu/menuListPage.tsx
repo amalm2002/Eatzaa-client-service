@@ -41,7 +41,7 @@ const MenuList: React.FC = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await restaurantApi.fetchMenuItems(dispatch, restaurantId);
+        const response = await restaurantApi.fetchMenuItems(dispatch, restaurantId, searchTerm, categoryFilter);
         setMenuItems(response);
         setLoading(false);
       } catch (error) {
@@ -63,7 +63,7 @@ const MenuList: React.FC = () => {
       }
     };
     fetchMenuItems();
-  }, [restaurantId]);
+  }, [restaurantId, searchTerm, categoryFilter]); 
 
   const handleSort = (field: keyof MenuItem) => {
     if (field === sortField) {

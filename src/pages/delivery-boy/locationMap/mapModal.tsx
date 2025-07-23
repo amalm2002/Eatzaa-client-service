@@ -14,6 +14,7 @@ import { MapModalProps } from '../../../interfaces/delivery-boy/location-map/map
 import { Order } from '../../../interfaces/delivery-boy/location-map/order.types';
 import { UserDetails } from '../../../interfaces/delivery-boy/location-map/user-details.types';
 import { deliveryBoyApi } from '../../../api/endpoints/deliveryBoyApi';
+import { toggleDeliveryRefresh } from '../../../service/redux/slices/deliveryBoySlice';
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -414,6 +415,7 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
     try {
       await deliveryBoyApi.completeOrder(dispatch, orderId, deliveryBoyId);
       dispatch(completeDelivery());
+      dispatch(toggleDeliveryRefresh());
       setDeliveryStep('completed');
       setIsModalOpen(false);
       localStorage.removeItem('deliveryMapModalState');

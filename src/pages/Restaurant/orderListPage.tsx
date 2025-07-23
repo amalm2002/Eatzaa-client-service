@@ -37,6 +37,7 @@ const OrderList: React.FC = () => {
       try {
         setLoading(true);
         const transformedOrders = await restaurantApi.fetchOrders(dispatch, restaurantId);
+        
         setOrders(transformedOrders);
         setLoading(false);
       } catch (error) {
@@ -128,7 +129,7 @@ const OrderList: React.FC = () => {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
       <div className="md:ml-64 p-4 sm:p-6 lg:p-8">
-        <OrderFilters
+        {/* <OrderFilters
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           statusFilter={statusFilter}
@@ -138,7 +139,7 @@ const OrderList: React.FC = () => {
           sortField={sortField}
           sortDirection={sortDirection}
           handleSort={handleSort}
-        />
+        /> */}
         <div className="space-y-6 max-w-7xl mx-auto">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">

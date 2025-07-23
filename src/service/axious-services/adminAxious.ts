@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { adminLogout } from '../redux/slices/adminSlice';
 import logoutLocalStorage from '../../utils/localStorage';
+import { toast } from 'sonner';
 
 export const createAxios = (dispatch: any) => {
   const axiosAdminInstance = axios.create({
@@ -13,8 +13,8 @@ export const createAxios = (dispatch: any) => {
 
   axiosAdminInstance.interceptors.request.use(
     (config: any) => {
-      const token = localStorage.getItem('adminToken'); 
-     
+      const token = localStorage.getItem('adminToken');
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -28,9 +28,10 @@ export const createAxios = (dispatch: any) => {
       return response;
     },
     async (error) => {
-      console.error('Response error:', error.response?.data || error.message); 
+      console.error('Response error:', error.response?.data || error.message);
       const originalRequest = error.config;
 
+      // Handle token refresh for 401
       if (error.response?.status === 401 && !originalRequest._retry) {
         try {
           originalRequest._retry = true;
@@ -44,7 +45,7 @@ export const createAxios = (dispatch: any) => {
           }
 
           const response = await axios.post(`${import.meta.env.VITE_API_GATEWAY_URL}/auth/refresh`, { token: refreshToken });
-          
+
           const newAccessToken = response.data.token;
           const newRefreshToken = response.data.refreshToken;
 
@@ -65,6 +66,13 @@ export const createAxios = (dispatch: any) => {
           window.location.href = '/login';
           return Promise.reject(refreshError);
         }
+      }
+
+      if (error.response?.status === 429) {
+        toast.error(error.response?.data?.message || 'Too many requests. Please try again later.');
+      } else {
+        const message = error.response?.data?.message || error.message || 'Something went wrong';
+        toast.error(message);
       }
 
       return Promise.reject(error);

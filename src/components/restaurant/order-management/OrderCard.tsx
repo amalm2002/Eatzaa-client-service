@@ -124,16 +124,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, axiosInstance, setOrders }
                             <div className="flex items-center justify-between p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl text-sm">
                                 <div>
                                     <div className="font-medium text-gray-900">{order.payment.method}</div>
-                                    <div className="text-gray-600">{order.payment.status}</div>
+                                    {/* <div className="text-gray-600">{order.payment.status}</div> */}
                                 </div>
-                                <div
+                                {/* <div
                                     className={`px-3 py-1 rounded-full text-xs font-medium ${order.payment.status === 'Success'
                                             ? 'bg-green-100 text-green-800'
                                             : 'bg-yellow-100 text-yellow-800'
                                         }`}
                                 >
                                     {order.payment.status}
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

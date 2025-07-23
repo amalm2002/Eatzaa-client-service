@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { restaurantLogout } from '../redux/slices/restaurantSlice';
 import logoutLocalStorage from '../../utils/localStorage';
+import { toast } from 'react-toastify';
 
 const createAxios = (dispatch: any) => {
   const axiosRestaurant = axios.create({
@@ -69,6 +70,13 @@ const createAxios = (dispatch: any) => {
           window.location.href = '/restaurant-login';
           return Promise.reject(refreshError);
         }
+      }
+
+      if (error.response?.status === 429) {
+        toast.error(error.response?.data?.message || 'Too many requests. Try again later.');
+      } else {
+        const message = error.response?.data?.message || error.message || 'Something went wrong';
+        toast.error(message);
       }
 
       return Promise.reject(error);

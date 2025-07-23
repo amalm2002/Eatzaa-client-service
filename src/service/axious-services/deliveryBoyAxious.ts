@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { restaurantLogout } from '../redux/slices/restaurantSlice';
 import logoutLocalStorage from '../../utils/localStorage';
+import { toast } from 'sonner';
 
 const createAxios = (dispatch: any) => {
   const axiosDeliveryBoy = axios.create({
@@ -38,6 +39,7 @@ const createAxios = (dispatch: any) => {
 
       const originalRequest = error.config;
 
+      // Handle 401 - Token Refresh
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         const refreshToken = localStorage.getItem('deliveryBoyRefreshToken');
@@ -72,7 +74,14 @@ const createAxios = (dispatch: any) => {
         }
       }
 
-      return Promise.reject(error);
+      if (error.response?.status === 429) {
+        toast.error(error.response.data?.message || "Too many requests, please slow down.");
+      } else {
+        const message = error.response?.data?.message || error.message || 'Something went wrong';
+        toast.error(message);
+      }
+
+      // return Promise.reject(error);
     }
   );
 

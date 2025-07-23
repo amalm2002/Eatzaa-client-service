@@ -107,9 +107,7 @@ const Checkout = () => {
           userId,
           cartItems,
         });
-
         const { orderId, razorpayKey } = response;
-
         if (!orderId || !razorpayKey) {
           toast.error('Invalid response from server');
           return;
@@ -138,9 +136,8 @@ const Checkout = () => {
                   paymentId: response.razorpay_payment_id,
                 },
               });
-
               if (verifyResponse.data.success) {
-                await userApi.updateMenuQuantities(dispatch, cartItems);
+                // await userApi.updateMenuQuantities(dispatch, cartItems);
                 await userApi.updateUserCart(dispatch, userId);
                 toast.success('Payment verified and order placed successfully!');
                 if (socket && isConnected && restaurant_id) {
@@ -172,6 +169,7 @@ const Checkout = () => {
         rzp.open();
       } else {
         const orderResponse = await userApi.placeOrder(dispatch, orderData);
+        // console.log('order response :', orderResponse);
 
         if (orderResponse.data.success) {
           await userApi.updateMenuQuantities(dispatch, cartItems);
@@ -186,7 +184,8 @@ const Checkout = () => {
         }
       }
     } catch (error: any) {
-      toast.error(`Error processing order: ${error.message}`);
+      console.log('check out side error :',error);
+      toast.error(`${error.message}`);
     }
   };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import ZoneListHeader from '../../../components/admin/delivery-boy/zones/ZoneListHeader';
-import ZoneListSearch from '../../../components/admin/delivery-boy/zones/ZoneListSearch';
+// import ZoneListSearch from '../../../components/admin/delivery-boy/zones/ZoneListSearch';
 import ZoneList from '../../../components/admin/delivery-boy/zones/ZoneList';
 import ZoneListPagination from '../../../components/admin/delivery-boy/zones/ZoneListPagination';
 import ZoneListDeleteModal from '../../../components/admin/delivery-boy/zones/ZoneListDeleteModal';
@@ -91,7 +91,7 @@ const ZoneListPage: React.FC = () => {
             <div className="flex-1 flex flex-col w-full">
                 <main className="flex-1 p-6 mt-16 max-w-[90rem] mx-auto">
                     <ZoneListHeader />
-                    <ZoneListSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                    {/* <ZoneListSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> */}
                     <ZoneList paginatedZones={paginatedZones} openDeleteModal={openDeleteModal} />
                     <ZoneListPagination
                         itemsPerPage={itemsPerPage}

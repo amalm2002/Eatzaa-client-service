@@ -4,8 +4,8 @@
 // }
 
 export interface CartItem {
-  id: string; 
-  menuId?: string; 
+  id: string;
+  menuId?: string;
   name: string;
   description: string;
   price: number;
@@ -19,7 +19,7 @@ export interface CartItem {
   rating: number;
   hasVariants: boolean;
   variants: any;
-  maxAvailableQty: number; 
+  maxAvailableQty: number;
 }
 
 export interface OrderData {
@@ -48,6 +48,8 @@ export interface VerifyPaymentResponse {
 }
 
 export interface PlaceOrderResponse {
-  success: boolean;
+  success?: boolean;
   orderId: string;
+  paymentId?: string;
+  message?: string
 }

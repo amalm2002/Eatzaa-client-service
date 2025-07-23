@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import DeliveryBoyListHeader from '../../../components/admin/delivery-boy/list/DeliveryBoyListHeader';
-import DeliveryBoyListFilters from '../../../components/admin/delivery-boy/list/DeliveryBoyListFilters';
+// import DeliveryBoyListFilters from '../../../components/admin/delivery-boy/list/DeliveryBoyListFilters';
 import DeliveryBoyListTable from '../../../components/admin/delivery-boy/list/DeliveryBoyListTable';
 import DeliveryBoyListCard from '../../../components/admin/delivery-boy/list/DeliveryBoyListCard';
 import DeliveryBoyListPagination from '../../../components/admin/delivery-boy/list/DeliveryBoyListPagination';
@@ -122,7 +122,7 @@ const DeliveryBoyListPage: React.FC = () => {
             <div className="flex-1 flex flex-col w-full">
                 <DeliveryBoyListHeader />
                 <main className="flex-1 p-6 mt-16 max-w-[90rem] mx-auto">
-                    <DeliveryBoyListFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+                    {/* <DeliveryBoyListFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} /> */}
                     <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                         <DeliveryBoyListTable
                             paginatedDeliveryBoys={paginatedDeliveryBoys}

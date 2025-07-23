@@ -23,11 +23,7 @@ export const deleteFromCloudinary = async (publicId: string) => {
       method: 'POST',
       body: formData,
     });
-    console.log('delete responseeeeeeeee :', response);
-
     const data = await response.json();
-    console.log('delete data:', data);
-
     if (data.result === 'ok' || data.result === 'not found') {
       console.log(`Image ${cleanPublicId} deleted or already not found on Cloudinary`);
       return true; 

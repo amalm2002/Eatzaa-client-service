@@ -1,6 +1,7 @@
 import axios from "axios";
 import { userLogout } from "../redux/slices/userAuthSlice";
 import logoutLocalStorage from "../../utils/localStorage";
+import { toast } from "sonner";
 
 const createAxios = (dispatch: any) => {
     const axiosUser = axios.create({
@@ -65,6 +66,14 @@ const createAxios = (dispatch: any) => {
                     return Promise.reject(refreshError);
                 }
             }
+
+            if (error.response?.status === 429) {
+                toast.error(error.response?.data?.message || 'Too many requests. Try again later.');
+            } else {
+                const message = error.response?.data?.message || error.message || 'Something went wrong';
+                toast.error(message);
+            }
+
 
             return Promise.reject(error);
         }

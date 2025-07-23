@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import { CredentialResponse } from '@react-oauth/google';
-import createAxios from '../../../service/axious-services/userAxious';
 import { userLogin } from '../../../service/redux/slices/userAuthSlice';
 import { adminLogin } from '../../../service/redux/slices/adminSlice';
 import { validateSignin } from '../../../utils/validation';
@@ -15,6 +14,7 @@ import Sidebar from '../../../components/user/authentication/SideBar';
 import { FormData } from '../../../interfaces/user/authentication/register/form-data.types';
 import { ValidationErrors } from '../../../interfaces/common/validation-errors.types';
 import { userApi } from '../../../api/endpoints/userApi';
+
 
 
 const SigninPage: React.FC = () => {
@@ -49,7 +49,7 @@ const SigninPage: React.FC = () => {
     if (serverError) setServerError(null);
   };
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
 
@@ -96,7 +96,7 @@ const SigninPage: React.FC = () => {
     }
   };
 
- const googleSignIn = async (data: CredentialResponse) => {
+  const googleSignIn = async (data: CredentialResponse) => {
     try {
       const token: string | undefined = data.credential;
 

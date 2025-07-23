@@ -44,6 +44,7 @@ const DeliveryPartnerDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const deliveryBoyId = useSelector((store: RootState) => store.deliveryBoyAuth.delivery_boy_id);
+  const deliveryCompletedTrigger = useSelector((store: RootState) => store.deliveryBoyAuth.deliveryCompletedTrigger);
 
   const hashSensitiveData = (data: string): string => {
     return HmacSHA256(data, `${import.meta.env.VITE_COOKIES_SECRET}`).toString();
@@ -109,8 +110,8 @@ const DeliveryPartnerDashboard = () => {
           latitude: coord.latitude,
           longitude: coord.longitude,
         }));
-        console.log('newLocation :',newLocation);
-        
+        console.log('newLocation :', newLocation);
+
         const inZone = isPointInPolygon(newLocation, formattedCoordinates);
         setIsInZone(inZone);
         if (!inZone) {
@@ -250,7 +251,7 @@ const DeliveryPartnerDashboard = () => {
       }
     };
     fetchDeliveryBoyData();
-  }, [deliveryBoyId]);
+  }, [deliveryBoyId, deliveryCompletedTrigger]);
 
   useEffect(() => {
     const fetchDeliveryBoyOrders = async () => {
@@ -271,7 +272,7 @@ const DeliveryPartnerDashboard = () => {
       }
     };
     fetchDeliveryBoyOrders();
-  }, [deliveryBoyId]);
+  }, [deliveryBoyId,deliveryCompletedTrigger]);
 
   const handleToggleOnline = async () => {
     if (!isInZone) {
