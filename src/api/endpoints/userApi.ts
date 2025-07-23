@@ -89,7 +89,7 @@ export const userApi = {
 
     verifyPayment: async (
         dispatch: Dispatch,
-        data: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string; orderData: OrderData }
+        data: { paymentDbId?: string, razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string; orderData: OrderData }
     ) => {
         const axiosInstance = createAxios(dispatch);
         return axiosInstance.post<VerifyPaymentResponse>('/verify-payment', data);

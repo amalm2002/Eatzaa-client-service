@@ -40,6 +40,7 @@ export interface CreateOrderResponse {
   orderId: string;
   razorpayKey: string;
   error?: string;
+  paymentDbId?:string;
 }
 
 export interface VerifyPaymentResponse {

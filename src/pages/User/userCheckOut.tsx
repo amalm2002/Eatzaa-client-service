@@ -107,7 +107,7 @@ const Checkout = () => {
           userId,
           cartItems,
         });
-        const { orderId, razorpayKey } = response;
+        const { orderId, razorpayKey, paymentDbId } = response;
         if (!orderId || !razorpayKey) {
           toast.error('Invalid response from server');
           return;
@@ -128,6 +128,7 @@ const Checkout = () => {
           handler: async function (response: any) {
             try {
               const verifyResponse = await userApi.verifyPayment(dispatch, {
+                paymentDbId: paymentDbId,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
@@ -184,7 +185,7 @@ const Checkout = () => {
         }
       }
     } catch (error: any) {
-      console.log('check out side error :',error);
+      console.log('check out side error :', error);
       toast.error(`${error.message}`);
     }
   };
