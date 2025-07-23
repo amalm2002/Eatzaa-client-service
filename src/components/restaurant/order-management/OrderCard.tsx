@@ -7,6 +7,8 @@ const statusOptions = [
     { value: 'Pending', label: 'Order Received', color: 'bg-orange-100 text-orange-800', icon: FiClock },
     { value: 'Preparing', label: 'Preparing', color: 'bg-blue-100 text-blue-800', icon: FiPackage },
     { value: 'Packed', label: 'Ready for Pickup', color: 'bg-purple-100 text-purple-800', icon: FiPackage },
+    { value: 'Delivered', label: 'Delivered', color: 'bg-green-100 text-green-800', icon: FiPackage },
+
 ];
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, axiosInstance, setOrders }) => {

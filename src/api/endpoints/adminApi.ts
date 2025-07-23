@@ -13,9 +13,27 @@ export const adminApi = {
     },
 
     //Restaurant side API calls
-    fetchRestaurants: async (dispatch: Dispatch) => {
+
+    // fetchRestaurants: async (dispatch: Dispatch) => {
+    //     const axiosInstance = createAxios(dispatch);
+    //     const response = await axiosInstance.get('/getAllRestaurants');
+    //     if (response.data.message !== 'success') {
+    //         throw new Error(response.data.message || 'Failed to load restaurants');
+    //     }
+    //     return response.data;
+    // },
+    fetchRestaurants: async (dispatch: Dispatch, searchTerm?: string, statusFilter?: string) => {
         const axiosInstance = createAxios(dispatch);
-        const response = await axiosInstance.get('/getAllRestaurants');
+        const queryParams = new URLSearchParams();
+
+        if (searchTerm) {
+            queryParams.append('search', searchTerm);
+        }
+        if (statusFilter && statusFilter !== 'all') {
+            queryParams.append('status', statusFilter);
+        }
+
+        const response = await axiosInstance.get(`/getAllRestaurants?${queryParams.toString()}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to load restaurants');
         }

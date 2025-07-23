@@ -21,12 +21,12 @@ const RestaurantListPage: React.FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        setLoading(true);
-        const data = await adminApi.fetchRestaurants(dispatch);
+        // setLoading(true);
+        const data = await adminApi.fetchRestaurants(dispatch, searchTerm, statusFilter);
         const mappedRestaurants: Restaurant[] = data.response.map((item: any) => ({
           id: item._id,
           name: item.restaurantName,
@@ -39,6 +39,7 @@ const RestaurantListPage: React.FC = () => {
           image: item.image || undefined,
           isRejected: item.rejectionReason ? true : false,
         }));
+        setLoading(true);
         setRestaurants(mappedRestaurants);
       } catch (error: any) {
         toast.error('Internal error');
@@ -48,7 +49,7 @@ const RestaurantListPage: React.FC = () => {
       }
     };
     fetchRestaurants();
-  }, []);
+  }, [searchTerm, statusFilter]);
 
   const handleView = (id: string) => {
     navigate(`/admin/restaurants/${id}`);
