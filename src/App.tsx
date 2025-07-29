@@ -26,6 +26,7 @@ import CartPage from './pages/user/userCart'
 import Checkout from './pages/user/userCheckOut'
 import OrderList from './pages/restaurant/orderListPage'
 import OrderTrackingUI from './pages/user/profile/orderTrackingPage'
+import DeliveryMapPage from './pages/delivery-boy/locationMap/mapModal'
 
 
 
@@ -60,6 +61,7 @@ function App() {
     '/admin/zone-list',
     '/admin/Delivery-Boy',
     '/admin/delivery-boys/:id',
+    '/admin/ride-payment',
 
     '/deliveryBoy-login',
     '/deliveryBoy-Home'
@@ -88,7 +90,7 @@ function App() {
             <Route path="/user-check-out-page" element={user ? <Checkout /> : <Navigate to="/login" />} />
             <Route path="/order-history" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
             <Route path="/order-details-page/:id" element={user ? <OrderTrackingUI /> : <Navigate to="/login" />} />
-            
+
 
             {/* ---------- RESTAURANT ROUTES ---------- */}
             <Route path="/restaurant-register" element={restaurant ? <Navigate to="/restaurant-dashboard" /> : <Register />} />
@@ -113,10 +115,26 @@ function App() {
             <Route path="/admin/zone-list" element={admin ? <AdminDashboard initialPage="Zone-List" /> : <Navigate to="/" />} />
             <Route path="/admin/Delivery-Boy" element={admin ? <AdminDashboard initialPage="DeliveryBoy" /> : <Navigate to="/" />} />
             <Route path="/admin/delivery-boys/:id" element={admin ? <AdminDashboard initialPage="DeliveryBoyDetails" /> : <Navigate to="/" />} />
+            <Route path="/admin/ride-payment" element={admin ? <AdminDashboard initialPage="RidePayment" /> : <Navigate to="/" />} />
 
             {/* ---------- DELIVER_BOY ROUTES ---------- */}
             <Route path="/deliveryBoy-Home" element={deliveryBoy ? <DeliveryPartnerHomepage /> : <Navigate to="/deliveryBoy-login" />} />
             <Route path="/deliveryBoy-login" element={deliveryBoy ? <Navigate to="/deliveryBoy-Home" /> : <DeliveryBoyLogin />} />
+            <Route
+              path="/location-map"
+              element={
+                deliveryBoy ? (
+                  <DeliveryMapPage
+                    origin={location.state?.origin || { latitude: 0, longitude: 0 }}
+                    destination={location.state?.destination || { latitude: 0, longitude: 0 }}
+                    orderId={location.state?.orderId || ''}
+                    deliveryBoyId={location.state?.deliveryBoyId || ''}
+                  />
+                ) : (
+                  <DeliveryBoyLogin />
+                )
+              }
+            />
           </Routes>
         </div>
         {showFooter && <Footer />}

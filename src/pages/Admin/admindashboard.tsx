@@ -14,6 +14,7 @@ import ZoneListPage from './delivery-boy/zoneList';
 import { OrderSchedule } from '../../interfaces/admin/dashboard/order-schedule.types';
 import { FoodCategory } from '../../interfaces/admin/dashboard/food-category.types';
 import { FoodDeliveryDashboardProps } from '../../interfaces/admin/dashboard/food-delivery-dash.types';
+import RidePaymentManagement from './delivery-boy/ridePayment';
 
 const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPage = 'Dashboard' }) => {
   const [activePage, setActivePage] = useState(initialPage);
@@ -46,6 +47,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
       navigate('/admin/Delivery-Boy')
     } else if (page === 'Zone-List') {
       navigate('/admin/zone-list')
+    } else if (page === 'RidePayment') {
+      navigate('/admin/ride-payment')
     } else {
       navigate('/admin-dashboard');
     }
@@ -93,6 +96,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
           <DeliveryBoyListPage />
         ) : activePage === 'Payments' ? (
           <PaymentListPage />
+        ) : activePage === 'RidePayment' ? (
+          <RidePaymentManagement />
         ) : activePage === 'Subscription-Plan' ? (
           <SubscriptionPlanManagementPage />
         ) : activePage === 'RestaurantDetails' && id ? (

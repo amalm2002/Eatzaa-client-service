@@ -40,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
     { icon: FiDollarSign, text: 'Zone-Creation' },
     { icon: FiTag, text: 'Zone-List' },
     { icon: FiDollarSign, text: 'Payments' },
-    // { icon: FiSettings, text: 'Settings' },
+    { icon: FiSettings, text: 'RidePayment' },
     // { icon: FiHelpCircle, text: 'Help Center' },
     { icon: FiLogOut, text: 'Logout' },
   ];

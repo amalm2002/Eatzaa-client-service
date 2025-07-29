@@ -6,6 +6,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import 'leaflet-routing-machine';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { AppDispatch } from '../../../service/redux/store';
 import { completeDelivery } from '../../../service/redux/slices/notificationSlice';
 import { useSocket } from '../../../context/SocketContext';
@@ -15,6 +16,7 @@ import { Order } from '../../../interfaces/delivery-boy/location-map/order.types
 import { UserDetails } from '../../../interfaces/delivery-boy/location-map/user-details.types';
 import { deliveryBoyApi } from '../../../api/endpoints/deliveryBoyApi';
 import { toggleDeliveryRefresh } from '../../../service/redux/slices/deliveryBoySlice';
+import { EarningsPopup } from '../../../components/delivery-boy/popup/DeliveryEarningsPopup';
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -75,9 +77,7 @@ const formatDuration = (distance: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
-const DeliveryMapModal: React.FC<MapModalProps> = ({
-  isOpen,
-  onClose,
+const DeliveryMapPage: React.FC<MapModalProps> = ({
   origin,
   destination,
   orderId,
@@ -90,13 +90,15 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
   const [currentLocation, setCurrentLocation] = useState(origin);
   const [currentDestination, setCurrentDestination] = useState(destination);
   const [distance, setDistance] = useState<number>(0);
+  const [totalDistance, setTotalDistance] = useState<number>(0);
   const [isTracking, setIsTracking] = useState(false);
   const [lastLocationUpdate, setLastLocationUpdate] = useState<Date>(new Date());
   const [showPinVerification, setShowPinVerification] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(isOpen);
   const [pinInput, setPinInput] = useState(['', '', '', '', '', '']);
   const [order, setOrder] = useState<Order | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [showEarningsPopup, setShowEarningsPopup] = useState(false);
+  const [earnings, setEarnings] = useState<number>(0);
   const mapRef = useRef<L.Map | null>(null);
   const routingControlRef = useRef<L.Routing.Control | null>(null);
   const pinInputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -104,6 +106,7 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const { socket, isConnected } = useSocket();
+  const navigate = useNavigate();
 
   const debouncedSetCurrentLocation = useCallback(
     debounce((newLocation: { latitude: number; longitude: number }) => {
@@ -302,26 +305,23 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
   }, [currentLocation, currentDestination]);
 
   useEffect(() => {
-    const savedState = localStorage.getItem('deliveryMapModalState');
-    if (savedState) {
-      const { isOpen: savedIsOpen, orderId: savedOrderId } = JSON.parse(savedState);
-      if (savedIsOpen && savedOrderId === orderId) {
-        setIsModalOpen(true);
-      }
-    }
+    localStorage.setItem('deliveryMapPageState', JSON.stringify({ orderId }));
   }, [orderId]);
 
   useEffect(() => {
-    localStorage.setItem('deliveryMapModalState', JSON.stringify({ isOpen: isModalOpen, orderId }));
-  }, [isModalOpen, orderId]);
+    setIsTracking(true);
+    return () => setIsTracking(false);
+  }, []);
+
+  console.log('distance :', distance);
+  console.log('totalDistance:', totalDistance);
+  console.log('Payment method :', order?.paymentMethod);
 
   useEffect(() => {
-    if (isModalOpen) {
-      setIsTracking(true);
-    } else {
-      setIsTracking(false);
+    if (deliveryStep === 'completed') {
+      setShowEarningsPopup(true);
     }
-  }, [isModalOpen]);
+  }, [deliveryStep]);
 
   const handleArrived = () => {
     if (!socket || !isConnected) {
@@ -329,6 +329,7 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
       return;
     }
     if (deliveryStep === 'going_to_restaurant') {
+      setTotalDistance(distance);
       setDeliveryStep('confirm_order');
       toast.success('Arrived at restaurant');
     } else if (deliveryStep === 'going_to_customer') {
@@ -388,7 +389,6 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
               orderId,
               deliveryBoyId,
               location: response.location,
-              destination: newDestination,
             });
           }
         } else {
@@ -413,14 +413,22 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
     }
 
     try {
-      await deliveryBoyApi.completeOrder(dispatch, orderId, deliveryBoyId);
+
+      const finalTotalDistance = totalDistance + distance;
+      const paymentMethod = order?.paymentMethod;
+      const orderAmount = order?.totalAmount
+      const res = await deliveryBoyApi.orderEarnings(dispatch, paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount);
+      console.log('map side loggg :', res);
+      setEarnings(res.data.earnings.today);
+      await deliveryBoyApi.completeOrder(dispatch, orderId, deliveryBoyId,);
+
       dispatch(completeDelivery());
       dispatch(toggleDeliveryRefresh());
       setDeliveryStep('completed');
-      setIsModalOpen(false);
-      localStorage.removeItem('deliveryMapModalState');
-      onClose();
+      localStorage.removeItem('deliveryMapPageState');
+      setTotalDistance(0);
       toast.success('Delivery completed successfully!');
+      // navigate('/deliveryBoy-Home');
     } catch (error) {
       console.error('Error completing delivery:', error);
       toast.error((error as Error).message || 'Failed to complete delivery');
@@ -456,245 +464,256 @@ const DeliveryMapModal: React.FC<MapModalProps> = ({
     return 'En Route';
   };
 
-  if (!isModalOpen || !isValidCoordinates(currentLocation) || !isValidCoordinates(currentDestination)) {
+  if (!isValidCoordinates(currentLocation) || !isValidCoordinates(currentDestination)) {
     return (
-      <div className="fixed inset-0 bg-white/10 bg-opacity-50 z-[60] flex items-center justify-center">
-        <div className="bg-white rounded-lg p-6">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white rounded-lg p-6 shadow-md">
           <p className="text-orange-600">Invalid or missing location data. Please try again.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all"
+          >
+            Go Back
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-white/10 bg-opacity-50 z-[60] flex items-center justify-center">
-      <div className="relative bg-white rounded-xl shadow-2xl w-full h-full flex flex-col overflow-hidden border border-orange-100">
-        {/* Header */}
-        <div className="p-4 border-b border-orange-100 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <div className="w-3 h-3 bg-green-600 rounded-full animate-pulse"></div>
-              <div className="absolute inset-0 w-3 h-3 bg-green-600 rounded-full animate-ping opacity-50"></div>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-orange-600">Live Delivery Tracking</h2>
-              <p className="text-sm text-gray-600">
-                {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
-                  ? 'Heading to Restaurant'
-                  : 'Delivering to Customer'}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              setIsModalOpen(false);
-              localStorage.removeItem('deliveryMapModalState');
-              onClose();
-            }}
-            className="text-gray-600 hover:text-orange-600 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-orange-50 transition-all"
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col md:flex-row">
-          {/* Map Container */}
-          <div className="flex-1 relative">
-            <MapContainer
-              ref={mapRef}
-              style={containerStyle}
-              center={[currentLocation.latitude, currentLocation.longitude]}
-              zoom={16}
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={[currentLocation.latitude, currentLocation.longitude]} icon={deliveryBoyIcon}>
-                <Popup>Your Location</Popup>
-              </Marker>
-              <Marker position={[currentDestination.latitude, currentDestination.longitude]} icon={destinationIcon}>
-                <Popup>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {!showEarningsPopup && (
+        <>
+          <div className="p-4 bg-white border-b border-orange-100 flex justify-between items-center shadow-sm">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="w-3 h-3 bg-green-600 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 w-3 h-3 bg-green-600 rounded-full animate-ping opacity-50"></div>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-orange-600">Live Delivery Tracking</h2>
+                <p className="text-sm text-gray-600">
                   {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
-                    ? 'Restaurant'
-                    : 'Customer Location'}
-                </Popup>
-              </Marker>
-            </MapContainer>
-
-            {/* Location Update Indicator */}
-            <div className="absolute top-4 left-4">
-              <div className="bg-white px-3 py-1.5 rounded-md shadow-md border border-orange-100">
-                <div className="flex items-center space-x-2 text-xs text-gray-600">
-                  <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
-                  <span>Updated {Math.round((Date.now() - lastLocationUpdate.getTime()) / 1000)}s ago</span>
-                </div>
+                    ? 'Heading to Restaurant'
+                    : 'Delivering to Customer'}
+                </p>
               </div>
             </div>
+            <button
+              onClick={() => {
+                localStorage.removeItem('deliveryMapPageState');
+                navigate('/');
+              }}
+              className="text-gray-600 hover:text-orange-600 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-orange-50 transition-all"
+            >
+              ×
+            </button>
           </div>
 
-          {/* Sidebar */}
-          <div className="w-full md:w-80 p-4 bg-white border-l border-orange-100 flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-orange-50 p-3 rounded-md text-center border border-orange-100">
-                <p className="text-xs text-gray-600 uppercase">Distance</p>
-                <p className="text-lg font-semibold text-orange-600">{formatDistance(distance)}</p>
-              </div>
-              <div className="bg-orange-50 p-3 rounded-md text-center border border-orange-100">
-                <p className="text-xs text-gray-600 uppercase">ETA</p>
-                <p className="text-lg font-semibold text-orange-600">{formatDuration(distance)}</p>
-              </div>
-              <div className="bg-orange-50 p-3 rounded-md text-center border border-orange-100 col-span-2">
-                <p className="text-xs text-gray-600 uppercase">Status</p>
-                <p className={`text-sm font-semibold ${getStatusColor()}`}>{getStatusText()}</p>
-              </div>
-            </div>
+          <div className="flex-1 flex flex-col md:flex-row">
+            <div className="flex-1 relative">
+              <MapContainer
+                ref={mapRef}
+                style={containerStyle}
+                center={[currentLocation.latitude, currentLocation.longitude]}
+                zoom={16}
+                scrollWheelZoom={false}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                <Marker position={[currentLocation.latitude, currentLocation.longitude]} icon={deliveryBoyIcon}>
+                  <Popup>Your Location</Popup>
+                </Marker>
+                <Marker position={[currentDestination.latitude, currentDestination.longitude]} icon={destinationIcon}>
+                  <Popup>
+                    {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
+                      ? 'Restaurant'
+                      : 'Customer Location'}
+                  </Popup>
+                </Marker>
+              </MapContainer>
 
-            {/* Order Info */}
-            <div className="border border-orange-100 rounded-md p-3">
-              <p className="text-sm text-gray-600">Order #{orderId.slice(-6)}</p>
-              <div className="flex items-center space-x-1 text-sm text-gray-600 mt-1">
-                <div
-                  className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-600' : 'bg-red-600'} animate-pulse`}
-                ></div>
-                <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
-              </div>
-            </div>
-
-            {/* Destination Info */}
-            <div className="border border-orange-100 rounded-md p-3">
-              <h3 className="text-sm font-semibold text-orange-600">
-                {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
-                  ? order?.items[0]?.restaurantName || 'Unknown Restaurant'
-                  : userDetails?.name || 'Unknown Customer'}
-              </h3>
-              <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
-                  ? order?.deliveryAddress || 'No address available'
-                  : userDetails?.address || 'No address available'}
-              </p>
-            </div>
-
-            {/* Order Confirmation */}
-            {deliveryStep === 'confirm_order' && (
-              <div className="border border-orange-100 rounded-md p-3">
-                <h3 className="text-sm font-semibold text-orange-600 mb-2">Confirm Order Items</h3>
-                {order?.items?.length ? (
-                  <ul className="text-sm text-gray-600 mb-3">
-                    {order.items.map((item, index) => (
-                      <li key={index} className="flex justify-between">
-                        <span>{item.name}</span>
-                        <span>x{item.quantity}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-gray-600 mb-3">No items available</p>
-                )}
-                <button
-                  onClick={handleConfirmOrder}
-                  className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
-                >
-                  Confirm Order
-                </button>
-              </div>
-            )}
-
-            {/* PIN Verification */}
-            {showPinVerification && deliveryStep === 'verify_pin' && (
-              <div className="border border-orange-100 rounded-md p-3">
-                <h3 className="text-sm font-semibold text-orange-600 mb-2">Enter 6-Digit PIN</h3>
-                <div className="flex justify-between mb-3">
-                  {pinInput.map((digit, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handlePinChange(index, e.target.value)}
-                      ref={(el: any) => (pinInputRefs.current[index] = el)}
-                      className="w-10 h-10 text-center border border-gray-300 rounded-md focus:border-orange-600 focus:outline-none"
-                    />
-                  ))}
+              <div className="absolute top-4 left-4">
+                <div className="bg-white px-3 py-1.5 rounded-md shadow-md border border-orange-100">
+                  <div className="flex items-center space-x-2 text-xs text-gray-600">
+                    <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                    <span>Updated {Math.round((Date.now() - lastLocationUpdate.getTime()) / 1000)}s ago</span>
+                  </div>
                 </div>
-                <button
-                  onClick={handlePinVerified}
-                  disabled={pinInput.some((digit) => !digit)}
-                  className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                  Verify PIN
-                </button>
               </div>
-            )}
+            </div>
 
-            {/* Actions */}
-            {hasArrived && deliveryStep !== 'confirm_order' && deliveryStep !== 'verify_pin' && (
-              <div className="space-y-2">
-                {deliveryStep === 'going_to_restaurant' && (
-                  <>
-                    {(order?.items[0]?.restaurantPhone || order?.deliveryBoy?.mobile) && (
+            <div className="w-full md:w-80 p-4 bg-white border-l border-orange-100 flex flex-col gap-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-orange-50 p-3 rounded-md text-center border border-orange-100">
+                  <p className="text-xs text-gray-600 uppercase">Distance</p>
+                  <p className="text-lg font-semibold text-orange-600">{formatDistance(distance)}</p>
+                </div>
+                <div className="bg-orange-50 p-3 rounded-md text-center border border-orange-100">
+                  <p className="text-xs text-gray-600 uppercase">ETA</p>
+                  <p className="text-lg font-semibold text-orange-600">{formatDuration(distance)}</p>
+                </div>
+                <div className="bg-orange-50 p-3 rounded-md text-center border border-orange-100 col-span-2">
+                  <p className="text-xs text-gray-600 uppercase">Status</p>
+                  <p className={`text-sm font-semibold ${getStatusColor()}`}>{getStatusText()}</p>
+                </div>
+              </div>
+
+              <div className="border border-orange-100 rounded-md p-3">
+                <p className="text-sm text-gray-600">Order #{orderId.slice(-6)}</p>
+                <div className="flex items-center space-x-1 text-sm text-gray-600 mt-1">
+                  <div
+                    className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-600' : 'bg-red-600'} animate-pulse`}
+                  ></div>
+                  <span>{isConnected ? 'Connected' : 'Disconnected'}</span>
+                </div>
+              </div>
+
+              <div className="border border-orange-100 rounded-md p-3">
+                <h3 className="text-sm font-semibold text-orange-600">
+                  {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
+                    ? order?.items[0]?.restaurantName || 'Unknown Restaurant'
+                    : userDetails?.name || 'Unknown Customer'}
+                </h3>
+                <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                  {deliveryStep === 'going_to_restaurant' || deliveryStep === 'confirm_order' || deliveryStep === 'verify_pin'
+                    ? order?.deliveryAddress || 'No address available'
+                    : userDetails?.address || 'No address available'}
+                </p>
+              </div>
+
+              {deliveryStep === 'confirm_order' && (
+                <div className="border border-orange-100 rounded-md p-3">
+                  <h3 className="text-sm font-semibold text-orange-600 mb-2">Confirm Order Items</h3>
+                  {order?.items?.length ? (
+                    <ul className="text-sm text-gray-600 mb-3">
+                      {order.items.map((item, index) => (
+                        <li key={index} className="flex justify-between">
+                          <span>{item.name}</span>
+                          <span>x{item.quantity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-gray-600 mb-3">No items available</p>
+                  )}
+                  <button
+                    onClick={handleConfirmOrder}
+                    className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
+                  >
+                    Confirm Order
+                  </button>
+                </div>
+              )}
+
+              {showPinVerification && deliveryStep === 'verify_pin' && (
+                <div className="border border-orange-100 rounded-md p-3">
+                  <h3 className="text-sm font-semibold text-orange-600 mb-2">Enter 6-Digit PIN</h3>
+                  <div className="flex justify-between mb-3">
+                    {pinInput.map((digit, index) => (
+                      <input
+                        key={index}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handlePinChange(index, e.target.value)}
+                        ref={(el: any) => (pinInputRefs.current[index] = el)}
+                        className="w-10 h-10 text-center border border-gray-300 rounded-md focus:border-orange-600 focus:outline-none"
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={handlePinVerified}
+                    disabled={pinInput.some((digit) => !digit)}
+                    className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    Verify PIN
+                  </button>
+                </div>
+              )}
+
+              {hasArrived && deliveryStep !== 'confirm_order' && deliveryStep !== 'verify_pin' && (
+                <div className="space-y-2">
+                  {deliveryStep === 'going_to_restaurant' && (
+                    <>
+                      {(order?.items[0]?.restaurantPhone || order?.deliveryBoy?.mobile) && (
+                        <button
+                          onClick={handleCallRestaurant}
+                          className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
+                        >
+                          Call Restaurant
+                        </button>
+                      )}
                       <button
-                        onClick={handleCallRestaurant}
+                        onClick={handleArrived}
                         className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
                       >
-                        Call Restaurant
+                        Reached Restaurant
                       </button>
-                    )}
+                    </>
+                  )}
+                  {deliveryStep === 'going_to_customer' && (
+                    <>
+                      {userDetails?.phone && (
+                        <button
+                          onClick={handleCallCustomer}
+                          className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
+                        >
+                          Call Customer
+                        </button>
+                      )}
+                      <button
+                        onClick={handleCompleteDelivery}
+                        className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-all text-sm"
+                      >
+                        Complete Delivery
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+              {!hasArrived && (
+                <div className="space-y-2">
+                  {deliveryStep === 'going_to_restaurant' && (order?.items[0]?.restaurantPhone || order?.deliveryBoy?.mobile) && (
                     <button
-                      onClick={handleArrived}
+                      onClick={handleCallRestaurant}
                       className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
                     >
-                      Reached Restaurant
+                      Call Restaurant
                     </button>
-                  </>
-                )}
-                {deliveryStep === 'going_to_customer' && (
-                  <>
-                    {userDetails?.phone && (
-                      <button
-                        onClick={handleCallCustomer}
-                        className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
-                      >
-                        Call Customer
-                      </button>
-                    )}
+                  )}
+                  {deliveryStep === 'going_to_customer' && userDetails?.phone && (
                     <button
-                      onClick={handleCompleteDelivery}
-                      className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-all text-sm"
+                      onClick={handleCallCustomer}
+                      className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
                     >
-                      Complete Delivery
+                      Call Customer
                     </button>
-                  </>
-                )}
-              </div>
-            )}
-            {!hasArrived && (
-              <div className="space-y-2">
-                {deliveryStep === 'going_to_restaurant' && (order?.items[0]?.restaurantPhone || order?.deliveryBoy?.mobile) && (
-                  <button
-                    onClick={handleCallRestaurant}
-                    className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
-                  >
-                    Call Restaurant
-                  </button>
-                )}
-                {deliveryStep === 'going_to_customer' && userDetails?.phone && (
-                  <button
-                    onClick={handleCallCustomer}
-                    className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 transition-all text-sm"
-                  >
-                    Call Customer
-                  </button>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </>
+      )}
+      {/* </div> */}
+      <EarningsPopup
+        isOpen={showEarningsPopup}
+        onClose={() => {
+          setShowEarningsPopup(false);
+          navigate('/deliveryBoy-Home');
+        }}
+        earnings={earnings}
+        orderDetails={{
+          orderId: order?.orderId || '#FD12345',
+          customerName: userDetails?.name || 'Unknown Customer',
+          deliveryTime: formatDuration(totalDistance + distance),
+        }}
+      />
+    </div >
   );
 };
 
-export default DeliveryMapModal;
+export default DeliveryMapPage;

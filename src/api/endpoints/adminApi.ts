@@ -189,4 +189,51 @@ export const adminApi = {
         }
         return response.data;
     },
+
+    addRidePayment: async (dispatch: Dispatch, payload: {
+        KM: number,
+        ratePerKm: number,
+        vehicleType: string,
+        isActive: boolean
+    }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.post('/add-ride-payment-rule', payload)
+        console.log('response i get :', response)
+        return response.data
+    },
+
+    getRidePaymentRules: async (dispatch: Dispatch) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.get('/fetch-ride-rate-payment')
+        return response
+    },
+    updateRidePayment: async (
+        dispatch: Dispatch,
+        payload: { id: string; KM: number; ratePerKm: number; vehicleType: string; isActive: boolean }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.put(`/update-ride-payment-rule/${payload.id}`, payload);
+        return response;
+    },
+
+    blockRidePayment: async (
+        dispatch: Dispatch,
+        payload: { id: string; vehicleType: string }
+    ) => {
+        console.log('Sending block payload:', payload);
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.put(`/block-ride-payment-rule/${payload.id}`, { vehicleType: payload.vehicleType });
+        console.log('Block response:', response.data);
+        return response;
+    },
+    unblockRidePayment: async (
+        dispatch: Dispatch,
+        payload: { id: string }
+    ) => {
+        console.log('Sending unblock payload:', payload);
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.put(`/unblock-ride-payment-rule/${payload.id}`);
+        console.log('Unblock response:', response.data);
+        return response;
+    },
 };

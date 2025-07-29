@@ -59,44 +59,6 @@ const UserList: React.FC = () => {
     setShowConfirmPopup(true);
   };
 
-  // const confirmToggleBlock = async () => {
-  //   if (!pendingAction) return;
-  //   setActionLoading(true);
-  //   const previousUsers = [...users];
-  //   setUsers((prevUsers) =>
-  //     prevUsers.map((user) =>
-  //       user.userId === pendingAction.userId
-  //         ? { ...user, isBlocked: pendingAction.action === 'block' }
-  //         : user
-  //     )
-  //   );
-
-  //   try {
-  //     const response = await adminApi.toggleBlockUser(dispatch, pendingAction.userId);
-  //     toast.success(`User ${pendingAction.action === 'block' ? 'blocked' : 'unblocked'} successfully!`, {
-  //       position: 'top-right',
-  //       autoClose: 3000,
-  //     });
-  //     console.log('customer list page respone :', response);
-
-  //     if (!response.success && isConnected && socket) {
-  //       socket.emit('block-user', { userId: response.userId });
-  //     }
-
-  //   } catch (error) {
-  //     console.error('Error blocking/unblocking user:', (error as Error).message);
-  //     setUsers(previousUsers);
-  //     toast.error(`Failed to ${pendingAction.action} user. Please try again.`, {
-  //       position: 'top-right',
-  //       autoClose: 3000,
-  //     });
-  //   } finally {
-  //     setActionLoading(false);
-  //     setShowConfirmPopup(false);
-  //     setPendingAction(null);
-  //   }
-  // };
-
   const confirmToggleBlock = async () => {
     if (!pendingAction) return;
     setActionLoading(true);

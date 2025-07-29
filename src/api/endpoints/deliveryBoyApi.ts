@@ -76,6 +76,12 @@ export const deliveryBoyApi = {
         return response.data;
     },
 
+    orderEarnings: async (dispatch: Dispatch, paymentMethod?: string, deliveryBoyId?: string, finalTotalDistance?: number, orderAmount?: number) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.post('/complete-and-earn', { paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount })
+        return response.data
+    },
+
     registerDeliveryBoy: async (dispatch: Dispatch, mobile: string) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post('/deliveryBoy-rigister', { mobile });
