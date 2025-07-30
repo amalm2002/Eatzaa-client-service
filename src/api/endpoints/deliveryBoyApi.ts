@@ -203,4 +203,10 @@ export const deliveryBoyApi = {
         const response = await axiosInstance.post(`/zone?deliveryBoyId=${deliveryBoyId}`, { zone });
         return response.data;
     },
+
+    checkTheInHandCash: async (dispatch: Dispatch, deliveryBoyId: string) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.post('/check-inHand-cash-limit', { deliveryBoyId })
+        return response
+    }
 };

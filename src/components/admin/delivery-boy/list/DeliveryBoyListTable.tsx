@@ -9,7 +9,7 @@ const DeliveryBoyListTable = ({ paginatedDeliveryBoys, handleView, handleBlockUn
           <tr>
             {[
               { field: 'name', label: 'Delivery Boy' },
-              { field: 'email', label: 'Email' },
+              // { field: 'email', label: 'Email' },
               { field: 'mobile', label: 'Contact' },
               { field: 'location', label: 'Location' },
               { field: 'status', label: 'Status' },
@@ -53,7 +53,7 @@ const DeliveryBoyListTable = ({ paginatedDeliveryBoys, handleView, handleBlockUn
                   </div>
                 </div>
               </td>
-              <td className="px-8 py-4 text-gray-700 font-medium">{boy.email}</td>
+              {/* <td className="px-8 py-4 text-gray-700 font-medium">{boy.email}</td> */}
               <td className="px-8 py-4 text-gray-700">{boy.mobile}</td>
               <td className="px-8 py-4 text-gray-700">{boy.location}</td>
               <td className="px-8 py-4">

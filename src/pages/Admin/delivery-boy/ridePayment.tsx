@@ -37,7 +37,7 @@ const RidePaymentManagement: React.FC = () => {
     useEffect(() => {
         const fetchRules = async () => {
             try {
-                const response = await adminApi.getRidePaymentRules(dispatch);
+                const response = await adminApi.getRidePaymentRules(dispatch);                
                 if (response.data.success) {
                     setPaymentRules(
                         response.data.data.map((rule: any) => ({
@@ -107,7 +107,6 @@ const RidePaymentManagement: React.FC = () => {
         };
 
         try {
-            console.log('Payload sent to API:', payload);
             let response;
             if (editingRule) {
                 response = await adminApi.updateRidePayment(dispatch, { id: editingRule.id, ...payload });
@@ -127,6 +126,7 @@ const RidePaymentManagement: React.FC = () => {
                 }
             } else {
                 response = await adminApi.addRidePayment(dispatch, payload);
+                
                 if (response.data.success) {
                     const newRule: RidePaymentRule = {
                         id: response.data.data?._id || Date.now().toString(),

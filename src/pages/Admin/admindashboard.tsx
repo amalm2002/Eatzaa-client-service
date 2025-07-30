@@ -15,6 +15,7 @@ import { OrderSchedule } from '../../interfaces/admin/dashboard/order-schedule.t
 import { FoodCategory } from '../../interfaces/admin/dashboard/food-category.types';
 import { FoodDeliveryDashboardProps } from '../../interfaces/admin/dashboard/food-delivery-dash.types';
 import RidePaymentManagement from './delivery-boy/ridePayment';
+import DeliveryPaymentManagement from './delivery-boy/deliveryPartnerPayment';
 
 const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPage = 'Dashboard' }) => {
   const [activePage, setActivePage] = useState(initialPage);
@@ -49,6 +50,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
       navigate('/admin/zone-list')
     } else if (page === 'RidePayment') {
       navigate('/admin/ride-payment')
+    } else if (page === 'PartnerPayment') {
+      navigate('/admin/partner-earnings-payment')
     } else {
       navigate('/admin-dashboard');
     }
@@ -96,6 +99,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
           <DeliveryBoyListPage />
         ) : activePage === 'Payments' ? (
           <PaymentListPage />
+        ) : activePage === 'PartnerPayment' ? (
+          <DeliveryPaymentManagement />
         ) : activePage === 'RidePayment' ? (
           <RidePaymentManagement />
         ) : activePage === 'Subscription-Plan' ? (
@@ -105,39 +110,185 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
         ) : activePage === 'DeliveryBoyDetails' && id ? (
           <DeliveryBoyDetails activePage={activePage} setActivePage={handleSetActivePage} deliveryBoyId={id} />
         ) : (
-          <main className="pt-20 p-6">
+          // <main className="pt-20 p-6">
+          //   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          //     {/* Order Overview */}
+          //     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          //       <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Overview</h2>
+          //       <div className="text-3xl font-bold text-orange-400 mb-2">
+          //         {orderStats.active}
+          //         <span className="text-sm text-gray-500 font-normal ml-2">Active Orders</span>
+          //       </div>
+          //       <div className="flex flex-wrap text-sm text-gray-600 gap-4">
+          //         <div>{orderStats.pending} Pending</div>
+          //         <div>{orderStats.cancelled} Cancelled</div>
+          //         <div>{orderStats.successRate} Success rate</div>
+          //       </div>
+          //     </div>
+
+          //     {/* Order Sources */}
+          //     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          //       <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Sources</h2>
+          //       <div className="space-y-4">
+          //         {[
+          //           { name: 'App', value: orderSources.app, color: 'orange-500' },
+          //           { name: 'Website', value: orderSources.website, color: 'blue-500' },
+          //           { name: 'Phone', value: orderSources.phone, color: 'purple-500' },
+          //         ].map((source) => (
+          //           <div key={source.name}>
+          //             <div className="flex justify-between mb-1 text-sm text-gray-600">
+          //               <span>{source.name}</span>
+          //               <span>{source.value}%</span>
+          //             </div>
+          //             <div className="w-full bg-gray-100 rounded-full h-2.5">
+          //               <div
+          //                 className={`bg-${source.color} h-2.5 rounded-full transition-all duration-300`}
+          //                 style={{ width: `${source.value}%` }}
+          //               ></div>
+          //             </div>
+          //           </div>
+          //         ))}
+          //       </div>
+          //     </div>
+
+          //     {/* Food Categories */}
+          //     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow xl:col-span-3">
+          //       <h2 className="text-lg font-semibold text-gray-800 mb-6">Popular Food Categories</h2>
+          //       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+          //         {foodCategories.map((category, index) => (
+          //           <div
+          //             key={index}
+          //             className="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow"
+          //           >
+          //             <div className="flex items-center justify-between mb-4">
+          //               <div className="flex items-center">
+          //                 <div
+          //                   className={`w-12 h-12 rounded-full flex items-center justify-center ${index === 0
+          //                     ? 'bg-yellow-50 text-yellow-600'
+          //                     : index === 1
+          //                       ? 'bg-blue-50 text-blue-600'
+          //                       : 'bg-red-50 text-red-600'
+          //                     }`}
+          //                 >
+          //                   {index === 0 ? '🍕' : index === 1 ? '🍔' : '🍣'}
+          //                 </div>
+          //                 <div className="ml-3">
+          //                   <div className="text-sm font-medium text-gray-800">{category.name}</div>
+          //                   <div className="text-xs text-gray-500">#{index + 1}</div>
+          //                 </div>
+          //               </div>
+          //               <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">Active</span>
+          //             </div>
+          //             <div className="text-2xl font-bold text-gray-800">{category.totalOrders}k</div>
+          //             <div className="text-xs text-gray-500">Orders</div>
+          //           </div>
+          //         ))}
+          //       </div>
+          //     </div>
+
+          //     {/* Order Schedule */}
+          //     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow xl:col-span-3">
+          //       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          //         <h2 className="text-lg font-semibold text-gray-800">Order Schedule</h2>
+          //         <div className="flex space-x-3">
+          //           <button className="px-4 py-2 text-sm rounded-lg bg-orange-400 text-white hover:bg-orange-500 transition-colors">
+          //             Filter
+          //           </button>
+          //           <button className="px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+          //             Export
+          //           </button>
+          //         </div>
+          //       </div>
+          //       <div className="overflow-x-auto">
+          //         <table className="min-w-full divide-y divide-gray-200">
+          //           <thead className="bg-gray-50">
+          //             <tr>
+          //               {['ID', 'Type', 'Status', 'Date & Time', 'Action'].map((header) => (
+          //                 <th
+          //                   key={header}
+          //                   className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          //                 >
+          //                   {header}
+          //                 </th>
+          //               ))}
+          //             </tr>
+          //           </thead>
+          //           <tbody className="divide-y divide-gray-200">
+          //             {orderSchedule.map((order) => (
+          //               <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+          //                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800">{order.id}</td>
+          //                 <td className="px-4 py-4 whitespace-nowrap">
+          //                   <span
+          //                     className={`px-2 py-1 text-xs rounded-full ${order.type === 'Delivery' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
+          //                       }`}
+          //                   >
+          //                     {order.type}
+          //                   </span>
+          //                 </td>
+          //                 <td className="px-4 py-4 whitespace-nowrap">
+          //                   <span
+          //                     className={`px-2 py-1 text-xs rounded-full ${order.status === 'Pending'
+          //                       ? 'bg-yellow-100 text-yellow-600'
+          //                       : order.status === 'Processing'
+          //                         ? 'bg-blue-100 text-blue-800'
+          //                         : 'bg-green-100 text-green-800'
+          //                       }`}
+          //                   >
+          //                     {order.status}
+          //                   </span>
+          //                 </td>
+          //                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{order.dateTime}</td>
+          //                 <td className="px-4 py-4 whitespace-nowrap">
+          //                   <button className="text-gray-400 hover:text-orange-400 transition-colors">
+          //                     {/* Add action icon here */}
+          //                   </button>
+          //                 </td>
+          //               </tr>
+          //             ))}
+          //           </tbody>
+          //         </table>
+          //       </div>
+          //     </div>
+          //   </div>
+          // </main>
+          <main className="pt-20 p-6 bg-gray-50" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <style >{`
+             main::-webkit-scrollbar {
+             display: none;
+             }
+           `}</style>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {/* Order Overview */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Overview</h2>
-                <div className="text-3xl font-bold text-orange-400 mb-2">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-blue-200 transition-all duration-300">
+                <h2 className="text-lg font-semibold text-black mb-4">Order Overview</h2>
+                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
                   {orderStats.active}
-                  <span className="text-sm text-gray-500 font-normal ml-2">Active Orders</span>
+                  <span className="text-sm text-gray-600 font-normal ml-2">Active Orders</span>
                 </div>
-                <div className="flex flex-wrap text-sm text-gray-600 gap-4">
-                  <div>{orderStats.pending} Pending</div>
-                  <div>{orderStats.cancelled} Cancelled</div>
-                  <div>{orderStats.successRate} Success rate</div>
+                <div className="flex flex-wrap text-sm text-gray-700 gap-4">
+                  <div className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md">{orderStats.pending} Pending</div>
+                  <div className="px-2 py-1 bg-red-50 text-red-700 rounded-md">{orderStats.cancelled} Cancelled</div>
+                  <div className="px-2 py-1 bg-green-50 text-green-700 rounded-md">{orderStats.successRate} Success rate</div>
                 </div>
               </div>
 
               {/* Order Sources */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Sources</h2>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-purple-200 transition-all duration-300">
+                <h2 className="text-lg font-semibold text-black mb-4">Order Sources</h2>
                 <div className="space-y-4">
                   {[
-                    { name: 'App', value: orderSources.app, color: 'orange-500' },
-                    { name: 'Website', value: orderSources.website, color: 'blue-500' },
-                    { name: 'Phone', value: orderSources.phone, color: 'purple-500' },
+                    { name: 'App', value: orderSources.app, color: 'bg-gradient-to-r from-blue-500 to-blue-600' },
+                    { name: 'Website', value: orderSources.website, color: 'bg-gradient-to-r from-purple-500 to-purple-600' },
+                    { name: 'Phone', value: orderSources.phone, color: 'bg-gradient-to-r from-green-500 to-green-600' },
                   ].map((source) => (
                     <div key={source.name}>
-                      <div className="flex justify-between mb-1 text-sm text-gray-600">
-                        <span>{source.name}</span>
-                        <span>{source.value}%</span>
+                      <div className="flex justify-between mb-2 text-sm">
+                        <span className="font-medium text-gray-800">{source.name}</span>
+                        <span className="font-semibold text-black">{source.value}%</span>
                       </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2.5">
+                      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
                         <div
-                          className={`bg-${source.color} h-2.5 rounded-full transition-all duration-300`}
+                          className={`${source.color} h-3 rounded-full transition-all duration-500 shadow-sm`}
                           style={{ width: `${source.value}%` }}
                         ></div>
                       </div>
@@ -147,61 +298,71 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
               </div>
 
               {/* Food Categories */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow xl:col-span-3">
-                <h2 className="text-lg font-semibold text-gray-800 mb-6">Popular Food Categories</h2>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-green-200 transition-all duration-300 xl:col-span-3">
+                <h2 className="text-lg font-semibold text-black mb-6">Popular Food Categories</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                   {foodCategories.map((category, index) => (
                     <div
                       key={index}
-                      className="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center">
                           <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center ${index === 0
-                              ? 'bg-yellow-50 text-yellow-600'
+                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${index === 0
+                              ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-600'
                               : index === 1
-                                ? 'bg-blue-50 text-blue-600'
-                                : 'bg-red-50 text-red-600'
+                                ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-indigo-600'
+                                : 'bg-gradient-to-r from-pink-100 to-red-100 text-red-600'
                               }`}
                           >
                             {index === 0 ? '🍕' : index === 1 ? '🍔' : '🍣'}
                           </div>
                           <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-800">{category.name}</div>
-                            <div className="text-xs text-gray-500">#{index + 1}</div>
+                            <div className="text-sm font-medium text-black">{category.name}</div>
+                            <div className="text-xs text-gray-600">#{index + 1} Popular</div>
                           </div>
                         </div>
-                        <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">Active</span>
+                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${index === 0
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                          : index === 1
+                            ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+                            : 'bg-gradient-to-r from-pink-500 to-red-500 text-white'
+                          }`}>Active</span>
                       </div>
-                      <div className="text-2xl font-bold text-gray-800">{category.totalOrders}k</div>
-                      <div className="text-xs text-gray-500">Orders</div>
+                      <div className="text-2xl font-bold text-black">{category.totalOrders}k</div>
+                      <div className="text-xs text-gray-600">Total Orders</div>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Order Schedule */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow xl:col-span-3">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 xl:col-span-3">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                  <h2 className="text-lg font-semibold text-gray-800">Order Schedule</h2>
+                  <h2 className="text-lg font-semibold text-black">Order Schedule</h2>
                   <div className="flex space-x-3">
-                    <button className="px-4 py-2 text-sm rounded-lg bg-orange-400 text-white hover:bg-orange-500 transition-colors">
+                    <button className="px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105">
                       Filter
                     </button>
-                    <button className="px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                    <button className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black hover:bg-gray-50 hover:border-gray-400 transition-all duration-300">
                       Export
                     </button>
                   </div>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <div className="overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <style >{`
+                      div::-webkit-scrollbar {
+                      display: none;
+                     }
+                  `}</style>
+                    <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                       <tr>
                         {['ID', 'Type', 'Status', 'Date & Time', 'Action'].map((header) => (
                           <th
                             key={header}
-                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider"
                           >
                             {header}
                           </th>
@@ -210,11 +371,13 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {orderSchedule.map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-800">{order.id}</td>
+                        <tr key={order.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200">
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-black font-medium">{order.id}</td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
-                              className={`px-2 py-1 text-xs rounded-full ${order.type === 'Delivery' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
+                              className={`px-3 py-1 text-xs rounded-full font-medium ${order.type === 'Delivery'
+                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm'
+                                : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-sm'
                                 }`}
                             >
                               {order.type}
@@ -222,20 +385,20 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
                             <span
-                              className={`px-2 py-1 text-xs rounded-full ${order.status === 'Pending'
-                                ? 'bg-yellow-100 text-yellow-600'
+                              className={`px-3 py-1 text-xs rounded-full font-medium shadow-sm ${order.status === 'Pending'
+                                ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white'
                                 : order.status === 'Processing'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-green-100 text-green-800'
+                                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+                                  : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
                                 }`}
                             >
                               {order.status}
                             </span>
                           </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{order.dateTime}</td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{order.dateTime}</td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <button className="text-gray-400 hover:text-orange-400 transition-colors">
-                              {/* Add action icon here */}
+                            <button className="w-8 h-8 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600 transition-all duration-300 flex items-center justify-center text-xs hover:scale-110">
+                              •••
                             </button>
                           </td>
                         </tr>

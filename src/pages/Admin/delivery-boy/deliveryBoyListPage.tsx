@@ -36,7 +36,7 @@ const DeliveryBoyListPage: React.FC = () => {
                     location: item.location.coordinates ? `${item.location.coordinates[0]}, ${item.location.coordinates[1]}` : 'N/A',
                     status: item.status || 'active',
                     isActive: item.isActive,
-                    totalDeliveries: item.totalDeliveries || 0,
+                    totalDeliveries: item.ordersCompleted || 0,
                     image: item.image || undefined,
                 }));
                 setDeliveryBoys(mappedDeliveryBoys);

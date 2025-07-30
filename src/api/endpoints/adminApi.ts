@@ -198,8 +198,7 @@ export const adminApi = {
     }) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post('/add-ride-payment-rule', payload)
-        console.log('response i get :', response)
-        return response.data
+        return response
     },
 
     getRidePaymentRules: async (dispatch: Dispatch) => {
@@ -207,6 +206,7 @@ export const adminApi = {
         const response = await axiosInstance.get('/fetch-ride-rate-payment')
         return response
     },
+
     updateRidePayment: async (
         dispatch: Dispatch,
         payload: { id: string; KM: number; ratePerKm: number; vehicleType: string; isActive: boolean }
@@ -220,20 +220,34 @@ export const adminApi = {
         dispatch: Dispatch,
         payload: { id: string; vehicleType: string }
     ) => {
-        console.log('Sending block payload:', payload);
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.put(`/block-ride-payment-rule/${payload.id}`, { vehicleType: payload.vehicleType });
-        console.log('Block response:', response.data);
         return response;
     },
+
     unblockRidePayment: async (
         dispatch: Dispatch,
         payload: { id: string }
     ) => {
-        console.log('Sending unblock payload:', payload);
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.put(`/unblock-ride-payment-rule/${payload.id}`);
-        console.log('Unblock response:', response.data);
         return response;
+    },
+
+    createRazorpayOrder: async (dispatch: Dispatch, data: { deliveryBoyId: string, amount: number }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.post('/create-delivery-partner-order', data)
+        if (response.data.error) {
+            throw new Error(response.data.error);
+        }
+        return response.data;
+    },
+
+    verifyPayment: async (
+        dispatch: Dispatch,
+        data: { deliveryBoyId?: string, razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string; }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        return axiosInstance.post('/verify-payment-delivery-partner', data);
     },
 };

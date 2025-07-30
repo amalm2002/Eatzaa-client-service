@@ -6,4 +6,7 @@ export interface StatusCardProps {
     zoneMessage: string;
     partnerData: PartnerData;
     handleToggleOnline: () => void;
+
+    cashLimitStatus: { success: boolean; message: string }; 
+    handlePayInHandCash: () => void;
 }

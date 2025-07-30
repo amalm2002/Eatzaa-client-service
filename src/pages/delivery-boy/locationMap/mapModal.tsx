@@ -419,7 +419,8 @@ const DeliveryMapPage: React.FC<MapModalProps> = ({
       const orderAmount = order?.totalAmount
       const res = await deliveryBoyApi.orderEarnings(dispatch, paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount);
       console.log('map side loggg :', res);
-      setEarnings(res.data.earnings.today);
+      // setEarnings(res.data.earnings.today);
+      setEarnings(res.data.earnings);
       await deliveryBoyApi.completeOrder(dispatch, orderId, deliveryBoyId,);
 
       dispatch(completeDelivery());

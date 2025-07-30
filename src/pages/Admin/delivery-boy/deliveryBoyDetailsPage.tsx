@@ -153,7 +153,7 @@ const DeliveryBoyDetails: React.FC<DeliveryBoyDetailsProps> = ({ deliveryBoyId, 
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-center p-8 rounded-lg">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
           <p className="mt-4 text-gray-700 font-medium">Loading delivery partner details...</p>
         </div>
       </div>
