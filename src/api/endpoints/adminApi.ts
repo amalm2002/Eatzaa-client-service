@@ -250,4 +250,9 @@ export const adminApi = {
         const axiosInstance = createAxios(dispatch);
         return axiosInstance.post('/verify-payment-delivery-partner', data);
     },
+
+    cancelPayment: async (dispatch: Dispatch, data: { deliveryBoyId: string; orderId: string }) => {
+        const axiosInstance = createAxios(dispatch);
+        return axiosInstance.post('/cancel-delivery-partner-payment', data);
+    },
 };
