@@ -7,7 +7,12 @@ interface CashLimitResponse {
   message: string;
 }
 
-export const useInHandCashLimit = () => {
+interface CashLimitHook {
+  cashLimitStatus: CashLimitResponse;
+  setCashLimitStatus: React.Dispatch<React.SetStateAction<CashLimitResponse>>;
+}
+
+export const useInHandCashLimit = (): CashLimitHook => {
   const dispatch = useDispatch();
   const deliveryBoyId = useSelector((store: { deliveryBoyAuth: { delivery_boy_id: string } }) => store.deliveryBoyAuth.delivery_boy_id);
   const [cashLimitStatus, setCashLimitStatus] = useState<CashLimitResponse>({ success: true, message: "" });
@@ -25,10 +30,9 @@ export const useInHandCashLimit = () => {
 
     checkTheInHandCash();
 
-    const interval = setInterval(checkTheInHandCash, 30000);
+    const interval = setInterval(checkTheInHandCash, 60000);
     return () => clearInterval(interval);
-    
   }, [dispatch, deliveryBoyId]);
 
-  return cashLimitStatus;
+  return { cashLimitStatus, setCashLimitStatus };
 };

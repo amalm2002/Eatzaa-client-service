@@ -27,6 +27,7 @@ import Checkout from './pages/user/userCheckOut'
 import OrderList from './pages/restaurant/orderListPage'
 import OrderTrackingUI from './pages/user/profile/orderTrackingPage'
 import DeliveryMapPage from './pages/delivery-boy/locationMap/mapModal'
+import DeliveryPartnerEarnings from './pages/delivery-boy/earningsPage'
 
 
 
@@ -65,7 +66,8 @@ function App() {
     '/admin/partner-earnings-payment',
 
     '/deliveryBoy-login',
-    '/deliveryBoy-Home'
+    '/deliveryBoy-Home',
+    '/deliveryBoy-Earnings'
   ]
   // const showFooter = !hideFooterPaths.includes(location.pathname)
   const showFooter = !hideFooterPaths.some((path) =>
@@ -122,21 +124,14 @@ function App() {
             {/* ---------- DELIVER_BOY ROUTES ---------- */}
             <Route path="/deliveryBoy-Home" element={deliveryBoy ? <DeliveryPartnerHomepage /> : <Navigate to="/deliveryBoy-login" />} />
             <Route path="/deliveryBoy-login" element={deliveryBoy ? <Navigate to="/deliveryBoy-Home" /> : <DeliveryBoyLogin />} />
-            <Route
-              path="/location-map"
-              element={
-                deliveryBoy ? (
-                  <DeliveryMapPage
-                    origin={location.state?.origin || { latitude: 0, longitude: 0 }}
-                    destination={location.state?.destination || { latitude: 0, longitude: 0 }}
-                    orderId={location.state?.orderId || ''}
-                    deliveryBoyId={location.state?.deliveryBoyId || ''}
-                  />
-                ) : (
-                  <DeliveryBoyLogin />
-                )
-              }
-            />
+            <Route path="/location-map" element={deliveryBoy ? (
+              <DeliveryMapPage origin={location.state?.origin || { latitude: 0, longitude: 0 }}
+                destination={location.state?.destination || { latitude: 0, longitude: 0 }}
+                orderId={location.state?.orderId || ''}
+                deliveryBoyId={location.state?.deliveryBoyId || ''}
+              />
+            ) : (<DeliveryBoyLogin />)} />
+            <Route path='/deliveryBoy-Earnings' element={deliveryBoy ? <DeliveryPartnerEarnings /> : <Navigate to="/deliveryBoy-login" />} />
           </Routes>
         </div>
         {showFooter && <Footer />}

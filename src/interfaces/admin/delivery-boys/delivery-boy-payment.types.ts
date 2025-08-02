@@ -72,3 +72,51 @@ export const isAlreadyPaid = (deliveryBoy: DeliveryBoy) => {
         deliveryBoy.totalCash === 0
     );
 };
+
+
+export interface RidePaymentRule {
+    id: string;
+    KM: number;
+    ratePerKm: number;
+    vehicleType: 'bike' | 'scooter' | 'cycle';
+    isActive: boolean;
+    lastUpdated?: string;
+}
+
+export interface HeaderSectionProps {
+    paymentRules: RidePaymentRule[];
+    handleAddRule: () => void;
+}
+
+export interface FilterSectionProps {
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+    filterVehicle: string;
+    setFilterVehicle: (vehicle: string) => void;
+    filterStatus: string;
+    setFilterStatus: (status: string) => void;
+}
+
+export interface RulesTableProps {
+    filteredRules: RidePaymentRule[];
+    handleEditRule: (rule: RidePaymentRule) => void;
+    handleBlockRule: (id: string, vehicleType: string) => void;
+    handleUnblockRule: (id: string) => void;
+    handleToggleStatus: (id: string) => void;
+}
+
+export interface ModalProps {
+    isOpen: boolean;
+    editingRule: RidePaymentRule | null;
+    formData: {
+        KM: number;
+        ratePerKm: number;
+        vehicleType: 'bike' | 'scooter' | 'cycle';
+        isActive: boolean;
+    };
+    errors: { [key: string]: string };
+    setFormData: (data: any) => void;
+    setEditingRule: (rule: RidePaymentRule | null) => void;
+    setIsModalOpen: (open: boolean) => void;
+    handleSaveRule: () => void;
+}

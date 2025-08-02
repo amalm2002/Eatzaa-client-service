@@ -234,7 +234,7 @@ export const adminApi = {
         return response;
     },
 
-    createRazorpayOrder: async (dispatch: Dispatch, data: { deliveryBoyId: string, amount: number }) => {
+    createRazorpayOrder: async (dispatch: Dispatch, data: { deliveryBoyId: string, amount: number, role:string }) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post('/create-delivery-partner-order', data)
         if (response.data.error) {
@@ -245,13 +245,13 @@ export const adminApi = {
 
     verifyPayment: async (
         dispatch: Dispatch,
-        data: { deliveryBoyId?: string, razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string; }
+        data: { deliveryBoyId?: string, razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string; role:string }
     ) => {
         const axiosInstance = createAxios(dispatch);
         return axiosInstance.post('/verify-payment-delivery-partner', data);
     },
 
-    cancelPayment: async (dispatch: Dispatch, data: { deliveryBoyId: string; orderId: string }) => {
+    cancelPayment: async (dispatch: Dispatch, data: { deliveryBoyId: string; orderId: string,role:string }) => {
         const axiosInstance = createAxios(dispatch);
         return axiosInstance.post('/cancel-delivery-partner-payment', data);
     },

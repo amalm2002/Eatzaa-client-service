@@ -56,7 +56,6 @@ const OrderTrackingUI = () => {
     const fetchOrder = async () => {
       try {
         const orderData = await userApi.getOrderDetails(dispatch, id!);
-
         const formattedOrder: Order = {
           orderId: orderData._id,
           orderTime: new Date(orderData.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -86,6 +85,7 @@ const OrderTrackingUI = () => {
           paymentMethod: orderData.payment.method,
           deliveryBoy: orderData.deliveryBoy
             ? {
+              id: orderData.deliveryBoy.id,
               name: orderData.deliveryBoy.name,
               mobile: orderData.deliveryBoy.mobile,
               profileImage: orderData.deliveryBoy.profileImage,

@@ -229,4 +229,26 @@ export const userApi = {
         }
         return response.data;
     },
+
+    reviewAndRaitingDeliveryBoy: async (dispatch: Dispatch, data: { deliveryBoyId?: string; rating: number; comment: string; orderId: string, userId: string, isEdit: boolean, }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.patch('/delivery-boy-review-submition', data)
+        return response.data
+    },
+
+    getUserReviewForOrder: async (dispatch: Dispatch, data: { deliveryBoyId?: string, userId: string; orderId: string; }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.get('/get-the-delivery-boy-review', {
+            params: data
+        })
+        return response.data
+    },
+
+    deleteReview: async (dispatch: Dispatch, data: { deliveryBoyId?: string, orderId: string; userId: string; }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.delete('/delete-delivery-boy-review', {
+            params: data
+        })
+        return response.data
+    }
 };

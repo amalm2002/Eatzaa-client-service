@@ -313,9 +313,9 @@ const DeliveryMapPage: React.FC<MapModalProps> = ({
     return () => setIsTracking(false);
   }, []);
 
-  console.log('distance :', distance);
-  console.log('totalDistance:', totalDistance);
-  console.log('Payment method :', order?.paymentMethod);
+  // console.log('distance :', distance);
+  // console.log('totalDistance:', totalDistance);
+  // console.log('Payment method :', order?.paymentMethod);
 
   useEffect(() => {
     if (deliveryStep === 'completed') {
@@ -417,7 +417,8 @@ const DeliveryMapPage: React.FC<MapModalProps> = ({
       const finalTotalDistance = totalDistance + distance;
       const paymentMethod = order?.paymentMethod;
       const orderAmount = order?.totalAmount
-      const res = await deliveryBoyApi.orderEarnings(dispatch, paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount);
+      const order_id = order?.orderId
+      const res = await deliveryBoyApi.orderEarnings(dispatch, paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount,order_id);
       console.log('map side loggg :', res);
       // setEarnings(res.data.earnings.today);
       setEarnings(res.data.earnings);

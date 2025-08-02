@@ -1,5 +1,5 @@
 import { FiPhone, FiTruck, FiEye, FiDollarSign, FiChevronUp, FiChevronDown } from 'react-icons/fi';
-import { DeliveryBoy, getStatusColor, formatDate, isPayButtonEnabled,isAlreadyPaid } from '../../../../interfaces/admin/delivery-boys/delivery-boy-payment.types';
+import { DeliveryBoy, getStatusColor, formatDate, isPayButtonEnabled, isAlreadyPaid } from '../../../../interfaces/admin/delivery-boys/delivery-boy-payment.types';
 
 interface DeliveryBoysTableProps {
     deliveryBoys: DeliveryBoy[];
@@ -36,6 +36,7 @@ const DeliveryBoysTable: React.FC<DeliveryBoysTableProps> = ({
                                 { field: 'weeklyEarnings', label: 'Weekly Earnings' },
                                 { field: 'inHandCash', label: 'In-Hand Cash' },
                                 { field: 'totalCash', label: 'Total Cash' },
+                                { field: 'completeAmount', label: 'Actual Cash toPay' },
                                 { field: 'amountToPayDeliveryBoy', label: 'Owed to Admin' },
                                 { field: 'ordersCompleted', label: 'Orders' },
                                 { field: 'nextPaymentDate', label: 'Next Payment' },
@@ -94,6 +95,9 @@ const DeliveryBoysTable: React.FC<DeliveryBoysTableProps> = ({
                                         <div className="font-semibold text-gray-900">₹{deliveryBoy.totalCash.toLocaleString()}</div>
                                     </td>
                                     <td className="px-6 py-4">
+                                        <div className="font-semibold text-gray-900">₹{deliveryBoy.completeAmount.toLocaleString()}</div>
+                                    </td>
+                                    <td className="px-6 py-4">
                                         <div className="font-semibold text-gray-700">₹{deliveryBoy.amountToPayDeliveryBoy.toLocaleString()}</div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -122,7 +126,8 @@ const DeliveryBoysTable: React.FC<DeliveryBoysTableProps> = ({
                                                 <FiEye size={18} />
                                             </button>
                                             <button
-                                                onClick={() => handlePayDeliveryBoy(deliveryBoy.id, deliveryBoy.totalCash)}
+                                                // onClick={() => handlePayDeliveryBoy(deliveryBoy.id, deliveryBoy.totalCash)}
+                                                onClick={() => handlePayDeliveryBoy(deliveryBoy.id, deliveryBoy.completeAmount > 0 ? deliveryBoy.completeAmount : deliveryBoy.totalCash)}
                                                 disabled={deliveryBoy.amountToPayDeliveryBoy > 0 || processingPayment === deliveryBoy.id || !isPayButtonEnabled(deliveryBoy.nextPaymentDate)}
                                                 className={`px-3 py-1 rounded-lg shadow-sm transform transition-all flex items-center gap-1 text-sm
                                                ${(deliveryBoy.amountToPayDeliveryBoy > 0 || processingPayment === deliveryBoy.id || !isPayButtonEnabled(deliveryBoy.nextPaymentDate))
@@ -191,6 +196,10 @@ const DeliveryBoysTable: React.FC<DeliveryBoysTableProps> = ({
                                     <div className="font-semibold text-gray-900">₹{deliveryBoy.totalCash.toLocaleString()}</div>
                                 </div>
                                 <div>
+                                    <div className="text-gray-600 text-xs font-medium">Actual Cash to Pay</div>
+                                    <div className="font-semibold text-gray-900">₹{deliveryBoy.completeAmount.toLocaleString()}</div>
+                                </div>
+                                <div>
                                     <div className="text-gray-600 text-xs font-medium">Owed to Admin</div>
                                     <div className="font-semibold text-gray-700">₹{deliveryBoy.amountToPayDeliveryBoy.toLocaleString()}</div>
                                 </div>
@@ -216,12 +225,12 @@ const DeliveryBoysTable: React.FC<DeliveryBoysTableProps> = ({
                                 </button>
                                 <button
                                     onClick={() => handlePayDeliveryBoy(deliveryBoy.id, deliveryBoy.totalCash)}
-                                    disabled={deliveryBoy.amountToPayDeliveryBoy > 0 || processingPayment === deliveryBoy.id || !isPayButtonEnabled(deliveryBoy.nextPaymentDate)}
-                                    className={`px-4 py-2 rounded-lg shadow-sm transform transition-all flex items-center gap-2
-                    ${(deliveryBoy.amountToPayDeliveryBoy > 0 || processingPayment === deliveryBoy.id || !isPayButtonEnabled(deliveryBoy.nextPaymentDate))
-                                            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                                            : 'bg-gray-800 hover:bg-gray-900 text-white hover:scale-105'
-                                        }`}
+                                //                 disabled={deliveryBoy.amountToPayDeliveryBoy > 0 || processingPayment === deliveryBoy.id || !isPayButtonEnabled(deliveryBoy.nextPaymentDate)}
+                                //                 className={`px-4 py-2 rounded-lg shadow-sm transform transition-all flex items-center gap-2
+                                // ${(deliveryBoy.amountToPayDeliveryBoy > 0 || processingPayment === deliveryBoy.id || !isPayButtonEnabled(deliveryBoy.nextPaymentDate))
+                                //                         ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                                //                         : 'bg-gray-800 hover:bg-gray-900 text-white hover:scale-105'
+                                //                     }`}
                                 >
                                     <FiDollarSign size={16} />
                                     <span>{processingPayment === deliveryBoy.id ? 'Processing...' : 'Pay Now'}</span>

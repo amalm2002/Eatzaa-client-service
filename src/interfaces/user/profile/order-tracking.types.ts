@@ -13,6 +13,7 @@ export interface OrderItem {
 }
 
 export interface DeliveryBoy {
+    id?:string;
     name: string;
     mobile: string;
     profileImage: string;
@@ -91,4 +92,15 @@ export interface WalletModalProps {
     isWalletModalOpen: boolean;
     setIsWalletModalOpen: (open: boolean) => void;
     wallet: Wallet | null;
+}
+
+export interface Review {
+  id: string; 
+  userId: string;
+  deliveryBoyId: string;
+  orderId: string;
+  rating: number;       
+  comment: string;
+  createdAt: string;    
+  updatedAt?: string;   
 }

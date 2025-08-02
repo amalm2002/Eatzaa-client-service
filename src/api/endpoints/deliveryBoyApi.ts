@@ -76,9 +76,9 @@ export const deliveryBoyApi = {
         return response.data;
     },
 
-    orderEarnings: async (dispatch: Dispatch, paymentMethod?: string, deliveryBoyId?: string, finalTotalDistance?: number, orderAmount?: number) => {
+    orderEarnings: async (dispatch: Dispatch, paymentMethod?: string, deliveryBoyId?: string, finalTotalDistance?: number, orderAmount?: number, order_id?: string) => {
         const axiosInstance = createAxios(dispatch)
-        const response = await axiosInstance.post('/complete-and-earn', { paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount })
+        const response = await axiosInstance.post('/complete-and-earn', { paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount, order_id })
         return response.data
     },
 
@@ -208,5 +208,47 @@ export const deliveryBoyApi = {
         const axiosInstance = createAxios(dispatch)
         const response = await axiosInstance.post('/check-inHand-cash-limit', { deliveryBoyId })
         return response
+    },
+
+    createAdminPayment: async (
+        dispatch: Dispatch,
+        data: { deliveryBoyId: string; amount: number; role?: string }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.post('/create-delivery-boy-admin-payment', data);
+        if (response.data.error) {
+            throw new Error(response.data.error);
+        }
+        return response.data;
+    },
+
+    verifyAdminPayment: async (
+        dispatch: Dispatch,
+        data: {
+            deliveryBoyId: string;
+            razorpay_payment_id: string;
+            razorpay_order_id: string;
+            razorpay_signature: string;
+            role?: string;
+        }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        return axiosInstance.post('/verify-delivery-boy-admin-payment', data);
+    },
+
+    cancelAdminPayment: async (
+        dispatch: Dispatch,
+        data: { deliveryBoyId: string; orderId: string; role?: string }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        return axiosInstance.post('/cancel-delivery-boy-admin-payment', data);
+    },
+
+    getDeliveryBoyInHandPaymentHistory: async (dispatch: Dispatch, data: { deliveryBoyId: string, role?: string }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.get('/get-partner-in-hand-payment-history', {
+            params: data
+        })
+        return response.data
     }
 };
