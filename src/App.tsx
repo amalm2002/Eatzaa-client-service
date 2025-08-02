@@ -28,6 +28,7 @@ import OrderList from './pages/restaurant/orderListPage'
 import OrderTrackingUI from './pages/user/profile/orderTrackingPage'
 import DeliveryMapPage from './pages/delivery-boy/locationMap/mapModal'
 import DeliveryPartnerEarnings from './pages/delivery-boy/earningsPage'
+import FoodDetailModal from './pages/user/foodDetailsPage'
 
 
 
@@ -93,6 +94,7 @@ function App() {
             <Route path="/user-check-out-page" element={user ? <Checkout /> : <Navigate to="/login" />} />
             <Route path="/order-history" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
             <Route path="/order-details-page/:id" element={user ? <OrderTrackingUI /> : <Navigate to="/login" />} />
+            <Route path="/dish/:dishId" element={user ? <FoodDetailModal /> : <Navigate to="/login" />} />
 
 
             {/* ---------- RESTAURANT ROUTES ---------- */}

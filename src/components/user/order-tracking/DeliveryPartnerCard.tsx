@@ -15,6 +15,8 @@ const DeliveryPartnerCard = ({ order }: DeliveryPartnerCardProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const userId = useSelector((store: { userAuth: { user_id: string } }) => store.userAuth.user_id);
+    const user = useSelector((store: { userAuth: { user: string } }) => store.userAuth.user);
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -41,6 +43,7 @@ const DeliveryPartnerCard = ({ order }: DeliveryPartnerCardProps) => {
         setIsSubmitting(true);
         try {
             const reviewData = {
+                userName:user,
                 deliveryBoyId: order.deliveryBoy?.id,
                 rating,
                 comment: reviewText,
@@ -72,7 +75,7 @@ const DeliveryPartnerCard = ({ order }: DeliveryPartnerCardProps) => {
         setReviewText(submittedReview.comment);
         setShowReviewModal(true);
     };
-console.log('rating :',rating,'comment :',reviewText);
+    console.log('rating :', rating, 'comment :', reviewText);
 
     const handleDeleteReview = async () => {
         try {

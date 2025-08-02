@@ -99,7 +99,7 @@ const FoodDeliveryPage = () => {
     fetchCartItems();
   }, [userId, dispatch]);
 
-  const handleAddToCart = async (dish: Dish) => {
+   const handleAddToCart = async (dish: Dish) => {
     if (dish.quantity === 0) {
       toast.error('This item is out of stock.');
       return;

@@ -230,7 +230,7 @@ export const userApi = {
         return response.data;
     },
 
-    reviewAndRaitingDeliveryBoy: async (dispatch: Dispatch, data: { deliveryBoyId?: string; rating: number; comment: string; orderId: string, userId: string, isEdit: boolean, }) => {
+    reviewAndRaitingDeliveryBoy: async (dispatch: Dispatch, data: { deliveryBoyId?: string; rating: number; comment: string; orderId: string, userId: string, isEdit: boolean, userName: string }) => {
         const axiosInstance = createAxios(dispatch)
         const response = await axiosInstance.patch('/delivery-boy-review-submition', data)
         return response.data
@@ -252,12 +252,12 @@ export const userApi = {
         return response.data
     },
 
-    reviewAndRatingFoodItem: async (dispatch: Dispatch, data: { itemId: string; rating: number; comment: string; orderId: string; userId: string; isEdit: boolean; }) => {
+    reviewAndRatingFoodItem: async (dispatch: Dispatch, data: { itemId: string; rating: number; comment: string; orderId: string; userId: string; isEdit: boolean; userName: string; }) => {
         const axiosInstance = createAxios(dispatch)
         const response = await axiosInstance.post('/review-the-food', data)
         return response.data
     },
-    
+
     deleteFoodItemReview: async (dispatch: Dispatch, data: { userId: string; orderId: string; itemId: string }) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post('/delete-food-review', data);
@@ -269,4 +269,16 @@ export const userApi = {
         const response = await axiosInstance.post('/get-user-review', data);
         return response.data;
     },
+
+    getMenuDetails: async (dispatch: Dispatch, data: { dishId?: string }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.get(`/get-menuItem/${data.dishId}`)
+        return response.data
+    },
+
+    getFoodReview: async (dispatch: Dispatch, data: { dishId?: string }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.get('/get-review', { params: data })
+        return response.data
+    }
 };
