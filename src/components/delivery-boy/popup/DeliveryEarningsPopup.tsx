@@ -38,16 +38,16 @@ export const EarningsPopup: React.FC<EarningsPopupProps> = ({
             <div
                 key={i}
                 className={`absolute text-xl ${i % 6 === 0
-                        ? 'text-orange-400'
-                        : i % 6 === 1
-                            ? 'text-yellow-400'
-                            : i % 6 === 2
-                                ? 'text-orange-300'
-                                : i % 6 === 3
-                                    ? 'text-yellow-300'
-                                    : i % 6 === 4
-                                        ? 'text-orange-500'
-                                        : 'text-yellow-500'
+                    ? 'text-orange-400'
+                    : i % 6 === 1
+                        ? 'text-yellow-400'
+                        : i % 6 === 2
+                            ? 'text-orange-300'
+                            : i % 6 === 3
+                                ? 'text-yellow-300'
+                                : i % 6 === 4
+                                    ? 'text-orange-500'
+                                    : 'text-yellow-500'
                     } ${showConfetti ? 'animate-ping' : ''}`}
                 style={{
                     left: '50%',
@@ -81,15 +81,13 @@ export const EarningsPopup: React.FC<EarningsPopupProps> = ({
     ));
 
     return (
-        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
-            <div className="relative bg-white/10 rounded-2xl shadow-2xl max-w-sm w-full mx-4 overflow-hidden transform transition-all duration-500 scale-100 animate-pulse">
-                {/* Celebration Background Elements */}
-                {showConfetti && (
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        {celebrationSparkles}
-                        {cheersEmojis}
-                    </div>
-                )}
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="relative bg-white/20 rounded-2xl shadow-2xl max-w-sm w-full mx-4 overflow-hidden transform transition-all duration-500 scale-100 animate-pulse">                {showConfetti && (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {celebrationSparkles}
+                    {cheersEmojis}
+                </div>
+            )}
 
                 <button
                     onClick={onClose}

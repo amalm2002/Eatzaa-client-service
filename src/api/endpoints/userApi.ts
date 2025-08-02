@@ -250,5 +250,23 @@ export const userApi = {
             params: data
         })
         return response.data
-    }
+    },
+
+    reviewAndRatingFoodItem: async (dispatch: Dispatch, data: { itemId: string; rating: number; comment: string; orderId: string; userId: string; isEdit: boolean; }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.post('/review-the-food', data)
+        return response.data
+    },
+    
+    deleteFoodItemReview: async (dispatch: Dispatch, data: { userId: string; orderId: string; itemId: string }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.post('/delete-food-review', data);
+        return response.data;
+    },
+
+    getUserReviewForFoodItem: async (dispatch: Dispatch, data: { userId: string; orderId: string; itemId: string }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.post('/get-user-review', data);
+        return response.data;
+    },
 };

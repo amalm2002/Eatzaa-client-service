@@ -48,9 +48,10 @@ const OrderTrackingUI = () => {
   ];
 
   useEffect(() => {
+    if (!order || order.currentStatus === 'delivered') return;
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [order?.currentStatus]);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -90,7 +91,7 @@ const OrderTrackingUI = () => {
               mobile: orderData.deliveryBoy.mobile,
               profileImage: orderData.deliveryBoy.profileImage,
               rating: 4.8,
-              totalDeliveries: 1000,
+              totalDeliveries: orderData.deliveryBoy.totalDeliveries,
             }
             : undefined,
         };
