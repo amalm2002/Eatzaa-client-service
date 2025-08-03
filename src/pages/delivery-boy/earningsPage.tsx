@@ -132,9 +132,6 @@ const DeliveryPartnerEarnings = () => {
                     }),
                 ]);
 
-                console.log('deliveryBoyData:', deliveryBoyData);
-                console.log('paymentHistoryResponse:', paymentHistoryResponse);
-
                 const updatedData: PartnerData = {
                     name: deliveryBoyData?.name || '',
                     rating: deliveryBoyData.rating || 4.8,
@@ -171,12 +168,11 @@ const DeliveryPartnerEarnings = () => {
                         : [],
                 };
 
-                console.log('Updated partnerData:', updatedData);
                 setPartnerData(updatedData);
                 storeInCookies(updatedData, savedTimerSeconds);
 
                 // if (!paymentHistoryResponse.success && paymentHistoryResponse.message !== 'No In-Hand payment history') {
-                    // toast.error(paymentHistoryResponse.message || 'No payment history available.');
+                // toast.error(paymentHistoryResponse.message || 'No payment history available.');
                 // }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -187,9 +183,9 @@ const DeliveryPartnerEarnings = () => {
         fetchData();
     }, [deliveryBoyId, deliveryBoyRole, deliveryCompletedTrigger, dispatch]);
 
-    useEffect(() => {
-        console.log('partnerData.paymentHistory:', partnerData.paymentHistory);
-    }, [partnerData.paymentHistory]);
+    // useEffect(() => {
+    //     console.log('partnerData.paymentHistory:', partnerData.paymentHistory);
+    // }, [partnerData.paymentHistory]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -199,20 +195,17 @@ const DeliveryPartnerEarnings = () => {
     }, []);
 
     const handleLogout = async () => {
-        try {
-            const data = await deliveryBoyApi.updateOnlineStatus(dispatch, deliveryBoyId, false);
-            if (data.success) {
-                Cookies.remove('timerSeconds');
-                dispatch(deliveryBoyLogout());
-                localStorage.removeItem('deliveryBoyToken');
-                localStorage.removeItem('deliveryBoyRefreshToken');
-                Cookies.remove('deliveryBoyData');
-                navigate('/deliveryBoy-login');
-            }
-        } catch (error) {
-            console.error('Error logging out:', error);
-            toast.error('Failed to log out. Please try again.');
+        if (partnerData.isOnline) {
+            toast.warning('Please turn off your online status before logging out.');
+            return;
         }
+        Cookies.remove('timerSeconds');
+        dispatch(deliveryBoyLogout());
+        localStorage.removeItem('deliveryBoyToken');
+        localStorage.removeItem('deliveryBoyRefreshToken');
+        Cookies.remove('deliveryBoyData');
+        navigate('/deliveryBoy-login');
+
     };
 
     const formatDate = (dateString: string) => {

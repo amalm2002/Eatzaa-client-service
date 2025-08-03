@@ -18,7 +18,6 @@ const ZoneShiftPage: React.FC<ZoneShiftPageProps> = ({ zone, setZone, shift, set
         const fetchZone = async () => {
             try {
                 const data = await deliveryBoyApi.fetchZones(dispatch);
-                console.log('fetch zone :', data);
                 const formattedZones = data.fetchZones.map((zone: any) => ({
                     _id: zone._id,
                     name: zone.name,

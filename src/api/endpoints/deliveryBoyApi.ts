@@ -250,5 +250,27 @@ export const deliveryBoyApi = {
             params: data
         })
         return response.data
-    }
+    },
+
+    getAllDeliverBoyHelpOptions: async (dispatch: Dispatch) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.get('/get-all-help-options');
+        return response.data;
+    },
+
+    getChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.get(`/delivery-boy/chat-state/${deliveryBoyId}`);
+        return response.data;
+    },
+    saveChatState: async (dispatch: Dispatch, deliveryBoyId: string, state: any) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.post(`/delivery-boy/chat-state/${deliveryBoyId}`, state);
+        return response.data;
+    },
+    clearChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.delete(`/delivery-boy/chat-state/${deliveryBoyId}`);
+        return response.data;
+    },
 };

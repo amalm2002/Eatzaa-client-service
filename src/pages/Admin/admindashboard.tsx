@@ -16,6 +16,7 @@ import { FoodCategory } from '../../interfaces/admin/dashboard/food-category.typ
 import { FoodDeliveryDashboardProps } from '../../interfaces/admin/dashboard/food-delivery-dash.types';
 import RidePaymentManagement from './delivery-boy/ridePayment';
 import DeliveryPaymentManagement from './delivery-boy/deliveryPartnerPayment';
+import DeliveryHelpAdmin from './delivery-boy/deliveryBoyHelpsection';
 
 const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPage = 'Dashboard' }) => {
   const [activePage, setActivePage] = useState(initialPage);
@@ -52,6 +53,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
       navigate('/admin/ride-payment')
     } else if (page === 'PartnerPayment') {
       navigate('/admin/partner-earnings-payment')
+    } else if (page === 'Help Center') {
+      navigate('/admin/partner/helpcenter')
     } else {
       navigate('/admin-dashboard');
     }
@@ -99,6 +102,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
           <DeliveryBoyListPage />
         ) : activePage === 'Payments' ? (
           <PaymentListPage />
+        ) : activePage === 'Help Center' ? (
+          <DeliveryHelpAdmin />
         ) : activePage === 'PartnerPayment' ? (
           <DeliveryPaymentManagement />
         ) : activePage === 'RidePayment' ? (
@@ -356,7 +361,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                       display: none;
                      }
                   `}</style>
-                    <table className="min-w-full divide-y divide-gray-200">
+                  <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                       <tr>
                         {['ID', 'Type', 'Status', 'Date & Time', 'Action'].map((header) => (

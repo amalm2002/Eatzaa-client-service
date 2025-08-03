@@ -1,9 +1,10 @@
-import { Menu, LogOut, Package, DollarSign, Clock, MapPin } from 'lucide-react';
+import { Menu, LogOut, Package, HelpCircleIcon, DollarSign, Clock, MapPin } from 'lucide-react';
 import { SidebarProps } from '../../interfaces/delivery-boy/layout/sidebar.types';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ sidebarOpen, toggleSidebar, partnerData, handleLogout }: SidebarProps) => {
     const navigate = useNavigate();
+    const location = useLocation()
 
     const handleNavigation = (path?: string) => {
         if (path) {
@@ -45,21 +46,26 @@ const Sidebar = ({ sidebarOpen, toggleSidebar, partnerData, handleLogout }: Side
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul>
                     {[
-                        { icon: <Package size={20} />, label: 'Dashboard', active: true ,path:'/deliveryBoy-Home'},
-                        { icon: <DollarSign size={20} />, label: 'Earnings',  path: '/deliveryBoy-Earnings' },
+                        { icon: <Package size={20} />, label: 'Dashboard', path: '/deliveryBoy-Home' },
+                        { icon: <DollarSign size={20} />, label: 'Earnings', path: '/deliveryBoy-Earnings' },
                         { icon: <Clock size={20} />, label: 'My Activity' },
                         { icon: <MapPin size={20} />, label: 'Order History' },
-                    ].map((item, index) => (
-                        <li key={index}>
-                            <button
-                                onClick={() => handleNavigation(item.path)}
-                                className={`flex items-center py-3 px-4 w-full text-left ${item.active ? 'bg-orange-100 text-orange-600' : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'}`}
-                            >
-                                <span className="flex-shrink-0">{item.icon}</span>
-                                {sidebarOpen && <span className="ml-3">{item.label}</span>}
-                            </button>
-                        </li>
-                    ))}
+                        { icon: <HelpCircleIcon size={20} />, label: 'Need Help', path: '/deliveryBoy/Need-Help' },
+                    ].map((item, index) => {
+                        const isActive = location.pathname === item.path;
+                        return (
+                            <li key={index}>
+                                <button
+                                    onClick={() => handleNavigation(item.path)}
+                                    className={`flex items-center py-3 px-4 w-full text-left ${isActive ? 'bg-orange-100 text-orange-600' : 'text-gray-600 hover:bg-orange-50 hover:text-orange-600'}`}
+                                >
+                                    <span className="flex-shrink-0">{item.icon}</span>
+                                    {sidebarOpen && <span className="ml-3">{item.label}</span>}
+                                </button>
+                            </li>
+                        );
+                    })
+                    }
                 </ul>
             </nav>
 

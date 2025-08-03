@@ -234,7 +234,7 @@ export const adminApi = {
         return response;
     },
 
-    createRazorpayOrder: async (dispatch: Dispatch, data: { deliveryBoyId: string, amount: number, role:string }) => {
+    createRazorpayOrder: async (dispatch: Dispatch, data: { deliveryBoyId: string, amount: number, role: string }) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post('/create-delivery-partner-order', data)
         if (response.data.error) {
@@ -245,14 +245,48 @@ export const adminApi = {
 
     verifyPayment: async (
         dispatch: Dispatch,
-        data: { deliveryBoyId?: string, razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string; role:string }
+        data: { deliveryBoyId?: string, razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string; role: string }
     ) => {
         const axiosInstance = createAxios(dispatch);
         return axiosInstance.post('/verify-payment-delivery-partner', data);
     },
 
-    cancelPayment: async (dispatch: Dispatch, data: { deliveryBoyId: string; orderId: string,role:string }) => {
+    cancelPayment: async (dispatch: Dispatch, data: { deliveryBoyId: string; orderId: string, role: string }) => {
         const axiosInstance = createAxios(dispatch);
         return axiosInstance.post('/cancel-delivery-partner-payment', data);
     },
+
+    createDeliveryBoyHelpOption: async (dispatch: Dispatch, data: {
+        title: string;
+        description: string;
+        category: string;
+        isActive: boolean;
+    }) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.post('/delivery-boy/add-help-option', data)
+        return response.data
+    },
+
+    updateDeliveryBoyHelpOption: async (dispatch: Dispatch, id: string, data: {
+        title: string;
+        description: string;
+        category: string;
+        isActive: boolean;
+    }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.put(`/delivery-boy/update-help-option/${id}`, data);
+        return response.data;
+    },
+
+    deleteDeliveryBoyHelpOption: async (dispatch: Dispatch, id: string) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.delete(`/delivery-boy/delete-help-option/${id}`);
+        return response.data;
+    },
+
+    getAllDeliveryBoyHelpOptions: async (dispatch: Dispatch) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.get('/delivery-boy/get-all-help-options');
+        return response.data;
+    }
 };

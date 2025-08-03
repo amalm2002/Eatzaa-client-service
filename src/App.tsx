@@ -29,6 +29,7 @@ import OrderTrackingUI from './pages/user/profile/orderTrackingPage'
 import DeliveryMapPage from './pages/delivery-boy/locationMap/mapModal'
 import DeliveryPartnerEarnings from './pages/delivery-boy/earningsPage'
 import FoodDetailModal from './pages/user/foodDetailsPage'
+import DeliveryHelpChat from './pages/delivery-boy/needHelpPage'
 
 
 
@@ -65,10 +66,12 @@ function App() {
     '/admin/delivery-boys/:id',
     '/admin/ride-payment',
     '/admin/partner-earnings-payment',
+    '/admin/partner/helpcenter',
 
     '/deliveryBoy-login',
     '/deliveryBoy-Home',
-    '/deliveryBoy-Earnings'
+    '/deliveryBoy-Earnings',
+    '/deliveryBoy/Need-Help',
   ]
   // const showFooter = !hideFooterPaths.includes(location.pathname)
   const showFooter = !hideFooterPaths.some((path) =>
@@ -122,6 +125,7 @@ function App() {
             <Route path="/admin/delivery-boys/:id" element={admin ? <AdminDashboard initialPage="DeliveryBoyDetails" /> : <Navigate to="/" />} />
             <Route path="/admin/ride-payment" element={admin ? <AdminDashboard initialPage="RidePayment" /> : <Navigate to="/" />} />
             <Route path="/admin/partner-earnings-payment" element={admin ? <AdminDashboard initialPage="PartnerPayment" /> : <Navigate to="/" />} />
+            <Route path="/admin/partner/helpcenter" element={admin ? <AdminDashboard initialPage="Help Center" /> : <Navigate to="/" />} />
 
             {/* ---------- DELIVER_BOY ROUTES ---------- */}
             <Route path="/deliveryBoy-Home" element={deliveryBoy ? <DeliveryPartnerHomepage /> : <Navigate to="/deliveryBoy-login" />} />
@@ -134,6 +138,7 @@ function App() {
               />
             ) : (<DeliveryBoyLogin />)} />
             <Route path='/deliveryBoy-Earnings' element={deliveryBoy ? <DeliveryPartnerEarnings /> : <Navigate to="/deliveryBoy-login" />} />
+            <Route path='/deliveryBoy/Need-Help' element={deliveryBoy ? <DeliveryHelpChat /> : <Navigate to="/deliveryBoy-login" />} />
           </Routes>
         </div>
         {showFooter && <Footer />}
