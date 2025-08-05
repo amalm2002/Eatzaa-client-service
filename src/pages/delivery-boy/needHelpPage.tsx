@@ -504,18 +504,18 @@ const DeliveryHelpChat: React.FC = () => {
         }
     };
 
-    const handleBack = async () => {
-        console.log('Back clicked: Resetting to welcome');
-        setCurrentStep('welcome');
-        setSelectedOption(null);
-        setConcernForm({ reason: '', description: '' });
-        setSelectedZone('');
-        setConcernId(null);
-        const welcomeMessage = getWelcomeMessage();
-        setMessages([welcomeMessage]);
-        await saveChatStateToApi.flush();
-        await clearChatStateFromApi();
-    };
+    // const handleBack = async () => {
+    //     console.log('Back clicked: Resetting to welcome');
+    //     setCurrentStep('welcome');
+    //     setSelectedOption(null);
+    //     setConcernForm({ reason: '', description: '' });
+    //     setSelectedZone('');
+    //     setConcernId(null);
+    //     const welcomeMessage = getWelcomeMessage();
+    //     setMessages([welcomeMessage]);
+    //     await saveChatStateToApi.flush();
+    //     await clearChatStateFromApi();
+    // };
 
     const handleLogout = async () => {
         if (partnerData.isOnline) {

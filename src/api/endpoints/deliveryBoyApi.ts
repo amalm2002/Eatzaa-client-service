@@ -4,7 +4,6 @@ import { OrderApiResponse } from '../../interfaces/delivery-boy/location-map/ord
 import { VerifyOrderResponse } from '../../interfaces/delivery-boy/location-map/verify-order-response.types';
 import { UserApiResponse } from '../../interfaces/delivery-boy/location-map/user-api-response.types';
 import { UserDetails } from '../../interfaces/delivery-boy/authentication/user-details.types';
-import { HelpOption } from '../../pages/delivery-boy/needHelpPage';
 
 // Centralized API service for delivery boy-related calls
 

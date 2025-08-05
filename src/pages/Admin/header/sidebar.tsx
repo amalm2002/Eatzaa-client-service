@@ -4,12 +4,10 @@ import {
   FiShoppingBag,
   FiUsers,
   FiClipboard,
-  FiSettings,
   FiHelpCircle,
   FiLogOut,
   FiTruck,
   FiDollarSign,
-  FiTag,
   FiBarChart2,
   FiMenu,
   FiX,
@@ -44,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
     { icon: FiTruck, text: 'RidePayment' },
     { icon: FiUserCheck, text: 'PartnerPayment' },
     { icon: FiHelpCircle, text: 'Help Center' },
+    { icon: FiHelpCircle, text: 'Concern' },
     { icon: FiLogOut, text: 'Logout' },
   ];
 

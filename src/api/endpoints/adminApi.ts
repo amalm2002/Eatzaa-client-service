@@ -14,14 +14,6 @@ export const adminApi = {
 
     //Restaurant side API calls
 
-    // fetchRestaurants: async (dispatch: Dispatch) => {
-    //     const axiosInstance = createAxios(dispatch);
-    //     const response = await axiosInstance.get('/getAllRestaurants');
-    //     if (response.data.message !== 'success') {
-    //         throw new Error(response.data.message || 'Failed to load restaurants');
-    //     }
-    //     return response.data;
-    // },
     fetchRestaurants: async (dispatch: Dispatch, searchTerm?: string, statusFilter?: string) => {
         const axiosInstance = createAxios(dispatch);
         const queryParams = new URLSearchParams();
@@ -114,6 +106,7 @@ export const adminApi = {
         }
         return response.data;
     },
+
     //Deliveryboy side API calls
     fetchDeliveryBoys: async (dispatch: Dispatch) => {
         const axiosInstance = createAxios(dispatch);
@@ -288,5 +281,17 @@ export const adminApi = {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.get('/delivery-boy/get-all-help-options');
         return response.data;
+    },
+
+    fetchAllConcerns: async (dispatch: Dispatch) => {
+        const axiosInstance = createAxios(dispatch)
+        const response = await axiosInstance.get('/get-all-concern')
+        return response.data
+    },
+
+    verifyTheConcern: async (dispatch: Dispatch, data: { id: string, newStatus: string }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.patch('/verify-concern', data)
+        return response.data
     }
 };

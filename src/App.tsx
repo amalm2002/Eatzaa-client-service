@@ -67,6 +67,7 @@ function App() {
     '/admin/ride-payment',
     '/admin/partner-earnings-payment',
     '/admin/partner/helpcenter',
+    '/admin/partner/concern',
 
     '/deliveryBoy-login',
     '/deliveryBoy-Home',
@@ -126,6 +127,7 @@ function App() {
             <Route path="/admin/ride-payment" element={admin ? <AdminDashboard initialPage="RidePayment" /> : <Navigate to="/" />} />
             <Route path="/admin/partner-earnings-payment" element={admin ? <AdminDashboard initialPage="PartnerPayment" /> : <Navigate to="/" />} />
             <Route path="/admin/partner/helpcenter" element={admin ? <AdminDashboard initialPage="Help Center" /> : <Navigate to="/" />} />
+            <Route path="/admin/partner/concern" element={admin ? <AdminDashboard initialPage="Concern" /> : <Navigate to="/" />} />
 
             {/* ---------- DELIVER_BOY ROUTES ---------- */}
             <Route path="/deliveryBoy-Home" element={deliveryBoy ? <DeliveryPartnerHomepage /> : <Navigate to="/deliveryBoy-login" />} />
