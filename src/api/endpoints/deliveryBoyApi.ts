@@ -4,6 +4,7 @@ import { OrderApiResponse } from '../../interfaces/delivery-boy/location-map/ord
 import { VerifyOrderResponse } from '../../interfaces/delivery-boy/location-map/verify-order-response.types';
 import { UserApiResponse } from '../../interfaces/delivery-boy/location-map/user-api-response.types';
 import { UserDetails } from '../../interfaces/delivery-boy/authentication/user-details.types';
+import { HelpOption } from '../../pages/delivery-boy/needHelpPage';
 
 // Centralized API service for delivery boy-related calls
 
@@ -259,18 +260,34 @@ export const deliveryBoyApi = {
     },
 
     getChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.get(`/delivery-boy/chat-state/${deliveryBoyId}`);
         return response.data;
     },
     saveChatState: async (dispatch: Dispatch, deliveryBoyId: string, state: any) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post(`/delivery-boy/chat-state/${deliveryBoyId}`, state);
         return response.data;
     },
     clearChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.delete(`/delivery-boy/chat-state/${deliveryBoyId}`);
+        return response.data;
+    },
+    submitConcern: async (
+        dispatch: Dispatch,
+        data: { deliveryBoyId: string; selectedOption: { _id?: string; title: string; description?: string; category?: string; isActive?: boolean; responseMessage?: string } | null; reason: string; description: string }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.patch('/delivery-boy/chat-state/concern', data);
+        return response.data;
+    },
+    submitZoneChangeRequest: async (
+        dispatch: Dispatch,
+        data: { deliveryBoyId: string; concernId: string; zoneId: string; zoneName: string; reason: string; description: string }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.patch('/delivery-boy/chat-state/zone', data);
         return response.data;
     },
 };

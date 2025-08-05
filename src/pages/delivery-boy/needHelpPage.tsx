@@ -23,13 +23,13 @@ interface Message {
     showZoneSelection?: boolean;
 }
 
-interface HelpOption {
-    _id: string;
+export interface HelpOption {
+    _id?: string;
     title: string;
-    description: string;
-    category: string;
-    isActive: boolean;
-    responseMessage: string;
+    description?: string;
+    category?: string;
+    isActive?: boolean;
+    responseMessage?: string;
 }
 
 interface Zone {
@@ -49,6 +49,7 @@ const DeliveryHelpChat: React.FC = () => {
     const [userMessage, setUserMessage] = useState('');
     const [concernForm, setConcernForm] = useState<ConcernForm>({ reason: '', description: '' });
     const [selectedZone, setSelectedZone] = useState<string>('');
+    const [concernId, setConcernId] = useState<string | null>(null); // New state for concernId
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
     const [currentTime, setCurrentTime] = useState<Date>(new Date());
     const [partnerData, setPartnerData] = useState<PartnerData>({
@@ -71,7 +72,7 @@ const DeliveryHelpChat: React.FC = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const deliveryBoyId = useSelector((store: RootState) => store.deliveryBoyAuth.delivery_boy_id);
+    const deliveryBoyId = useSelector((state: RootState) => state.deliveryBoyAuth.delivery_boy_id);
 
     const sensitiveFields: (keyof Pick<PartnerData, 'name' | 'email' | 'mobile'>)[] = ['name', 'email', 'mobile'];
 
@@ -99,6 +100,7 @@ const DeliveryHelpChat: React.FC = () => {
                     selectedOption: response.data.selectedOption,
                     concernForm: response.data.concernForm,
                     selectedZone: response.data.selectedZone,
+                    concernId: response.data.concernId, 
                 };
             }
             return null;
@@ -107,21 +109,11 @@ const DeliveryHelpChat: React.FC = () => {
         }
     };
 
-    const saveChatStateToApi = debounce(async () => {
+    const saveChatStateToApi = debounce(async (stateToSave: any) => {
         if (!deliveryBoyId || !isChatStateLoaded) {
             console.log('No deliveryBoyId or chat state not loaded, skipping saveChatStateToApi');
             return;
         }
-        const stateToSave = {
-            messages: messages.map((msg) => ({
-                ...msg,
-                timestamp: msg.timestamp,
-            })),
-            currentStep,
-            selectedOption,
-            concernForm,
-            selectedZone,
-        };
         try {
             await deliveryBoyApi.saveChatState(dispatch, deliveryBoyId, stateToSave);
         } catch (error: any) {
@@ -191,12 +183,12 @@ const DeliveryHelpChat: React.FC = () => {
                             description: option.description,
                             category: option.category,
                             isActive: option.isActive,
-                            responseMessage: option.responseMessage || 'Your request has been submitted successfully. Our team will get back to you soon.',
+                            responseMessage: 'Your concern has been submitted and is awaiting verification.',
                         }));
                     setHelpOptions(activeOptions);
 
                     const zonesResponse = await deliveryBoyApi.fetchZones(dispatch);
-                    if (zonesResponse.success) {
+                    if (zonesResponse.message === 'Fetch data success') {
                         const zoneList = zonesResponse.fetchZones.map((zone: any) => ({
                             _id: zone._id,
                             name: zone.name,
@@ -204,23 +196,13 @@ const DeliveryHelpChat: React.FC = () => {
                         setZones(zoneList);
                         storeOptionsAndZonesInCookies(activeOptions, zoneList);
                     } else {
-                        toast.error(zonesResponse.message || 'Failed to fetch zones.');
+                        toast.error(zonesResponse.message || 'Something went wrong');
                     }
                 } else {
                     toast.error(helpResponse.message || 'Failed to fetch help options.');
                 }
             } catch (error: any) {
                 console.error('Error fetching help options or zones:', error);
-                if (error.response?.status === 401) {
-                    toast.error('Session expired. Please log in again.');
-                    dispatch(deliveryBoyLogout());
-                    localStorage.removeItem('deliveryBoyToken');
-                    localStorage.removeItem('deliveryBoyRefreshToken');
-                    Cookies.remove('deliveryBoyData');
-                    navigate('/deliveryBoy-login');
-                } else {
-                    toast.error((error as Error).message || 'Something went wrong.');
-                }
             }
         };
         fetchHelpOptionsAndZones();
@@ -301,16 +283,6 @@ const DeliveryHelpChat: React.FC = () => {
                 storeInCookies(updatedData, 0);
             } catch (error: any) {
                 console.error('Error fetching delivery boy data:', error);
-                if (error.response?.status === 401) {
-                    toast.error('Session expired. Please log in again.');
-                    dispatch(deliveryBoyLogout());
-                    localStorage.removeItem('deliveryBoyToken');
-                    localStorage.removeItem('deliveryBoyRefreshToken');
-                    Cookies.remove('deliveryBoyData');
-                    navigate('/deliveryBoy-login');
-                } else {
-                    toast.error('Failed to fetch delivery boy data.');
-                }
             }
         };
         if (deliveryBoyId) fetchDeliveryBoyData();
@@ -334,60 +306,70 @@ const DeliveryHelpChat: React.FC = () => {
     useEffect(() => {
         const initChatState = async () => {
             if (!deliveryBoyId) {
-                console.log('Skipping chat state init: deliveryBoyId is undefined');
                 const welcomeMessage = getWelcomeMessage();
                 setMessages([welcomeMessage]);
                 setIsChatStateLoaded(true);
                 return;
             }
-            console.log('Initializing chat state with deliveryBoyId:', deliveryBoyId);
             const savedState = await fetchChatStateFromApi();
             const welcomeMessage = getWelcomeMessage();
 
             if (savedState && savedState.messages && savedState.messages.length > 0) {
-                console.log('Restoring saved state from API:', savedState);
                 setMessages(savedState.messages);
                 setCurrentStep(savedState.currentStep || 'welcome');
                 setSelectedOption(savedState.selectedOption || null);
                 setConcernForm(savedState.concernForm || { reason: '', description: '' });
                 setSelectedZone(savedState.selectedZone || '');
+                setConcernId(savedState.concernId || null); 
             } else {
-                console.log('No saved messages or empty state, setting welcome message');
                 setMessages([welcomeMessage]);
                 setCurrentStep('welcome');
                 setSelectedOption(null);
                 setConcernForm({ reason: '', description: '' });
                 setSelectedZone('');
-                await saveChatStateToApi.flush();
-                await saveChatStateToApi();
+                setConcernId(null);
+                await saveChatStateToApi({
+                    messages: [welcomeMessage],
+                    currentStep: 'welcome',
+                    selectedOption: null,
+                    concernForm: { reason: '', description: '' },
+                    selectedZone: '',
+                    concernId: null,
+                });
             }
             setIsChatStateLoaded(true);
         };
         initChatState();
     }, [deliveryBoyId, dispatch, navigate]);
 
-    useEffect(() => {
-        if (isChatStateLoaded) {
-            saveChatStateToApi();
-        }
-    }, [messages, currentStep, selectedOption, concernForm, selectedZone, isChatStateLoaded]);
+    const saveChatState = async () => {
+        const stateToSave = {
+            messages: messages.map((msg) => ({
+                ...msg,
+                timestamp: msg.timestamp,
+            })),
+            currentStep,
+            selectedOption,
+            concernForm,
+            selectedZone,
+            concernId,
+        };
+        await saveChatStateToApi.flush();
+        await saveChatStateToApi(stateToSave);
+    };
 
     useEffect(() => {
         const handleBeforeUnload = () => {
-            console.log('Before unload: Saving state to API');
-            saveChatStateToApi.flush();
-            saveChatStateToApi();
+            saveChatState();
         };
 
         window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
-            console.log('Unmounting: Saving state to API');
-            saveChatStateToApi.flush();
-            saveChatStateToApi();
+            saveChatState();
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, [messages, currentStep, selectedOption, concernForm, selectedZone, isChatStateLoaded]);
+    }, [messages, currentStep, selectedOption, concernForm, selectedZone, concernId, isChatStateLoaded]);
 
     const addMessage = (text: string, isBot: boolean, options?: string[], showForm?: boolean, showZoneSelection?: boolean) => {
         const newMessage: Message = {
@@ -399,7 +381,6 @@ const DeliveryHelpChat: React.FC = () => {
             showForm,
             showZoneSelection,
         };
-        console.log('Adding message:', newMessage);
         setMessages((prev) => [...prev, newMessage]);
     };
 
@@ -428,6 +409,8 @@ const DeliveryHelpChat: React.FC = () => {
         if (option) {
             setSelectedOption(option);
             setCurrentStep('concern');
+            setConcernForm({ reason: '', description: '' });
+            setConcernId(null); 
             addMessage(optionTitle, false);
             setTimeout(() => {
                 addMessage(`You've selected: ${optionTitle}\n\nPlease provide more details about your concern so we can assist you better.`, true, undefined, true);
@@ -437,85 +420,87 @@ const DeliveryHelpChat: React.FC = () => {
 
     const handleConcernSubmit = async () => {
         if (!concernForm.reason.trim() || !concernForm.description.trim()) {
+            toast.error('Please fill in both reason and description fields.');
             return;
         }
 
         addMessage(`Reason: ${concernForm.reason}\nDescription: ${concernForm.description}`, false);
 
-        if (selectedOption?.title === 'Zone Change Request') {
-            setCurrentStep('zones');
-            setTimeout(() => {
-                addMessage('Thank you for providing the details. Please select your preferred zone from the options below:', true, undefined, false, true);
-            }, 500);
-        } else {
-            try {
-                // await deliveryBoyApi.submitConcern(dispatch, {
-                //     deliveryBoyId,
-                //     optionId: selectedOption?._id,
-                //     reason: concernForm.reason,
-                //     description: concernForm.description,
-                // });
-                setCurrentStep('completed');
-                setTimeout(() => {
-                    addMessage(selectedOption?.responseMessage || 'Your request has been submitted successfully.', true);
-                }, 500);
+        try {
+            const response = await deliveryBoyApi.submitConcern(dispatch, {
+                deliveryBoyId,
+                selectedOption,
+                reason: concernForm.reason,
+                description: concernForm.description,
+            });
 
-                setTimeout(() => {
-                    addMessage('Is there anything else I can help you with? Type "/start" to see options again.', true);
-                }, 1500);
-            } catch (error: any) {
-                console.error('Error submitting concern:', error);
-                if (error.response?.status === 401) {
-                    toast.error('Session expired. Please log in again.');
-                    dispatch(deliveryBoyLogout());
-                    localStorage.removeItem('deliveryBoyToken');
-                    localStorage.removeItem('deliveryBoyRefreshToken');
-                    Cookies.remove('deliveryBoyData');
-                    navigate('/deliveryBoy-login');
+            if (response.success) {
+                setConcernId(response.concernId); 
+                await saveChatState();
+                if (selectedOption?.title === 'Zone Change Request') {
+                    setCurrentStep('zones');
+                    setTimeout(() => {
+                        addMessage('Thank you for providing the details. Please select your preferred zone from the options below:', true, undefined, false, true);
+                    }, 500);
                 } else {
-                    toast.error((error as Error).message || 'Failed to submit concern.');
+                    setCurrentStep('completed');
+                    setTimeout(() => {
+                        addMessage('Your concern has been submitted and is awaiting verification.', true);
+                    }, 500);
+                    setTimeout(() => {
+                        addMessage('Is there anything else I can help you with? Type "/start" to see options again.', true);
+                    }, 1500);
+                    setConcernForm({ reason: '', description: '' });
+                    setConcernId(null);
                 }
+            } else {
+                throw new Error(response.message || 'Failed to submit concern.');
             }
+        } catch (error: any) {
+            console.error('Error submitting concern:', error);
+            addMessage('Failed to submit your concern. Please try again.', true);
         }
-
-        setConcernForm({ reason: '', description: '' });
     };
 
     const handleZoneSelect = async (zoneName: string) => {
         const selectedZoneObj = zones.find((zone) => zone.name === zoneName);
         if (!selectedZoneObj) return;
 
+        if (!concernId) {
+            addMessage('Error: No concern ID found. Please submit the concern again.', true);
+            return;
+        }
+
         setSelectedZone(zoneName);
         addMessage(`Selected Zone: ${zoneName}`, false);
 
         try {
-            // await deliveryBoyApi.submitZoneChangeRequest(dispatch, {
-            //     deliveryBoyId,
-            //     zoneId: selectedZoneObj._id,
-            //     zoneName: selectedZoneObj.name,
-            //     reason: concernForm.reason,
-            //     description: concernForm.description,
-            // });
-            setCurrentStep('completed');
-            setTimeout(() => {
-                addMessage('Your submission has been received. You will receive an update within 24 hours.', true);
-            }, 500);
+            const response = await deliveryBoyApi.submitZoneChangeRequest(dispatch, {
+                deliveryBoyId,
+                concernId,
+                zoneId: selectedZoneObj._id,
+                zoneName: selectedZoneObj.name,
+                reason: concernForm.reason,
+                description: concernForm.description,
+            });
 
-            setTimeout(() => {
-                addMessage('Is there anything else I can help you with? Type "/start" to see options again.', true);
-            }, 1500);
+            if (response.success) {
+                setCurrentStep('completed');
+                setTimeout(() => {
+                    addMessage('Your zone change request has been submitted and is awaiting verification.', true);
+                }, 500);
+                setTimeout(() => {
+                    addMessage('Is there anything else I can help you with? Type "/start" to see options again.', true);
+                }, 1500);
+                setConcernForm({ reason: '', description: '' });
+                setConcernId(null);
+                await saveChatState();
+            } else {
+                throw new Error(response.message || 'Failed to submit zone change request.');
+            }
         } catch (error: any) {
             console.error('Error submitting zone change request:', error);
-            if (error.response?.status === 401) {
-                toast.error('Session expired. Please log in again.');
-                dispatch(deliveryBoyLogout());
-                localStorage.removeItem('deliveryBoyToken');
-                localStorage.removeItem('deliveryBoyRefreshToken');
-                Cookies.remove('deliveryBoyData');
-                navigate('/deliveryBoy-login');
-            } else {
-                toast.error((error as Error).message || 'Failed to submit zone change request.');
-            }
+            addMessage('Failed to submit your zone change request. Please try again.', true);
         }
     };
 
@@ -525,6 +510,7 @@ const DeliveryHelpChat: React.FC = () => {
         setSelectedOption(null);
         setConcernForm({ reason: '', description: '' });
         setSelectedZone('');
+        setConcernId(null);
         const welcomeMessage = getWelcomeMessage();
         setMessages([welcomeMessage]);
         await saveChatStateToApi.flush();
@@ -536,7 +522,6 @@ const DeliveryHelpChat: React.FC = () => {
             toast.warning('Please turn off your online status before logging out.');
             return;
         }
-        console.log('Logging out: Clearing storage and chat state');
         Cookies.remove('timerSeconds');
         Cookies.remove('helpOptions');
         Cookies.remove('zones');

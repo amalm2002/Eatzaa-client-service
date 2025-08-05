@@ -4,7 +4,7 @@ import { adminApi } from '../../../api/endpoints/adminApi';
 import { useDispatch } from 'react-redux';
 
 interface HelpOption {
-    _id: string; 
+    _id: string;
     title: string;
     description: string;
     category: string;
@@ -37,7 +37,7 @@ const DeliveryHelpAdmin: React.FC = () => {
             if (response.success) {
                 const mappedOptions = response.data.map((option: any) => ({
                     ...option,
-                    _id: option._id.toString() 
+                    _id: option._id.toString()
                 }));
                 setHelpOptions(mappedOptions);
             }
@@ -121,7 +121,7 @@ const DeliveryHelpAdmin: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-white text-black pt-20">
-            <div className="bg-white/15 text-white p-6 shadow-lg">
+            <div className="bg-black text-white p-6 shadow-lg">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ const DeliveryHelpAdmin: React.FC = () => {
                                     <p className="text-gray-600 mb-2">{option.description}</p>
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                                         <span className="bg-gray-100 px-2 py-1 rounded">{option.category}</span>
-                                        <span>Created: {option.createdAt}</span>
+                                        <span>Created:{option.createdAt?.replace('T', ' ').slice(0, 19)}</span>
                                     </div>
                                 </div>
 
@@ -217,7 +217,7 @@ const DeliveryHelpAdmin: React.FC = () => {
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                <div className="fixed inset-0 bg-white/20 bg-opacity-50 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between p-6 border-b">
                             <h2 className="text-xl font-bold">
