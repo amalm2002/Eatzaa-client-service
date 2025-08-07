@@ -38,7 +38,6 @@ const DeliveryCincernPanel: React.FC = () => {
         const fetchTheAllConcerns = async () => {
             try {
                 const response = await adminApi.fetchAllConcerns(dispatch);
-                console.log('resssssss :', response);
                 if (response.success && Array.isArray(response.data)) {
                     const transformedData: DeliveryBoy[] = response.data.map((item: any) => ({
                         id: item._id,

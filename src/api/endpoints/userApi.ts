@@ -100,6 +100,20 @@ export const userApi = {
         return axiosInstance.post<PlaceOrderResponse>('/place-order', orderData);
     },
 
+    handleFailedPayment: async (dispatch: Dispatch,
+        data: {
+            paymentDbId: string;
+            userId:string;
+            razorpay_order_id: string;
+            razorpay_payment_id: string;
+            error_description: string;
+            error_code: string;
+        }
+    ) => {
+        const axiosInstance = createAxios(dispatch);
+        return axiosInstance.post('/handle-failed-payment', data);
+    },
+
     getCartItems: async (dispatch: Dispatch, userId: string) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.get(`/get-cart/${userId}`);

@@ -263,16 +263,19 @@ export const deliveryBoyApi = {
         const response = await axiosInstance.get(`/delivery-boy/chat-state/${deliveryBoyId}`);
         return response.data;
     },
+
     saveChatState: async (dispatch: Dispatch, deliveryBoyId: string, state: any) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post(`/delivery-boy/chat-state/${deliveryBoyId}`, state);
         return response.data;
     },
+
     clearChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.delete(`/delivery-boy/chat-state/${deliveryBoyId}`);
         return response.data;
     },
+
     submitConcern: async (
         dispatch: Dispatch,
         data: { deliveryBoyId: string; selectedOption: { _id?: string; title: string; description?: string; category?: string; isActive?: boolean; responseMessage?: string } | null; reason: string; description: string }
@@ -281,6 +284,7 @@ export const deliveryBoyApi = {
         const response = await axiosInstance.patch('/delivery-boy/chat-state/concern', data);
         return response.data;
     },
+
     submitZoneChangeRequest: async (
         dispatch: Dispatch,
         data: { deliveryBoyId: string; concernId: string; zoneId: string; zoneName: string; reason: string; description: string }
@@ -289,4 +293,12 @@ export const deliveryBoyApi = {
         const response = await axiosInstance.patch('/delivery-boy/chat-state/zone', data);
         return response.data;
     },
+
+    getConcerns: async (dispatch: Dispatch, deliveryBoyId: string) => {
+        const axiosInstance = createAxios(dispatch)
+        console.log('delivey boy id :', deliveryBoyId);
+
+        const response = await axiosInstance.get('/deivery-boy/concern', { params: { deliveryBoyId } })
+        return response.data
+    }
 };
