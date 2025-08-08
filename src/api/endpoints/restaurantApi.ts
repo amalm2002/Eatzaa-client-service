@@ -171,6 +171,12 @@ export const restaurantApi = {
         }));
     },
 
+    fetchDashboardStats: async (dispatch: Dispatch, restaurantId: string, params: { period: string; startDate?: string; endDate?: string }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.get(`/dashboard-stats/${restaurantId}`, { params });
+        return response.data;
+    },
+
     getTheCustomers: async (dispatch: Dispatch, data: { userId: string[] }) => {
         const axiosInstance = createAxios(dispatch);
         const response = await axiosInstance.post('/customers', data)
