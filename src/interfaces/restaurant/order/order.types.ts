@@ -23,6 +23,7 @@ export interface Order {
     _id: string;
     orderId: string;
     userId: string;
+    userName?: string;
     items: OrderItem[];
     address: Address[];
     phoneNumber: string;

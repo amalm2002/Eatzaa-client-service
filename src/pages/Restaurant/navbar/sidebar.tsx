@@ -3,8 +3,6 @@ import {
     LayoutGrid,
     BarChart2,
     ShoppingCart,
-    MessageSquare,
-    Settings,
     Utensils,
     Users,
     X,
@@ -28,9 +26,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuO
         { icon: <BarChart2 size={20} />, label: 'Payment', path: '/restaurant-payment' },
         { icon: <ShoppingCart size={20} />, label: 'Orders', path: '/order-list-page' },
         { icon: <Utensils size={20} />, label: 'Menu Items', path: '/restaurant-menu-list' },
-        { icon: <Users size={20} />, label: 'Customers', path: '/restaurant-dashboard' },
-        { icon: <MessageSquare size={20} />, label: 'Messages', path: '/restaurant-dashboard' },
-        { icon: <Settings size={20} />, label: 'Settings', path: '/restaurant-dashboard' },
+        { icon: <Users size={20} />, label: 'Customers', path: '/restaurant-customers' },
         { icon: <History size={20} />, label: 'PaymentHistory', path: '/restaurant-payment-history' },
     ];
 

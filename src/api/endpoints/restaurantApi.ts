@@ -138,8 +138,8 @@ export const restaurantApi = {
         }
 
         const response = await axiosInstance.get(`/all-menus/${restaurantId}?${queryParams.toString()}`);
-        console.log('response api side :',response);
-        
+        console.log('response api side :', response);
+
         return response.data;
     },
 
@@ -169,6 +169,12 @@ export const restaurantApi = {
                 restaurantName: item.restaurantName,
             })),
         }));
+    },
+
+    getTheCustomers: async (dispatch: Dispatch, data: { userId: string[] }) => {
+        const axiosInstance = createAxios(dispatch);
+        const response = await axiosInstance.post('/customers', data)
+        return response.data
     },
 
     updateOrderStatus: async (dispatch: Dispatch, orderId: string, orderStatus: string) => {

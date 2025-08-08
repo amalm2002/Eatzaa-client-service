@@ -30,6 +30,7 @@ import DeliveryMapPage from './pages/delivery-boy/locationMap/mapModal'
 import DeliveryPartnerEarnings from './pages/delivery-boy/earningsPage'
 import FoodDetailModal from './pages/user/foodDetailsPage'
 import DeliveryHelpChat from './pages/delivery-boy/needHelpPage'
+import CustomerListUI from './pages/restaurant/customersListPage'
 
 
 
@@ -53,6 +54,7 @@ function App() {
     '/restaurant-menu-list',
     '/restaurant-edit-menu/:id',
     '/order-list-page',
+    '/restaurant-customers',
 
     '/admin-dashboard',
     '/admin/restaurants',
@@ -112,6 +114,7 @@ function App() {
             <Route path="/restaurant-payment-history" element={restaurant ? <TransactionHistory /> : <Navigate to="/restaurant-login" />} />
             <Route path="/restaurant-payment-details/:id" element={restaurant ? <TransactionDetails /> : <Navigate to="/restaurant-login" />} />
             <Route path="/order-list-page" element={restaurant ? <OrderList /> : <Navigate to="/restaurant-login" />} />
+            <Route path="/restaurant-customers" element={restaurant ? <CustomerListUI /> : <Navigate to="/restaurant-login" />} />
 
             {/* ---------- ADMIN ROUTES ---------- */}
             <Route path="/admin-dashboard" element={admin ? <AdminDashboard /> : <Navigate to="/" />} />

@@ -24,6 +24,7 @@ export interface CartItem {
 
 export interface OrderData {
   userId: string;
+  userName?:string
   cartItems: CartItem[];
   subtotal: number;
   deliveryFee: number;
@@ -40,7 +41,7 @@ export interface CreateOrderResponse {
   orderId: string;
   razorpayKey: string;
   error?: string;
-  paymentDbId?:string;
+  paymentDbId?: string;
 }
 
 export interface VerifyPaymentResponse {

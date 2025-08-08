@@ -25,6 +25,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>('');
 
   const userId = useSelector((store: { userAuth: { user_id: string } }) => store.userAuth.user_id);
+  const userName = useSelector((store: { userAuth: { user: string } }) => store.userAuth.user);
   const { state } = useLocation();
   const { cartItems = [], subtotal = 0, deliveryFee = 0, tax = 0, total = 0 } = state || {};
   const dispatch = useSelector((state: any) => state);
@@ -60,134 +61,6 @@ const Checkout = () => {
     setPaymentMethod(method);
   };
 
-  // const handlePlaceOrder = async () => {
-  //   if (!location) {
-  //     toast.error('Please select a delivery location');
-  //     return;
-  //   }
-  //   if (location.lat === 23.226390067116835 && location.lng === 79.17271614074708) {
-  //     toast.error('Please select a valid delivery location');
-  //     return;
-  //   }
-  //   if (!selectedAddress) {
-  //     toast.error('Please select a delivery address');
-  //     return;
-  //   }
-  //   if (!phoneNumber) {
-  //     toast.error('Please provide a phone number');
-  //     return;
-  //   }
-  //   if (!paymentMethod) {
-  //     toast.error('Please select a payment method');
-  //     return;
-  //   }
-
-  //   const formattedAddress = `${selectedAddress.houseName}, ${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.pinCode}`;
-
-  //   const orderData: OrderData = {
-  //     userId,
-  //     cartItems,
-  //     subtotal,
-  //     deliveryFee,
-  //     tax,
-  //     total,
-  //     location: {
-  //       latitude: location.lat,
-  //       longitude: location.lng,
-  //     },
-  //     address: formattedAddress,
-  //     phoneNumber,
-  //     paymentMethod,
-  //   };
-
-  //   try {
-  //     if (paymentMethod === 'upi') {
-  //       const response = await userApi.createOrder(dispatch, {
-  //         amount: total,
-  //         userId,
-  //         cartItems,
-  //       });
-  //       const { orderId, razorpayKey, paymentDbId } = response;
-  //       if (!orderId || !razorpayKey) {
-  //         toast.error('Invalid response from server');
-  //         return;
-  //       }
-
-  //       if (!window.Razorpay) {
-  //         toast.error('Razorpay SDK not loaded. Please try again.');
-  //         return;
-  //       }
-
-  //       const options: RazorpayOptions = {
-  //         key: razorpayKey,
-  //         amount: total * 100,
-  //         currency: 'INR',
-  //         name: 'Eatzaa Food Hub',
-  //         description: 'Order Payment',
-  //         order_id: orderId,
-  //         handler: async function (response: any) {
-  //           try {
-  //             const verifyResponse = await userApi.verifyPayment(dispatch, {
-  //               paymentDbId: paymentDbId,
-  //               razorpay_order_id: response.razorpay_order_id,
-  //               razorpay_payment_id: response.razorpay_payment_id,
-  //               razorpay_signature: response.razorpay_signature,
-  //               orderData: {
-  //                 ...orderData,
-  //                 paymentId: response.razorpay_payment_id,
-  //               },
-  //             });
-  //             if (verifyResponse.data.success) {
-  //               // await userApi.updateMenuQuantities(dispatch, cartItems);
-  //               await userApi.updateUserCart(dispatch, userId);
-  //               toast.success('Payment verified and order placed successfully!');
-  //               if (socket && isConnected && restaurant_id) {
-  //                 socket.emit('order-placed', { restaurantId: restaurant_id, orderId: verifyResponse.data.orderId });
-  //               }
-  //               navigate('/order-history', { state: { activeTab: 'orders' } });
-  //             } else {
-  //               toast.error('Order placement failed');
-  //             }
-  //           } catch (error: any) {
-  //             console.error('Payment verification failed:', error);
-  //             toast.error('Payment verification failed. Contact support.');
-  //           }
-  //         },
-  //         prefill: {
-  //           name: 'Eatzaa Food Hub',
-  //           email: 'eatzaafoodhub@gmail.com',
-  //           contact: phoneNumber,
-  //         },
-  //         theme: {
-  //           color: '#2C938C',
-  //         },
-  //       };
-
-  //       const rzp = new window.Razorpay(options);
-  //       rzp.on('payment.failed', function (response: any) {
-  //         toast.error(`Payment failed: ${response.error.description}`);
-  //       });
-  //       rzp.open();
-  //     } else {
-  //       const orderResponse = await userApi.placeOrder(dispatch, orderData);
-  //       if (orderResponse.data.success) {
-  //         await userApi.updateMenuQuantities(dispatch, cartItems);
-  //         await userApi.updateUserCart(dispatch, userId);
-  //         toast.success('Order placed successfully!');
-  //         if (socket && isConnected && restaurant_id) {
-  //           socket.emit('order-placed', { restaurantId: restaurant_id, orderId: orderResponse.data.orderId });
-  //         }
-  //         navigate('/order-history', { state: { activeTab: 'orders' } });
-  //       } else {
-  //         toast.error('Order placement failed');
-  //       }
-  //     }
-  //   } catch (error: any) {
-  //     console.log('check out side error :', error);
-  //     toast.error(`${error.message}`);
-  //   }
-  // };
-
   const handlePlaceOrder = async () => {
     if (!location) {
       toast.error('Please select a delivery location');
@@ -214,6 +87,7 @@ const Checkout = () => {
 
     const orderData: OrderData = {
       userId,
+      userName: userName,
       cartItems,
       subtotal,
       deliveryFee,
