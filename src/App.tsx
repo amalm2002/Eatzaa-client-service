@@ -31,6 +31,7 @@ import DeliveryPartnerEarnings from './pages/delivery-boy/earningsPage'
 import FoodDetailModal from './pages/user/foodDetailsPage'
 import DeliveryHelpChat from './pages/delivery-boy/needHelpPage'
 import CustomerListUI from './pages/restaurant/customersListPage'
+import ConcernsPage from './pages/delivery-boy/concernPage'
 
 
 
@@ -75,6 +76,7 @@ function App() {
     '/deliveryBoy-Home',
     '/deliveryBoy-Earnings',
     '/deliveryBoy/Need-Help',
+    '/deliveryBoy/Concern-Page',
   ]
   // const showFooter = !hideFooterPaths.includes(location.pathname)
   const showFooter = !hideFooterPaths.some((path) =>
@@ -144,6 +146,7 @@ function App() {
             ) : (<DeliveryBoyLogin />)} />
             <Route path='/deliveryBoy-Earnings' element={deliveryBoy ? <DeliveryPartnerEarnings /> : <Navigate to="/deliveryBoy-login" />} />
             <Route path='/deliveryBoy/Need-Help' element={deliveryBoy ? <DeliveryHelpChat /> : <Navigate to="/deliveryBoy-login" />} />
+            <Route path='/deliveryBoy/Concern-Page' element={deliveryBoy ? <ConcernsPage /> : <Navigate to="/deliveryBoy-login" />} />
           </Routes>
         </div>
         {showFooter && <Footer />}

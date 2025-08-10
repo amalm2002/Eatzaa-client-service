@@ -96,9 +96,6 @@ export const ReviewsTab: React.FC<ReviewsTabProps> = ({
                                             <span className="hidden sm:inline">Not helpful</span>
                                         </button>
                                     </div>
-                                    <div className="text-xs text-gray-400 truncate max-w-24 sm:max-w-none">
-                                        Order #{review.orderId.slice(-8)}
-                                    </div>
                                 </div>
                             </div>
                         </div>

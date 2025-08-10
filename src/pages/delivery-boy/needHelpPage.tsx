@@ -208,19 +208,19 @@
 //         fetchHelpOptionsAndZones();
 //     }, [dispatch, navigate]);
 
-//     useEffect(() => {
-//         const fetchConernResults = async () => {
-//             try {
-//                 const response = await deliveryBoyApi.getConcerns(dispatch, deliveryBoyId)
-//                 console.log('response :', response);
+//     // useEffect(() => {
+//     //     const fetchConernResults = async () => {
+//     //         try {
+//     //             const response = await deliveryBoyApi.getConcerns(dispatch, deliveryBoyId)
+//     //             console.log('response :', response);
 
-//             } catch (error) {
-//                 console.error('this error has to show on fetch the concerns :', error);
-//                 toast.error((error as Error).message || 'Somthing went wrong')
-//             }
-//         }
-//         fetchConernResults()
-//     }, [dispatch, navigate])
+//     //         } catch (error) {
+//     //             console.error('this error has to show on fetch the concerns :', error);
+//     //             toast.error((error as Error).message || 'Somthing went wrong')
+//     //         }
+//     //     }
+//     //     fetchConernResults()
+//     // }, [dispatch, navigate])
 
 //     const hashSensitiveData = (data: string): string => {
 //         return HmacSHA256(data, `${import.meta.env.VITE_COOKIES_SECRET}`).toString();
@@ -713,15 +713,8 @@
 
 
 
-
-
-
-
-
-
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, HelpCircle, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Send, HelpCircle, CheckCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deliveryBoyLogout } from '../../service/redux/slices/deliveryBoySlice';
@@ -743,7 +736,6 @@ interface Message {
     options?: string[];
     showForm?: boolean;
     showZoneSelection?: boolean;
-    concernId?: string; 
 }
 
 export interface HelpOption {
@@ -763,20 +755,6 @@ interface Zone {
 interface ConcernForm {
     reason: string;
     description: string;
-}
-
-interface Concern {
-    _id: string;
-    deliveryBoyId: string;
-    selectedOption: { _id: string; title: string; description: string; category: string; isActive: boolean };
-    reason: string;
-    description: string;
-    status: string;
-    zoneId?: string;
-    zoneName?: string;
-    createdAt: string;
-    updatedAt: string;
-    rejectionReason?: string;
 }
 
 const DeliveryHelpChat: React.FC = () => {
@@ -805,7 +783,6 @@ const DeliveryHelpChat: React.FC = () => {
     const [helpOptions, setHelpOptions] = useState<HelpOption[]>([]);
     const [zones, setZones] = useState<Zone[]>([]);
     const [isChatStateLoaded, setIsChatStateLoaded] = useState<boolean>(false);
-    const [concerns, setConcerns] = useState<Concern[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const dispatch = useDispatch();
@@ -844,6 +821,7 @@ const DeliveryHelpChat: React.FC = () => {
             return null;
         } catch (error: any) {
             console.error('Error fetching chat state from API:', error);
+            return null;
         }
     };
 
@@ -945,52 +923,6 @@ const DeliveryHelpChat: React.FC = () => {
         };
         fetchHelpOptionsAndZones();
     }, [dispatch, navigate]);
-
-    useEffect(() => {
-        const fetchConcernResults = async () => {
-            if (!deliveryBoyId) return;
-            try {
-                const response = await deliveryBoyApi.getConcerns(dispatch, deliveryBoyId);
-                if (response.success && response.data) {
-                    setConcerns(response.data);
-                    // Update messages by removing old status messages for each concern
-                    setMessages((prevMessages) => {
-                        let updatedMessages = [...prevMessages];
-                        response.data.forEach((concern: Concern) => {
-                            // Remove previous status messages for this concern
-                            updatedMessages = updatedMessages.filter(
-                                (msg) => !(msg.isBot && msg.concernId === concern._id)
-                            );
-                            // Create new status message
-                            let statusMessage: string;
-                            if (concern.status === 'approved') {
-                                statusMessage = `Your concern "${concern.reason}" has been approved.`;
-                            } else if (concern.status === 'rejected') {
-                                statusMessage = `Your concern "${concern.reason}" was rejected. Reason: ${concern.rejectionReason || 'No reason provided.'}`;
-                            } else {
-                                statusMessage = `Your concern "${concern.reason}" is pending verification.`;
-                            }
-                            // Add new status message with concernId
-                            updatedMessages.push({
-                                id: Date.now().toString() + '-' + concern._id,
-                                text: statusMessage,
-                                isBot: true,
-                                timestamp: new Date().toISOString(),
-                                concernId: concern._id,
-                            });
-                        });
-                        return updatedMessages;
-                    });
-                } else {
-                    toast.error(response.message || 'Failed to fetch concerns.');
-                }
-            } catch (error) {
-                console.error('Error fetching concerns:', error);
-                toast.error((error as Error).message || 'Something went wrong');
-            }
-        };
-        fetchConcernResults();
-    }, [dispatch, deliveryBoyId]);
 
     const hashSensitiveData = (data: string): string => {
         return HmacSHA256(data, `${import.meta.env.VITE_COOKIES_SECRET}`).toString();
@@ -1096,8 +1028,6 @@ const DeliveryHelpChat: React.FC = () => {
                 return;
             }
             const savedState = await fetchChatStateFromApi();
-            const welcomeMessage = getWelcomeMessage();
-
             if (savedState && savedState.messages && savedState.messages.length > 0) {
                 setMessages(savedState.messages);
                 setCurrentStep(savedState.currentStep || 'welcome');
@@ -1106,6 +1036,7 @@ const DeliveryHelpChat: React.FC = () => {
                 setSelectedZone(savedState.selectedZone || '');
                 setConcernId(savedState.concernId || null);
             } else {
+                const welcomeMessage = getWelcomeMessage();
                 setMessages([welcomeMessage]);
                 setCurrentStep('welcome');
                 setSelectedOption(null);
@@ -1142,7 +1073,20 @@ const DeliveryHelpChat: React.FC = () => {
         await saveChatStateToApi(stateToSave);
     };
 
-    const addMessage = (text: string, isBot: boolean, options?: string[], showForm?: boolean, showZoneSelection?: boolean, concernId?: string) => {
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            saveChatState();
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            saveChatState();
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [messages, currentStep, selectedOption, concernForm, selectedZone, concernId, isChatStateLoaded]);
+
+    const addMessage = (text: string, isBot: boolean, options?: string[], showForm?: boolean, showZoneSelection?: boolean) => {
         const newMessage: Message = {
             id: Date.now().toString(),
             text,
@@ -1151,7 +1095,6 @@ const DeliveryHelpChat: React.FC = () => {
             options,
             showForm,
             showZoneSelection,
-            concernId,
         };
         setMessages((prev) => [...prev, newMessage]);
     };
@@ -1208,22 +1151,30 @@ const DeliveryHelpChat: React.FC = () => {
 
             if (response.success) {
                 setConcernId(response.concernId);
-                await saveChatState();
                 if (selectedOption?.title === 'Zone Change Request') {
                     setCurrentStep('zones');
                     setTimeout(() => {
                         addMessage('Thank you for providing the details. Please select your preferred zone from the options below:', true, undefined, false, true);
                     }, 500);
+                    await saveChatState();
                 } else {
                     setCurrentStep('completed');
-                    setTimeout(() => {
-                        addMessage('Your concern has been submitted and is awaiting verification.', true, undefined, undefined, undefined, response.concernId);
-                    }, 500);
-                    setTimeout(() => {
-                        addMessage('Is there anything else I can help you with? Type "/start" to see options again.', true);
-                    }, 1500);
+                    const verificationMessage: Message = {
+                        id: Date.now().toString(),
+                        text: 'Your concern has been submitted and is awaiting verification.',
+                        isBot: true,
+                        timestamp: new Date().toISOString(),
+                    };
+                    const followUpMessage: Message = {
+                        id: (Date.now() + 1).toString(),
+                        text: 'Is there anything else I can help you with? Type "/start" to see options again.',
+                        isBot: true,
+                        timestamp: new Date(new Date().getTime() + 1000).toISOString(),
+                    };
+                    setMessages((prev) => [...prev, verificationMessage, followUpMessage]);
                     setConcernForm({ reason: '', description: '' });
                     setConcernId(null);
+                    await saveChatState();
                 }
             } else {
                 throw new Error(response.message || 'Failed to submit concern.');
@@ -1258,13 +1209,22 @@ const DeliveryHelpChat: React.FC = () => {
 
             if (response.success) {
                 setCurrentStep('completed');
-                setTimeout(() => {
-                    addMessage('Your zone change request has been submitted and is awaiting verification.', true, undefined, undefined, undefined, concernId);
-                }, 500);
-                setTimeout(() => {
-                    addMessage('Is there anything else I can help you with? Type "/start" to see options again.', true);
-                }, 1500);
+                const verificationMessage: Message = {
+                    id: Date.now().toString(),
+                    text: 'Your zone change request has been submitted and is awaiting verification.',
+                    isBot: true,
+                    timestamp: new Date().toISOString(),
+                    showZoneSelection: false,
+                };
+                const followUpMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    text: 'Is there anything else I can help you with? Type "/start" to see options again.',
+                    isBot: true,
+                    timestamp: new Date(new Date().getTime() + 1000).toISOString(),
+                };
+                setMessages((prev) => [...prev, verificationMessage, followUpMessage]);
                 setConcernForm({ reason: '', description: '' });
+                setSelectedZone('');
                 setConcernId(null);
                 await saveChatState();
             } else {
@@ -1281,7 +1241,6 @@ const DeliveryHelpChat: React.FC = () => {
             toast.warning('Please turn off your online status before logging out.');
             return;
         }
-        await saveChatState();
         Cookies.remove('timerSeconds');
         Cookies.remove('helpOptions');
         Cookies.remove('zones');
@@ -1320,154 +1279,94 @@ const DeliveryHelpChat: React.FC = () => {
                 <main className="flex-1 overflow-y-auto p-6 bg-orange-50">
                     <div className="max-w-4xl mx-auto w-full">
                         <div className="space-y-4">
-                            {messages.map((message) => {
-                                const isApproved = message.isBot && message.text.toLowerCase().includes('approved');
-                                const isRejected = message.isBot && message.text.toLowerCase().includes('rejected');
-                                const isPending = message.isBot && message.text.toLowerCase().includes('pending');
-                                return (
-                                    <div key={message.id} className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
-                                        <div
-                                            className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl rounded-2xl p-4 shadow-sm ${
-                                                isApproved
-                                                    ? 'bg-green-100 border border-green-200'
-                                                    : isRejected
-                                                    ? 'bg-red-100 border border-red-200'
-                                                    : isPending
-                                                    ? 'bg-yellow-100 border border-yellow-200'
-                                                    : message.isBot
-                                                    ? 'bg-white border border-orange-100'
-                                                    : 'bg-orange-600 text-white'
-                                            }`}
-                                        >
-                                            {message.isBot && (
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <div
-                                                        className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                                            isApproved
-                                                                ? 'bg-green-500'
-                                                                : isRejected
-                                                                ? 'bg-red-500'
-                                                                : isPending
-                                                                ? 'bg-yellow-500'
-                                                                : 'bg-orange-500'
-                                                        }`}
-                                                    >
-                                                        {isApproved ? (
-                                                            <CheckCircle className="w-4 h-4 text-white" />
-                                                        ) : isRejected ? (
-                                                            <XCircle className="w-4 h-4 text-white" />
-                                                        ) : isPending ? (
-                                                            <Clock className="w-4 h-4 text-white" />
-                                                        ) : (
-                                                            <HelpCircle className="w-4 h-4 text-white" />
-                                                        )}
-                                                    </div>
-                                                    <span
-                                                        className={`text-sm font-medium ${
-                                                            isApproved
-                                                                ? 'text-green-600'
-                                                                : isRejected
-                                                                ? 'text-red-600'
-                                                                : isPending
-                                                                ? 'text-yellow-600'
-                                                                : 'text-orange-600'
-                                                        }`}
-                                                    >
-                                                        Support Bot
-                                                    </span>
+                            {messages.map((message) => (
+                                <div key={message.id} className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+                                    <div
+                                        className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl ${message.isBot ? 'bg-white border border-orange-100' : 'bg-orange-600 text-white'
+                                            } rounded-2xl p-4 shadow-sm`}
+                                    >
+                                        {message.isBot && (
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                                                    <HelpCircle className="w-4 h-4 text-white" />
                                                 </div>
-                                            )}
+                                                <span className="text-sm font-medium text-orange-600">Support Bot</span>
+                                            </div>
+                                        )}
 
-                                            <p
-                                                className={`text-sm leading-relaxed whitespace-pre-line ${
-                                                    message.isBot ? 'text-gray-800' : 'text-white'
-                                                }`}
-                                            >
-                                                {message.text}
-                                            </p>
+                                        <p className={`text-sm leading-relaxed whitespace-pre-line ${message.isBot ? 'text-gray-800' : 'text-white'}`}>
+                                            {message.text}
+                                        </p>
 
-                                            {message.options && (
-                                                <div className="mt-4 space-y-2">
-                                                    {message.options.map((option, index) => (
+                                        {message.options && (
+                                            <div className="mt-4 space-y-2">
+                                                {message.options.map((option, index) => (
+                                                    <button
+                                                        key={index}
+                                                        onClick={() => handleOptionSelect(option)}
+                                                        className="w-full text-left p-3 bg-orange-100 hover:bg-orange-200 rounded-lg transition-colors text-orange-800 text-sm font-medium"
+                                                    >
+                                                        {option}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {message.showForm && (
+                                            <div className="mt-4 space-y-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Reason for request *</label>
+                                                    <input
+                                                        type="text"
+                                                        value={concernForm.reason}
+                                                        onChange={(e) => setConcernForm({ ...concernForm, reason: e.target.value })}
+                                                        placeholder="Brief reason for your request"
+                                                        className="w-full px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Detailed description *</label>
+                                                    <textarea
+                                                        value={concernForm.description}
+                                                        onChange={(e) => setConcernForm({ ...concernForm, description: e.target.value })}
+                                                        placeholder="Please explain your situation in detail..."
+                                                        rows={3}
+                                                        className="w-full px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm resize-none"
+                                                    />
+                                                </div>
+                                                <button
+                                                    onClick={handleConcernSubmit}
+                                                    disabled={!concernForm.reason.trim() || !concernForm.description.trim()}
+                                                    className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium"
+                                                >
+                                                    Submit Details
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {message.showZoneSelection && (
+                                            <div className="mt-4 space-y-2">
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {zones.map((zone) => (
                                                         <button
-                                                            key={index}
-                                                            onClick={() => handleOptionSelect(option)}
-                                                            className="w-full text-left p-3 bg-orange-100 hover:bg-orange-200 rounded-lg transition-colors text-orange-800 text-sm font-medium"
+                                                            key={zone._id}
+                                                            onClick={() => handleZoneSelect(zone.name)}
+                                                            className="p-3 bg-orange-100 hover:bg-orange-200 rounded-lg transition-colors text-orange-800 text-sm font-medium text-center"
                                                         >
-                                                            {option}
+                                                            {zone.name}
                                                         </button>
                                                     ))}
                                                 </div>
-                                            )}
-
-                                            {message.showForm && (
-                                                <div className="mt-4 space-y-4">
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Reason for request *
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            value={concernForm.reason}
-                                                            onChange={(e) =>
-                                                                setConcernForm({ ...concernForm, reason: e.target.value })
-                                                            }
-                                                            placeholder="Brief reason for your request"
-                                                            className="w-full px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Detailed description *
-                                                        </label>
-                                                        <textarea
-                                                            value={concernForm.description}
-                                                            onChange={(e) =>
-                                                                setConcernForm({ ...concernForm, description: e.target.value })
-                                                            }
-                                                            placeholder="Please explain your situation in detail..."
-                                                            rows={3}
-                                                            className="w-full px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm resize-none"
-                                                        />
-                                                    </div>
-                                                    <button
-                                                        onClick={handleConcernSubmit}
-                                                        disabled={!concernForm.reason.trim() || !concernForm.description.trim()}
-                                                        className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium"
-                                                    >
-                                                        Submit Details
-                                                    </button>
-                                                </div>
-                                            )}
-
-                                            {message.showZoneSelection && (
-                                                <div className="mt-4 space-y-2">
-                                                    <div className="grid grid-cols-2 gap-2">
-                                                        {zones.map((zone) => (
-                                                            <button
-                                                                key={zone._id}
-                                                                onClick={() => handleZoneSelect(zone.name)}
-                                                                className="p-3 bg-orange-100 hover:bg-orange-200 rounded-lg transition-colors text-orange-800 text-sm font-medium text-center"
-                                                            >
-                                                                {zone.name}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            <div
-                                                className={`flex items-center justify-between mt-2 text-xs ${
-                                                    message.isBot ? 'text-gray-500' : 'text-orange-100'
-                                                }`}
-                                            >
-                                                <span>{formatTime(message.timestamp)}</span>
-                                                {!message.isBot && <CheckCircle className="w-3 h-3" />}
                                             </div>
+                                        )}
+
+                                        <div className={`flex items-center justify-between mt-2 text-xs ${message.isBot ? 'text-gray-500' : 'text-orange-100'}`}>
+                                            <span>{formatTime(message.timestamp)}</span>
+                                            {!message.isBot && <CheckCircle className="w-3 h-3" />}
                                         </div>
                                     </div>
-                                );
-                            })}
+                                </div>
+                            ))}
                             <div ref={messagesEndRef} />
                         </div>
                     </div>
@@ -1500,9 +1399,7 @@ const DeliveryHelpChat: React.FC = () => {
                             >
                                 /start
                             </button>
-                            <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-full">
-                                Tip: Type /start to see help options
-                            </span>
+                            <span className="px-3 py-2 text-xs text-gray-500 bg-gray-100 rounded-full">Tip: Type /start to see help options</span>
                         </div>
                     </div>
                 </div>

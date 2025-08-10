@@ -48,7 +48,7 @@ const Sidebar = ({ sidebarOpen, toggleSidebar, partnerData, handleLogout }: Side
                     {[
                         { icon: <Package size={20} />, label: 'Dashboard', path: '/deliveryBoy-Home' },
                         { icon: <DollarSign size={20} />, label: 'Earnings', path: '/deliveryBoy-Earnings' },
-                        { icon: <Clock size={20} />, label: 'My Activity' },
+                        { icon: <Clock size={20} />, label: 'My Activity', path: '/deliveryBoy/Concern-Page' },
                         { icon: <MapPin size={20} />, label: 'Order History' },
                         { icon: <HelpCircleIcon size={20} />, label: 'Need Help', path: '/deliveryBoy/Need-Help' },
                     ].map((item, index) => {

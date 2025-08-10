@@ -103,7 +103,7 @@ export const userApi = {
     handleFailedPayment: async (dispatch: Dispatch,
         data: {
             paymentDbId: string;
-            userId:string;
+            userId: string;
             razorpay_order_id: string;
             razorpay_payment_id: string;
             error_description: string;
@@ -111,7 +111,8 @@ export const userApi = {
         }
     ) => {
         const axiosInstance = createAxios(dispatch);
-        return axiosInstance.post('/handle-failed-payment', data);
+        const response = await axiosInstance.post('/handle-failed-payment', data);
+        return response.data
     },
 
     getCartItems: async (dispatch: Dispatch, userId: string) => {

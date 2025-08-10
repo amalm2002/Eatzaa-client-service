@@ -148,10 +148,10 @@ export const EarningsPopup: React.FC<EarningsPopupProps> = ({
                             <span className="text-gray-600 font-medium">Customer</span>
                             <span className="font-bold text-gray-800">{orderDetails.customerName}</span>
                         </div>
-                        <div className="flex items-center justify-between text-sm">
+                        {/* <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600 font-medium">Delivery Time</span>
                             <span className="font-bold text-green-600">{orderDetails.deliveryTime}</span>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Action Button */}

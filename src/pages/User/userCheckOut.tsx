@@ -167,7 +167,7 @@ const Checkout = () => {
         const rzp = new window.Razorpay(options);
         rzp.on('payment.failed', async function (response: any) {
           try {
-            let x = await userApi.handleFailedPayment(dispatch, {
+            let failedPaymentResponse = await userApi.handleFailedPayment(dispatch, {
               paymentDbId,
               userId: userId,
               razorpay_order_id: response.error.metadata.order_id,
@@ -175,9 +175,16 @@ const Checkout = () => {
               error_description: response.error.description,
               error_code: response.error.code,
             });
-            console.log('response :', x);
-            if (response.data.success) {
-              toast.error(`Payment failed: ${response.data.message}. Please try again or choose another payment method.`);
+            console.log('response :', failedPaymentResponse);
+            if (failedPaymentResponse.success) {
+              toast.error(`Payment failed: ${failedPaymentResponse.message}. Please try again or choose another payment method.`,
+                {
+                  duration: 10000,
+                  onAutoClose: (toast) => {
+                    console.log("Toast closed automatically:", toast);
+                  }
+                }
+              );
             }
           } catch (error: any) {
             console.error('Failed to handle payment failure:', error);

@@ -60,6 +60,7 @@ const DaintyFoodDashboard = () => {
           params.endDate = customEndDate.toISOString();
         }
         const response = await restaurantApi.fetchDashboardStats(dispatch, restaurantId, params);
+        console.log('response:', response);
 
         if (response.success) {
           setOrderData(response.data.revenueData);
@@ -87,7 +88,7 @@ const DaintyFoodDashboard = () => {
   const statsCards = [
     {
       label: 'Available Dishes',
-      value: 150, 
+      value: 150,
       icon: <ChefHat size={24} className="text-[#6589f6]" />,
       growth: '+2.5%',
     },
@@ -444,8 +445,8 @@ const DaintyFoodDashboard = () => {
                     <div className="text-right">
                       <p className="font-medium text-gray-800">${order.totalAmount.toFixed(2)}</p>
                       <span
-                        // className={`text-xs px-2 py-1 rounded-full
-                        // ${order.orderStatus === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}
+                      // className={`text-xs px-2 py-1 rounded-full
+                      // ${order.orderStatus === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}
                       >
                         {order.orderStatus}
                       </span>
