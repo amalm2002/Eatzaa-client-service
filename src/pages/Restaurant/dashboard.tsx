@@ -340,7 +340,7 @@ const DaintyFoodDashboard = () => {
           </div>
 
           {/* Restaurant Profile */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+          {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-6">Restaurant Profile</h3>
             <div className="flex border-b border-gray-100 mb-6">
               {['overview', 'hours', 'locations'].map((tab) => (
@@ -418,7 +418,7 @@ const DaintyFoodDashboard = () => {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Recent Orders */}
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">

@@ -12,7 +12,7 @@ import { RootState } from '../../interfaces/delivery-boy/dashboard/root-state.ty
 import { deliveryBoyApi } from '../../api/endpoints/deliveryBoyApi';
 
 interface Concern {
-    id: string; // Changed to string to match _id
+    id: string; 
     title: string;
     description: string;
     status: 'pending' | 'approved' | 'rejected';
@@ -45,7 +45,6 @@ const ConcernsPage: React.FC = () => {
     const navigate = useNavigate();
     const deliveryBoyId = useSelector((store: RootState) => store.deliveryBoyAuth.delivery_boy_id);
 
-    // Load partner data from cookies or API
     useEffect(() => {
         const fetchDeliveryBoyData = async () => {
             try {
@@ -95,7 +94,6 @@ const ConcernsPage: React.FC = () => {
         fetchDeliveryBoyData();
     }, [deliveryBoyId, dispatch]);
 
-    // Update current time every second
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
@@ -103,7 +101,6 @@ const ConcernsPage: React.FC = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // Fetch concerns from backend
     useEffect(() => {
         const fetchConcernResults = async () => {
             try {
@@ -114,8 +111,8 @@ const ConcernsPage: React.FC = () => {
                         title: item.reason || item.selectedOption.title,
                         description: item.description,
                         status: item.status as 'pending' | 'approved' | 'rejected',
-                        submittedBy: partnerData.name || 'Unknown', // Fallback to partnerData.name
-                        submittedDate: new Date(item.createdAt).toISOString().split('T')[0], // Format date as YYYY-MM-DD
+                        submittedBy: partnerData.name || 'Unknown', 
+                        submittedDate: new Date(item.createdAt).toISOString().split('T')[0], 
                         category: item.selectedOption.category,
                     }));
                     setConcerns(formattedConcerns);
@@ -224,7 +221,7 @@ const ConcernsPage: React.FC = () => {
                                         {/* Header */}
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center space-x-2">
-                                                <span className="text-sm font-medium text-orange-600">#{concern.id.slice(-4)}</span>
+                                                <span className="text-sm font-medium text-orange-600">#{concern.id.slice(-4).toUpperCase()}</span>
                                             </div>
                                             <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(concern.status)}`}>
                                                 {concern.status.toUpperCase()}
@@ -260,13 +257,6 @@ const ConcernsPage: React.FC = () => {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Action Buttons */}
-                                    {/* <div className="px-6 pb-4">
-                                        <button className="w-full bg-orange-600 hover:bg-orange-500 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200">
-                                            View Details
-                                        </button>
-                                    </div> */}
                                 </div>
                             ))}
                         </div>

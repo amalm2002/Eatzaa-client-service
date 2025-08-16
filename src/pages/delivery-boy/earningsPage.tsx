@@ -251,7 +251,7 @@ const DeliveryPartnerEarnings = () => {
             />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Header currentTime={currentTime} partnerData={partnerData} />
-                <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <main className="flex-1 overflow-y-auto p-6 bg-orange-50">
                     <div className="bg-white rounded-xl shadow-md">
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                             <div className="flex items-center">
