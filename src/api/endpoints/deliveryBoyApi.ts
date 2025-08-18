@@ -1,46 +1,46 @@
 import { Dispatch } from 'redux';
-import createAxios from '../../service/axious-services/deliveryBoyAxious';
 import { OrderApiResponse } from '../../interfaces/delivery-boy/location-map/order-api-response.types';
 import { VerifyOrderResponse } from '../../interfaces/delivery-boy/location-map/verify-order-response.types';
 import { UserApiResponse } from '../../interfaces/delivery-boy/location-map/user-api-response.types';
 import { UserDetails } from '../../interfaces/delivery-boy/authentication/user-details.types';
+import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
 // Centralized API service for delivery boy-related calls
 
 export const deliveryBoyApi = {
 
     getDeliveryBoyData: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get(`/delivery-boy/${deliveryBoyId}`);
         return response.data.data;
     },
 
     getDeliveryBoyOrders: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get(`/delivery-partner/order/${deliveryBoyId}`);
         return response.data.data;
     },
 
     updateOnlineStatus: async (dispatch: Dispatch, deliveryBoyId: string, status: boolean) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post(`/enable-online/${deliveryBoyId}`, { isOnline: status });
         return response.data.data;
     },
 
     updateLocation: async (dispatch: Dispatch, deliveryBoyId: string, location: { latitude: number; longitude: number }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post(`/update-location/${deliveryBoyId}`, location);
         return response.data;
     },
 
     getOrderDetails: async (dispatch: Dispatch, orderId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get<OrderApiResponse>(`/order-details/${orderId}`);
         return response.data.data;
     },
 
     getLiveLocation: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get<{
             success: boolean;
             location?: { latitude: number; longitude: number };
@@ -53,7 +53,7 @@ export const deliveryBoyApi = {
     },
 
     verifyOrderPin: async (dispatch: Dispatch, orderId: string, enteredPin: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post<VerifyOrderResponse>('/verify-order-number', { enteredPin, orderId });
         if (!response.data.success) {
             throw new Error('Entered PIN does not match the order');
@@ -62,13 +62,13 @@ export const deliveryBoyApi = {
     },
 
     getUserDetails: async (dispatch: Dispatch, userId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get<UserApiResponse>(`/get-user/${userId}`);
         return response.data.response.user;
     },
 
     completeOrder: async (dispatch: Dispatch, orderId: string, deliveryBoyId?: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post('/complete-order', { orderId, deliveryBoyId });
         if (!response.data.success) {
             throw new Error(response.data.message || 'Failed to complete delivery');
@@ -77,19 +77,19 @@ export const deliveryBoyApi = {
     },
 
     orderEarnings: async (dispatch: Dispatch, paymentMethod?: string, deliveryBoyId?: string, finalTotalDistance?: number, orderAmount?: number, order_id?: string) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post('/complete-and-earn', { paymentMethod, deliveryBoyId, finalTotalDistance, orderAmount, order_id })
         return response.data
     },
 
     registerDeliveryBoy: async (dispatch: Dispatch, mobile: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post('/deliveryBoy-rigister', { mobile });
         return response.data;
     },
 
     submitDeliveryBoyDetails: async (dispatch: Dispatch, deliveryBoyId: string, userDetails: UserDetails) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const formData = new FormData();
         formData.append('deliveryBoyId', deliveryBoyId);
         formData.append('name', userDetails.name);
@@ -115,7 +115,7 @@ export const deliveryBoyApi = {
     },
 
     fetchResubmitDocuments: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get(`/fetch-resubmit-doc/${deliveryBoyId}`);
         if (response.data.message !== 'success') {
             throw new Error('Failed to fetch rejected documents');
@@ -124,7 +124,7 @@ export const deliveryBoyApi = {
     },
 
     resubmitDeliveryBoyDetails: async (dispatch: Dispatch, deliveryBoyId: string, userDetails: UserDetails, changedFields: Partial<Record<keyof UserDetails, boolean>>) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const formData = new FormData();
         formData.append('deliveryBoyId', deliveryBoyId);
 
@@ -171,7 +171,7 @@ export const deliveryBoyApi = {
     },
 
     submitVehicleSelection: async (dispatch: Dispatch, deliveryBoyId: string, vehicle: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post(`/vehicle?deliveryBoyId=${deliveryBoyId}`, { vehicle });
         if (!response.data.success) {
             throw new Error(response.data.message || 'Failed to submit vehicle selection');
@@ -180,7 +180,7 @@ export const deliveryBoyApi = {
     },
 
     submitDeliveryBoyLocation: async (dispatch: Dispatch, deliveryBoyId: string, location: { latitude: number; longitude: number }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post(`/location?deliveryBoyId=${deliveryBoyId}`, location, {
             headers: {
                 "Content-Type": "application/json",
@@ -193,19 +193,19 @@ export const deliveryBoyApi = {
     },
 
     fetchZones: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get('/get-zone');
         return response.data;
     },
 
     submitZoneSelection: async (dispatch: Dispatch, deliveryBoyId: string, zone: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post(`/zone?deliveryBoyId=${deliveryBoyId}`, { zone });
         return response.data;
     },
 
     checkTheInHandCash: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post('/check-inHand-cash-limit', { deliveryBoyId })
         return response
     },
@@ -214,7 +214,7 @@ export const deliveryBoyApi = {
         dispatch: Dispatch,
         data: { deliveryBoyId: string; amount: number; role?: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post('/create-delivery-boy-admin-payment', data);
         if (response.data.error) {
             throw new Error(response.data.error);
@@ -232,7 +232,7 @@ export const deliveryBoyApi = {
             role?: string;
         }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         return axiosInstance.post('/verify-delivery-boy-admin-payment', data);
     },
 
@@ -240,12 +240,12 @@ export const deliveryBoyApi = {
         dispatch: Dispatch,
         data: { deliveryBoyId: string; orderId: string; role?: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         return axiosInstance.post('/cancel-delivery-boy-admin-payment', data);
     },
 
     getDeliveryBoyInHandPaymentHistory: async (dispatch: Dispatch, data: { deliveryBoyId: string, role?: string }) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get('/get-partner-in-hand-payment-history', {
             params: data
         })
@@ -253,25 +253,25 @@ export const deliveryBoyApi = {
     },
 
     getAllDeliverBoyHelpOptions: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get('/get-all-help-options');
         return response.data;
     },
 
     getChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get(`/delivery-boy/chat-state/${deliveryBoyId}`);
         return response.data;
     },
 
     saveChatState: async (dispatch: Dispatch, deliveryBoyId: string, state: any) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.post(`/delivery-boy/chat-state/${deliveryBoyId}`, state);
         return response.data;
     },
 
     clearChatState: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.delete(`/delivery-boy/chat-state/${deliveryBoyId}`);
         return response.data;
     },
@@ -280,7 +280,7 @@ export const deliveryBoyApi = {
         dispatch: Dispatch,
         data: { deliveryBoyId: string; selectedOption: { _id?: string; title: string; description?: string; category?: string; isActive?: boolean; responseMessage?: string } | null; reason: string; description: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.patch('/delivery-boy/chat-state/concern', data);
         return response.data;
     },
@@ -289,15 +289,13 @@ export const deliveryBoyApi = {
         dispatch: Dispatch,
         data: { deliveryBoyId: string; concernId: string; zoneId: string; zoneName: string; reason: string; description: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.patch('/delivery-boy/chat-state/zone', data);
         return response.data;
     },
 
     getConcerns: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch)
-        console.log('delivey boy id :', deliveryBoyId);
-
+        const axiosInstance = createAxiosInstance('DeliveryBoy',dispatch);
         const response = await axiosInstance.get('/deivery-boy/concern', { params: { deliveryBoyId } })
         return response.data
     }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import createAxios from "../../service/axious-services/restaurantAxious";
 import useRestaurantStatus from "../../hooks/useRestaurantStatus";
 import { toast } from "sonner";
 import Header from "./navbar/header";
@@ -15,6 +14,7 @@ import EmptyState from "../../components/restaurant/order-management/EmptyState"
 import { useNavigate } from "react-router-dom";
 import { Transaction } from "../../interfaces/restaurant/transaction/transaction.types";
 import { restaurantApi } from "../../api/endpoints/restaurantApi";
+import { createAxiosInstance } from "../../service/axious-services/axiosInstance";
 
 const TransactionHistory: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState("PaymentHistory");
@@ -30,7 +30,7 @@ const TransactionHistory: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const axiosInstance = createAxios(dispatch);
+  const axiosInstance = createAxiosInstance('Restaurant', dispatch);
   const restaurantId = useSelector(
     (store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id
   );

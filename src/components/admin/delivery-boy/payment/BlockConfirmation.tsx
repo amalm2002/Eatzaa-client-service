@@ -1,7 +1,6 @@
 import { FiLock } from 'react-icons/fi';
-import { BlockConfirmationModalProps } from "../../../../interfaces/admin/delivery-boys/delivery-boy-payment.types";
 
-export const BlockConfirmationModal: React.FC<BlockConfirmationModalProps> = ({ isOpen, onConfirm, onCancel, vehicleType }) => {
+export const BlockConfirmationModal: React.FC<any> = ({ isOpen, onConfirm, onCancel, vehicleType }) => {
     if (!isOpen) return null;
 
     return (

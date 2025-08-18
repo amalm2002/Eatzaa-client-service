@@ -20,8 +20,8 @@ import DeliveryHelpAdmin from './delivery-boy/deliveryBoyHelpsection';
 import DeliveryCincernPanel from './delivery-boy/concernListPage';
 import Chart from 'chart.js/auto';
 import { toast } from 'sonner';
-import { createAxios } from '../../service/axious-services/adminAxious';
 import { useDispatch } from 'react-redux';
+import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
 
 interface RestaurantChartData {
@@ -61,7 +61,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
     const fetchRestaurantChartData = async () => {
       try {
         setLoading(true);
-        const axiosInstance = createAxios(dispatch);
+        // const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getRestaurantChartData', {
           params: { startDate: filter.startDate, endDate: filter.endDate },
         });
@@ -93,7 +94,8 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
     const fetchDeliveryBoyChartData = async () => {
       try {
         setLoading(true);
-        const axiosInstance = createAxios(dispatch);
+        // const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getDeliveryBoyChartData', {
           params: { startDate: filter.startDate, endDate: filter.endDate },
         });

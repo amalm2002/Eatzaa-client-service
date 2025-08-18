@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
-import createAxios from '../../service/axious-services/restaurantAxious';
 import useRestaurantStatus from '../../hooks/useRestaurantStatus';
 import Header from './navbar/header';
 import Sidebar from './navbar/sidebar';
@@ -11,6 +10,7 @@ import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/restaurant/order-management/EmptyState';
 import { Order } from '../../interfaces/restaurant/order/order.types';
 import { restaurantApi } from '../../api/endpoints/restaurantApi';
+import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
 const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -25,7 +25,7 @@ const OrderList: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
-  const axiosInstance = createAxios(dispatch);
+  const axiosInstance = createAxiosInstance('Restaurant', dispatch);
   const { isOnline, handleToggleOnline } = useRestaurantStatus();
   const restaurantId = useSelector(
     (store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id

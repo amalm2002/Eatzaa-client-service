@@ -1,13 +1,13 @@
 import { Dispatch } from 'redux';
 import { LatLngExpression } from 'leaflet';
-import { createAxios } from '../../service/axious-services/adminAxious';
+import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
 
 // Centralized API service for admin-related calls
 export const adminApi = {
     //Users side API calls
     fetchUsers: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getAllUsers');
         return response.data;
     },
@@ -15,7 +15,7 @@ export const adminApi = {
     //Restaurant side API calls
 
     fetchRestaurants: async (dispatch: Dispatch, searchTerm?: string, statusFilter?: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const queryParams = new URLSearchParams();
 
         if (searchTerm) {
@@ -33,7 +33,7 @@ export const adminApi = {
     },
 
     fetchRestaurantDetails: async (dispatch: Dispatch, restaurantId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get(`/getRestaurant/${restaurantId}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to load restaurant details');
@@ -42,7 +42,7 @@ export const adminApi = {
     },
 
     verifyRestaurantDocuments: async (dispatch: Dispatch, restaurantId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post(`/verifyRestaurantDocs/${restaurantId}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to verify restaurant');
@@ -51,7 +51,7 @@ export const adminApi = {
     },
 
     rejectRestaurantDocuments: async (dispatch: Dispatch, restaurantId: string, rejectionReason: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post(`/rejectedRestaurantDocs`, {
             restaurantId,
             rejectionReason,
@@ -63,7 +63,7 @@ export const adminApi = {
     },
 
     fetchSubscriptionPlans: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getSubscriptionPlans');
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to load plans');
@@ -72,7 +72,7 @@ export const adminApi = {
     },
 
     addSubscriptionPlan: async (dispatch: Dispatch, plan: any) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post('/addSubscriptionPlan', plan);
         if (response.data.message !== 'Subscription Plan Created Successfully') {
             throw new Error(response.data.message || 'Failed to add subscription plan');
@@ -81,7 +81,7 @@ export const adminApi = {
     },
 
     updateSubscriptionPlan: async (dispatch: Dispatch, planId: string, plan: any) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.put(`/updateSubscriptionPlan/${planId}`, plan);
         if (response.data.plan?.message !== 'success') {
             throw new Error(response.data.plan?.message || 'Failed to update subscription plan');
@@ -90,7 +90,7 @@ export const adminApi = {
     },
 
     deleteSubscriptionPlan: async (dispatch: Dispatch, planId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.delete(`/deleteSubscriptionPlan/${planId}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Error deleting plan');
@@ -99,7 +99,7 @@ export const adminApi = {
     },
 
     fetchPayments: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getAllPayments');
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to load payments');
@@ -109,7 +109,7 @@ export const adminApi = {
 
     //Deliveryboy side API calls
     fetchDeliveryBoys: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getAllDeliveryBoys');
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to load delivery boys');
@@ -118,7 +118,7 @@ export const adminApi = {
     },
 
     updateDeliveryBoyStatus: async (dispatch: Dispatch, deliveryBoyId: string, isActive: boolean) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.patch(`/updateDeliveryBoyStatus/${deliveryBoyId}`, { isActive });
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to update status');
@@ -127,7 +127,7 @@ export const adminApi = {
     },
 
     fetchDeliveryBoyDetails: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get(`/getDeliveryBoy/${deliveryBoyId}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to load delivery boy details');
@@ -136,7 +136,7 @@ export const adminApi = {
     },
 
     verifyDeliveryBoyDocuments: async (dispatch: Dispatch, deliveryBoyId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post(`/verifyDeliveryBoyDocs/${deliveryBoyId}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to verify delivery boy');
@@ -145,7 +145,7 @@ export const adminApi = {
     },
 
     rejectDeliveryBoyDocuments: async (dispatch: Dispatch, deliveryBoyId: string, rejectionReason: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post(`/rejectDeliveryBoyDocs`, {
             deliveryBoyId,
             rejectionReason,
@@ -157,7 +157,7 @@ export const adminApi = {
     },
 
     createDeliveryZone: async (dispatch: Dispatch, zone: { name: string; coordinates: LatLngExpression[] }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post('/zone-creation', zone);
         if (response.data.error) {
             throw new Error(response.data.message || 'Failed to save zone');
@@ -166,7 +166,7 @@ export const adminApi = {
     },
 
     fetchZones: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/fetch-zone');
         if (response.data.message !== 'Fetch data success') {
             throw new Error(response.data.message || 'Failed to load zones');
@@ -175,7 +175,7 @@ export const adminApi = {
     },
 
     deleteZone: async (dispatch: Dispatch, zoneId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.delete(`/deleteZone/${zoneId}`);
         if (response.data.message !== 'success') {
             throw new Error(response.data.message || 'Failed to delete zone');
@@ -189,13 +189,13 @@ export const adminApi = {
         vehicleType: string,
         isActive: boolean
     }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post('/add-ride-payment-rule', payload)
         return response
     },
 
     getRidePaymentRules: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/fetch-ride-rate-payment')
         return response
     },
@@ -204,7 +204,7 @@ export const adminApi = {
         dispatch: Dispatch,
         payload: { id: string; KM: number; ratePerKm: number; vehicleType: string; isActive: boolean }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.put(`/update-ride-payment-rule/${payload.id}`, payload);
         return response;
     },
@@ -213,7 +213,7 @@ export const adminApi = {
         dispatch: Dispatch,
         payload: { id: string; vehicleType: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.put(`/block-ride-payment-rule/${payload.id}`, { vehicleType: payload.vehicleType });
         return response;
     },
@@ -222,13 +222,13 @@ export const adminApi = {
         dispatch: Dispatch,
         payload: { id: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.put(`/unblock-ride-payment-rule/${payload.id}`);
         return response;
     },
 
     createRazorpayOrder: async (dispatch: Dispatch, data: { deliveryBoyId: string, amount: number, role: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post('/create-delivery-partner-order', data)
         if (response.data.error) {
             throw new Error(response.data.error);
@@ -240,12 +240,12 @@ export const adminApi = {
         dispatch: Dispatch,
         data: { deliveryBoyId?: string, razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string; role: string }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         return axiosInstance.post('/verify-payment-delivery-partner', data);
     },
 
     cancelPayment: async (dispatch: Dispatch, data: { deliveryBoyId: string; orderId: string, role: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         return axiosInstance.post('/cancel-delivery-partner-payment', data);
     },
 
@@ -255,7 +255,7 @@ export const adminApi = {
         category: string;
         isActive: boolean;
     }) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.post('/delivery-boy/add-help-option', data)
         return response.data
     },
@@ -266,31 +266,31 @@ export const adminApi = {
         category: string;
         isActive: boolean;
     }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.put(`/delivery-boy/update-help-option/${id}`, data);
         return response.data;
     },
 
     deleteDeliveryBoyHelpOption: async (dispatch: Dispatch, id: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.delete(`/delivery-boy/delete-help-option/${id}`);
         return response.data;
     },
 
     getAllDeliveryBoyHelpOptions: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/delivery-boy/get-all-help-options');
         return response.data;
     },
 
     fetchAllConcerns: async (dispatch: Dispatch) => {
-        const axiosInstance = createAxios(dispatch)
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/get-all-concern')
         return response.data
     },
 
     verifyTheConcern: async (dispatch: Dispatch, data: { id: string, newStatus: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.patch('/verify-concern', data)
         return response.data
     }

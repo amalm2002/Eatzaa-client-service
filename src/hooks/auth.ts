@@ -10,8 +10,6 @@ export const onCaptchaVerify = (auth: Auth) => {
   if (window.recaptchaVerifier) {
     window.recaptchaVerifier.clear();
   }
-  // console.log("RecaptchaVerifier after initialization:", window.recaptchaVerifier);
-
 
   // Ensure the container exists before initializing
   if (!document.getElementById("recaptcha-container")) {
@@ -24,7 +22,6 @@ export const onCaptchaVerify = (auth: Auth) => {
     {
       size: "invisible",
       callback: (respose: any) => {
-        // console.log("recaptcha verified result:", respose);
       },
       "expired-callback": () => {
         toast.error("Verification Expired");
@@ -53,12 +50,6 @@ export const sendOtp = async (
       setConfirmationResult);
 
     onCaptchaVerify(auth);
-    // console.log("appVerifier:", window.recaptchaVerifier);
-
-  
-    // console.log('numberrrrrrrrr',mobile,'----',auth,'------',setotpInput,'-----',setConfirmationResult);
-    
-    
 
     const appVerifier: ApplicationVerifier | undefined =
       window?.recaptchaVerifier;
@@ -67,15 +58,11 @@ export const sendOtp = async (
       throw new Error("RecaptchaVerifier could not be created");
     }
 
-    const result = await signInWithPhoneNumber(auth, number, appVerifier);
-    // console.log(result,'resultttttttttttttt');
-    
+    const result = await signInWithPhoneNumber(auth, number, appVerifier);    
     setConfirmationResult(result);
     toast.success("OTP sent successfully");
     setotpInput("otp")
   } catch (error) {
-    // console.log("OTP Send Error:", error);
-
     // More detailed error handling
     if (error instanceof Error) {
       switch (error.message) {

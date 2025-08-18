@@ -31,8 +31,6 @@ const ReviewModal = ({
       setHoverRating(0);
     }
   }, [isOpen, initialRating, initialReviewText]);
-
-  console.log('isSubmitting :',isSubmitting);
   
   const handleSubmit = async () => {
     if (rating === 0) {

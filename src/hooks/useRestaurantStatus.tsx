@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import createAxios from '../service/axious-services/restaurantAxious';
 import Swal from 'sweetalert2';
+import { createAxiosInstance } from '../service/axious-services/axiosInstance';
 
 const useRestaurantStatus = () => {
   const [isOnline, setIsOnline] = useState(false);
@@ -9,7 +9,7 @@ const useRestaurantStatus = () => {
   const restaurant_id = useSelector(
     (store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id
   );
-  const axiosInstance = createAxios(dispatch);
+  const axiosInstance = createAxiosInstance('Restaurant', dispatch);
 
   useEffect(() => {
     const fetchOnlineStatus = async () => {

@@ -38,7 +38,7 @@ const ProfilePage = () => {
     const userId = useSelector((store: { userAuth: { user_id: string } }) => store.userAuth.user_id);
 
     const tealColor = 'rgb(44,147,140)';
-    const tealColorLight = 'rgba(44,147,140,0.1)';
+    // const tealColorLight = 'rgba(44,147,140,0.1)';
 
     useEffect(() => {
         const fetchUser = async () => {

@@ -96,8 +96,6 @@ function RestaurntLocation() {
                 await formik.submitForm();
             } else {
                 toast.error("Invalid location coordinates");
-                // alert("Invalid location coordinates");
-
             }
         };
 
@@ -105,19 +103,15 @@ function RestaurntLocation() {
             switch (error.code) {
                 case error.PERMISSION_DENIED:
                     toast.error("Please allow location access to use this feature");
-                    // alert("Please allow location access to use this feature");
                     break;
                 case error.POSITION_UNAVAILABLE:
                     toast.error("Location information is unavailable");
-                    // alert("Location information is unavailable");
                     break;
                 case error.TIMEOUT:
                     toast.error("The request to get location timed out");
-                    // alert("The request to get location timed out");
                     break;
                 default:
                     toast.error("An error occurred while getting location");
-                // alert("An error occurred while getting location");
             }
 
         };

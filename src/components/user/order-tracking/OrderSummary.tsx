@@ -1,5 +1,5 @@
 import { OrderSummaryProps, Review } from '../../../interfaces/user/profile/order-tracking.types';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Star, Edit2, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userApi } from '../../../api/endpoints/userApi';

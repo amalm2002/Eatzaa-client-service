@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import RegisterMap from '../../map/map';
 import { toast } from 'sonner';
-import createAxios from '../../../service/axious-services/userAxious';
 import { useDispatch, useSelector } from 'react-redux';
 import { validateProfileEdit } from '../../../utils/validation';
 import { RootState } from '../../../service/redux/store';
@@ -9,6 +8,7 @@ import { AddressSectionProps } from '../../../interfaces/user/checkOut/address.t
 import { Address } from '../../../interfaces/user/profile/user-profile.types';
 import { UserProfile } from '../../../interfaces/user/checkOut/user-profile.types';
 import { userApi } from '../../../api/endpoints/userApi';
+import { createAxiosInstance } from '../../../service/axious-services/axiosInstance';
 
 const AddressSection: React.FC<AddressSectionProps> = ({
     onLocationSelect,
@@ -20,7 +20,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
     const [latitude, setLatitude] = useState<number>(23.226390067116835);
     const [longitude, setLongitude] = useState<number>(79.17271614074708);
     const [loading, setLoading] = useState<boolean>(false);
-    const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(undefined); // Explicitly typed
+    const [selectedAddress, setSelectedAddress] = useState<Address | undefined>(undefined); 
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [isAddingPhone, setIsAddingPhone] = useState<boolean>(false);
     const [addresses, setAddresses] = useState<UserProfile | null>(null);
@@ -36,7 +36,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
     const [phoneError, setPhoneError] = useState<string>('');
 
     const dispatch = useDispatch();
-    const axiosInstance = createAxios(dispatch);
+    const axiosInstance = createAxiosInstance("User",dispatch);
     const { user } = useSelector((state: RootState) => state.userAuth);
 
     useEffect(() => {

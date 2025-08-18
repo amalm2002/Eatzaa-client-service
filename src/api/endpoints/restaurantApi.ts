@@ -1,18 +1,17 @@
 import { Dispatch } from 'redux';
-import createAxios from '../../service/axious-services/restaurantAxious';
 import { FormData } from "../../interfaces/restaurant/authentication/register/form-data.types";
 import { Variant } from '../../interfaces/restaurant/menu/variant.types';
 import { Order } from '../../interfaces/restaurant/order/order.types';
 import { Plan } from '../../interfaces/restaurant/subscription/plan.types';
 import { Transaction } from "../../interfaces/restaurant/transaction/transaction-details.types";
-
+import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
 
 // Centralized API service for restaurant-related calls
 export const restaurantApi = {
 
     restaurantLogin: async (dispatch: Dispatch, formData: { email: string; mobile: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurant-login', formData);
         return response.data;
     },
@@ -22,7 +21,7 @@ export const restaurantApi = {
         restaurantId: string,
         formData: any
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/resubmit-restaurant-docs', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -33,7 +32,7 @@ export const restaurantApi = {
     },
 
     checkRestaurant: async (dispatch: Dispatch, formData: { email: string; mobile: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurant-checking', formData);
         return response.data;
     },
@@ -42,7 +41,7 @@ export const restaurantApi = {
         dispatch: Dispatch,
         data: { otp: string; otpToken: string | null; formData: FormData }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurant-register', data);
         if (response.data.error) {
             throw new Error(response.data.error);
@@ -51,13 +50,13 @@ export const restaurantApi = {
     },
 
     resendRestaurantOtp: async (dispatch: Dispatch, formData: FormData) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurant-otp-resend', { formData });
         return response.data;
     },
 
     submitRestaurantDocuments: async (dispatch: Dispatch, formData: any) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurant-documents', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -72,7 +71,7 @@ export const restaurantApi = {
         restaurantId: string,
         locationData: { latitude: number; longitude: number }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post(
             `/location?restaurantId=${restaurantId}`,
             locationData,
@@ -87,7 +86,7 @@ export const restaurantApi = {
     },
 
     submitMenuItem: async (dispatch: Dispatch, formData: any) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/menu-items', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
@@ -98,13 +97,13 @@ export const restaurantApi = {
     },
 
     fetchExistingVariants: async (dispatch: Dispatch): Promise<Variant[]> => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get('/variants');
         return response.data;
     },
 
     fetchMenuItem: async (dispatch: Dispatch, menuItemId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get(`/menu-item/${menuItemId}`);
         if (!response.data) {
             throw new Error('No menu item data found in response');
@@ -113,21 +112,15 @@ export const restaurantApi = {
     },
 
     updateMenuItem: async (dispatch: Dispatch, menuItemId: string, formData: FormData) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.put(`/edit-menu-item/${menuItemId}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
         return response.data;
     },
 
-    // fetchMenuItems: async (dispatch: Dispatch, restaurantId: string) => {
-    //     const axiosInstance = createAxios(dispatch);
-    //     const response = await axiosInstance.get(`/all-menus/${restaurantId}`);
-    //     return response.data;
-    // },
-
     fetchMenuItems: async (dispatch: Dispatch, restaurantId: string, searchTerm?: string, categoryFilter?: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const queryParams = new URLSearchParams();
 
         if (searchTerm) {
@@ -144,13 +137,13 @@ export const restaurantApi = {
     },
 
     toggleMenuItemActive: async (dispatch: Dispatch, menuItemId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.patch(`/menu/${menuItemId}`);
         return response.data;
     },
 
     fetchOrders: async (dispatch: Dispatch, restaurantId: string): Promise<Order[]> => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get(`/orders/${restaurantId}`);
         return response.data.data.map((order: any) => ({
             ...order,
@@ -172,19 +165,19 @@ export const restaurantApi = {
     },
 
     fetchDashboardStats: async (dispatch: Dispatch, restaurantId: string, params: { period: string; startDate?: string; endDate?: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get(`/dashboard-stats/${restaurantId}`, { params });
         return response.data;
     },
 
     getTheCustomers: async (dispatch: Dispatch, data: { userId: string[] }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/customers', data)
         return response.data
     },
 
     updateOrderStatus: async (dispatch: Dispatch, orderId: string, orderStatus: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.patch(`/order/status/${orderId}`, {
             orderStatus,
         });
@@ -192,7 +185,7 @@ export const restaurantApi = {
     },
 
     fetchSubscriptionPlans: async (dispatch: Dispatch): Promise<Plan[]> => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get('/get-all-plans');
         if (response.data.message !== 'success') {
             throw new Error('Failed to load subscription plans');
@@ -209,13 +202,13 @@ export const restaurantApi = {
     },
 
     checkPlanExistence: async (dispatch: Dispatch, restaurantId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get(`/check-plan-exist/${restaurantId}`);
         return response.data;
     },
 
     initiateSubscriptionPayment: async (dispatch: Dispatch, payload: { amount: string; planId: string; restaurantId: string }) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurnt/subscription-plan', payload);
         if (response.data.error) {
             throw new Error(response.data.error);
@@ -233,7 +226,7 @@ export const restaurantApi = {
             restaurantId: string;
         }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurnt-verify-payment', payload);
         return response.data;
     },
@@ -249,13 +242,13 @@ export const restaurantApi = {
             restaurantId: string;
         }
     ) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.post('/restaurnt-payment-failed', payload);
         return response.data;
     },
 
     fetchTransactionDetails: async (dispatch: Dispatch, transactionId: string): Promise<Transaction> => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get(`/payment/details/${transactionId}`);
         return {
             ...response.data,
@@ -271,7 +264,7 @@ export const restaurantApi = {
     },
 
     fetchTransactionHistory: async (dispatch: Dispatch, restaurantId: string) => {
-        const axiosInstance = createAxios(dispatch);
+        const axiosInstance = createAxiosInstance('Restaurant', dispatch);
         const response = await axiosInstance.get(`/payment/history/${restaurantId}`);
         return response.data.map((item: any) => ({
             _id: item._id,

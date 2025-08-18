@@ -170,10 +170,6 @@ const DeliveryPartnerEarnings = () => {
 
                 setPartnerData(updatedData);
                 storeInCookies(updatedData, savedTimerSeconds);
-
-                // if (!paymentHistoryResponse.success && paymentHistoryResponse.message !== 'No In-Hand payment history') {
-                // toast.error(paymentHistoryResponse.message || 'No payment history available.');
-                // }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 toast.error('Failed to fetch data.');
@@ -182,10 +178,6 @@ const DeliveryPartnerEarnings = () => {
 
         fetchData();
     }, [deliveryBoyId, deliveryBoyRole, deliveryCompletedTrigger, dispatch]);
-
-    // useEffect(() => {
-    //     console.log('partnerData.paymentHistory:', partnerData.paymentHistory);
-    // }, [partnerData.paymentHistory]);
 
     useEffect(() => {
         const timer = setInterval(() => {

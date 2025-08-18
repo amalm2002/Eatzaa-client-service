@@ -5,7 +5,6 @@ import { Area } from 'react-easy-crop';
 import Header from '../navbar/header';
 import Sidebar from '../navbar/sidebar';
 import useRestaurantStatus from '../../../hooks/useRestaurantStatus';
-import createAxios from '../../../service/axious-services/restaurantAxious';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -21,6 +20,7 @@ import VariantModal from '../../../components/restaurant/menu-management/Variant
 import { MenuItem } from '../../../interfaces/restaurant/menu/menu-item-form.types';
 import { Variant } from '../../../interfaces/restaurant/menu/variant.types';
 import { restaurantApi } from '../../../api/endpoints/restaurantApi';
+import { createAxiosInstance } from '../../../service/axious-services/axiosInstance';
 
 export const EditMenuItems = () => {
   const [showVariantModal, setShowVariantModal] = useState(false);
@@ -51,7 +51,7 @@ export const EditMenuItems = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const axiosInstance = createAxios(dispatch);
+  const axiosInstance = createAxiosInstance('Restaurant', dispatch);
   const restaurantId = useSelector(
     (store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id
   );

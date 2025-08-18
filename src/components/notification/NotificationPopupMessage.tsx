@@ -5,8 +5,7 @@ import { RootState, AppDispatch } from '../../service/redux/store';
 import { hideNotification, showNotification } from '../../service/redux/slices/notificationSlice';
 import { toast } from 'sonner';
 import { useSocket } from '../../context/SocketContext';
-import createAxios from '../../service/axious-services/restaurantAxious';
-import deliveryBoyCreateAxios from '../../service/axious-services/deliveryBoyAxious';
+import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
 interface NotificationState {
   isOpen: boolean;
@@ -40,8 +39,8 @@ const NotificationPopup: React.FC = () => {
     (state: RootState) => state.notification
   );
   const deliveryBoyId = useSelector((state: RootState) => state.deliveryBoyAuth.delivery_boy_id);
-  const axiosInstance = createAxios(dispatch);
-  const deliveryBoyAxious = deliveryBoyCreateAxios(dispatch);
+  const axiosInstance = createAxiosInstance('Restaurant', dispatch);
+  const deliveryBoyAxious = createAxiosInstance('DeliveryBoy',dispatch);
 
   const [timeLeft, setTimeLeft] = useState(30);
   const [deliveryBoyLocation, setDeliveryBoyLocation] = useState<{ latitude: number; longitude: number } | null>(null);

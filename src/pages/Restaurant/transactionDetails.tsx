@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import createAxios from "../../service/axious-services/restaurantAxious";
 import useRestaurantStatus from "../../hooks/useRestaurantStatus";
 import { toast } from "sonner";
 import Header from "./navbar/header";
@@ -13,6 +12,7 @@ import ErrorState from "../../components/restaurant/transaction-management/Error
 import EmptyState from "../../components/restaurant/order-management/EmptyState";
 import { Transaction } from "../../interfaces/restaurant/transaction/transaction-details.types";
 import { restaurantApi } from "../../api/endpoints/restaurantApi";
+import { createAxiosInstance } from "../../service/axious-services/axiosInstance";
 
 const TransactionDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -24,7 +24,7 @@ const TransactionDetails: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { isOnline, handleToggleOnline } = useRestaurantStatus();
     const dispatch = useDispatch();
-    const axiosInstance = createAxios(dispatch);
+    const axiosInstance = createAxiosInstance('Restaurant', dispatch);
     const restaurantId = useSelector(
         (store: { restaurantAuth: { restaurant_id: string } }) => store.restaurantAuth.restaurant_id
     );

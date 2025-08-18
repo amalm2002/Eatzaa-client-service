@@ -10,7 +10,7 @@ import UserListSidebar from '../../../components/admin/user/UserListSidebar';
 // import UserListPagination from '../../../components/admin/user/UserListPagination';
 import { User } from '../../../interfaces/admin/user/user.types';
 import { adminApi } from '../../../api/endpoints/adminApi';
-import { createAxios } from '../../../service/axious-services/adminAxious';
+import { createAxiosInstance } from '../../../service/axious-services/axiosInstance';
 
 
 const UserList: React.FC = () => {
@@ -26,7 +26,8 @@ const UserList: React.FC = () => {
   const { socket, isConnected } = useSocket();
 
   const dispatch = useDispatch();
-  const axiosInstance = createAxios(dispatch)
+  // const axiosInstance = createAxios(dispatch)
+  const axiosInstance = createAxiosInstance('Admin',dispatch);
 
   const fetchUsers = async () => {
     try {
