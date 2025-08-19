@@ -88,7 +88,7 @@ const SigninPage: React.FC = () => {
         localStorage.setItem('role', response.role);
         localStorage.setItem('adminToken', response.token);
         localStorage.setItem('adminRefreshToken', response.refreshToken);
-        navigate('/admin-dashboard');
+        navigate('/admin/dashboard');
       }
     } catch (error: any) {
       console.log('error on the login page ', error);
@@ -130,7 +130,7 @@ const SigninPage: React.FC = () => {
             localStorage.setItem('role', role);
             localStorage.setItem('adminToken', token);
             localStorage.setItem('adminRefreshToken', refreshToken);
-            navigate('/admin-dashboard');
+            navigate('/admin/dashboard');
           } else {
             setServerError('Invalid role received. Please contact support.');
           }

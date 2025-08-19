@@ -31,7 +31,7 @@ const RetryPaymentButton: React.FC<RetryPaymentButtonProps> = ({ transaction, ax
               restaurantId: transaction.restaurantId,
             });
             toast.success("Payment verified and subscription activated!");
-            navigate("/restaurant-payment-history");
+            navigate("/restaurant/payments/history");
           } catch (error: any) {
             toast.error("Payment verification failed. Contact support.");
           }
@@ -52,7 +52,7 @@ const RetryPaymentButton: React.FC<RetryPaymentButtonProps> = ({ transaction, ax
             restaurantId: transaction.restaurantId,
           });
           toast.error("Payment failed. Please try again.");
-          navigate("/restaurant-payment-history");
+          navigate("/restaurant/payments/history");
         } catch (error: any) {
           toast.error("Failed to log payment failure. Contact support.");
         }

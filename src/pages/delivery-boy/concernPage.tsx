@@ -139,7 +139,7 @@ const ConcernsPage: React.FC = () => {
             localStorage.removeItem('deliveryBoyRefreshToken');
             Cookies.remove('deliveryBoyData');
             Cookies.remove('timerSeconds');
-            navigate('/deliveryBoy-login');
+            navigate('/delivery-boy/login');
             toast.success('Logged out successfully.');
         } catch (error) {
             console.error('Error during logout:', error);

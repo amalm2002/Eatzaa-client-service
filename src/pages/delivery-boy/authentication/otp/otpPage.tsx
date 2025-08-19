@@ -95,7 +95,7 @@ const OtpPage: React.FC<OtpPageProps> = ({
                                 // isOnline: false,?
                             })
                         );
-                        navigate('/deliveryBoy-Home')
+                        navigate('/delivery-boy/home')
                     }
 
                 })

@@ -166,7 +166,7 @@ const NotificationPopup: React.FC = () => {
         showNotification({
           type: 'restaurant-accept',
           message: `Order ${data.orderId} accepted and is now being prepared.`,
-          navigate: '/order-list-page',
+          navigate: '/restaurant/orders',
         })
       );
 
@@ -225,7 +225,7 @@ const NotificationPopup: React.FC = () => {
       });
 
       toast.success('Order accepted and location updated!');
-      navigate('/location-map', {
+      navigate('/delivery-boy/map', {
         state: {
           origin: deliveryBoyLocation,
           destination: restaurantLocation,

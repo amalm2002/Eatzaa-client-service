@@ -535,7 +535,7 @@ const DeliveryHelpChat: React.FC = () => {
         localStorage.removeItem('deliveryBoyToken');
         localStorage.removeItem('deliveryBoyRefreshToken');
         Cookies.remove('deliveryBoyData');
-        navigate('/deliveryBoy-login');
+        navigate('/delivery-boy/login');
     };
 
     const formatTime = (date: string) => {

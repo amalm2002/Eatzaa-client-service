@@ -169,7 +169,7 @@ const DaintyFoodDashboard = () => {
                 <p className="text-gray-500 text-sm mt-1">Explore your restaurant's performance insights</p>
               </div>
               <Link
-                to="/restaurant-add-menu"
+                to="/restaurant/menus/add"
                 className="bg-[#6589f6] text-white px-4 py-2 rounded-lg hover:bg-[#5578e5] transition-colors duration-200 flex items-center gap-2"
               >
                 <span>+</span> Add Menu Item
@@ -456,7 +456,7 @@ const DaintyFoodDashboard = () => {
               )}
             </div>
             <div className="mt-4 text-center">
-              <Link to="/order-list-page" className="text-[#6589f6] hover:text-[#5578e5] text-sm font-medium">
+              <Link to="/restaurant/orders" className="text-[#6589f6] hover:text-[#5578e5] text-sm font-medium">
                 View All Orders →
               </Link>
             </div>

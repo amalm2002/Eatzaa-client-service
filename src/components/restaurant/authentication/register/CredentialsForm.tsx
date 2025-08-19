@@ -105,7 +105,7 @@ const CredentialsForm = ({ formData, validationErrors, error, handleChange, hand
           <p className="text-gray-500 text-sm mt-2">
             Already have an account?{" "}
             <span className="text-blue-600 font-medium cursor-pointer hover:underline">
-              <a href="/restaurant-login">Login instead</a>
+              <a href="/restaurant/login">Login instead</a>
             </span>
           </p>
         </div>

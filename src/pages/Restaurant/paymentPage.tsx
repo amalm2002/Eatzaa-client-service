@@ -109,7 +109,7 @@ export default function PaymentPage() {
               restaurantId,
             });
             toast.success('Payment verified and subscription activated!');
-            navigate(`/restaurant-payment-history`);
+            navigate(`/restaurant/payments/history`);
           } catch (error: any) {
             console.error('Payment verification failed:', error);
             toast.error(error.message);
@@ -137,7 +137,7 @@ export default function PaymentPage() {
             restaurantId,
           });
           toast.error('Payment failed. Please try again.');
-          navigate('/restaurant-payment-history');
+          navigate('/restaurant/payments/history');
         } catch (error: any) {
           console.error('Failed to log payment failure:', error);
           toast.error(error.message);

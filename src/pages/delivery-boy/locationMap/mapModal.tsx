@@ -430,7 +430,7 @@ const DeliveryMapPage: React.FC<MapModalProps> = ({
       localStorage.removeItem('deliveryMapPageState');
       setTotalDistance(0);
       toast.success('Delivery completed successfully!');
-      // navigate('/deliveryBoy-Home');
+      // navigate('/delivery-boy/home');
     } catch (error) {
       console.error('Error completing delivery:', error);
       toast.error((error as Error).message || 'Failed to complete delivery');
@@ -705,7 +705,7 @@ const DeliveryMapPage: React.FC<MapModalProps> = ({
         isOpen={showEarningsPopup}
         onClose={() => {
           setShowEarningsPopup(false);
-          navigate('/deliveryBoy-Home');
+          navigate('/delivery-boy/home');
         }}
         earnings={earnings}
         orderDetails={{

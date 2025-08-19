@@ -161,7 +161,7 @@ const FoodDeliveryPage = () => {
       }]);
 
       toast.success('Item added to cart successfully!');
-      navigate('/user-cart-page');
+      navigate('/cart');
     } catch (error: any) {
       console.error('Error adding item to cart:', error);
       toast.error('Failed to add item to cart. Please try again.');

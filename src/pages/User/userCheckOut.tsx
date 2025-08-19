@@ -145,7 +145,7 @@ const Checkout = () => {
                 if (socket && isConnected && restaurant_id) {
                   socket.emit('order-placed', { restaurantId: restaurant_id, orderId: verifyResponse.data.orderId });
                 }
-                navigate('/order-history', { state: { activeTab: 'orders' } });
+                navigate('/orders', { state: { activeTab: 'orders' } });
               } else {
                 toast.error('Order placement failed');
               }
@@ -200,7 +200,7 @@ const Checkout = () => {
           if (socket && isConnected && restaurant_id) {
             socket.emit('order-placed', { restaurantId: restaurant_id, orderId: orderResponse.data.orderId });
           }
-          navigate('/order-history', { state: { activeTab: 'orders' } });
+          navigate('/orders', { state: { activeTab: 'orders' } });
         } else {
           toast.error('Order placement failed');
         }

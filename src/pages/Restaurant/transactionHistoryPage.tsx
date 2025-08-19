@@ -133,7 +133,7 @@ const TransactionHistory: React.FC = () => {
               currentPage={currentPage}
               totalPages={Math.ceil(filteredTransactions.length / itemsPerPage)}
               setCurrentPage={setCurrentPage}
-              navigateToDetails={(id) => navigate(`/restaurant-payment-details/${id}`)}
+              navigateToDetails={(id) => navigate(`/restaurant/payments/${id}`)}
             />
           ) : (
             <EmptyState />

@@ -52,7 +52,7 @@ function RestaurntLocation() {
                     toast.success("Location updated successfully!");
                     setTimeout(() => {
                         localStorage.removeItem("restaurantId");
-                        navigate("/restaurant-login");
+                        navigate("/restaurant/login");
                     }, 2000);
                 } else {
                     toast.error(data?.message || "Something went wrong, please try again.");

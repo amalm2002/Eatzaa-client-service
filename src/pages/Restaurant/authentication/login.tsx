@@ -219,7 +219,7 @@ const Login: React.FC = () => {
           localStorage.setItem("role", formData.role);
           localStorage.setItem("restaurantToken", formData.token);
           localStorage.setItem("restaurantRefreshToken", formData.refreshToken);
-          navigate("/restaurant-dashboard");
+          navigate("/restaurant/dashboard");
         })
         .catch(() => {
           setErrors((prev) => ({ ...prev, otp: "Invalid OTP. Try again." }));
@@ -483,7 +483,7 @@ const Login: React.FC = () => {
             <p className="text-blue-200/70 text-sm">
               New to Eatzaa Food Venture?{" "}
               <span className="text-orange-300 font-medium cursor-pointer">
-                <a href="/restaurant-register">Register your restaurant</a>
+                <a href="/restaurant/register">Register your restaurant</a>
               </span>
             </p>
             <p className="text-blue-200/70 text-sm mt-2">

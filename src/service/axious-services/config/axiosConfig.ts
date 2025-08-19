@@ -23,13 +23,13 @@ export const roleConfig = {
         tokenKey: "deliveryBoyToken",
         refreshTokenKey: "deliveryBoyRefreshToken",
         logoutAction: deliveryBoyLogout,
-        loginPath: "/deliveryBoy-login",
+        loginPath: "/delivery-boy/login",
     },
     Restaurant: {
         basePath: "restaurant",
         tokenKey: "restaurantToken",
         refreshTokenKey: "restaurantRefreshToken",
         logoutAction: restaurantLogout,
-        loginPath: "/restaurant-login",
+        loginPath: "/restaurant/login",
     },
 };

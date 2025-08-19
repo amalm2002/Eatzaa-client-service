@@ -44,39 +44,39 @@ function App() {
   const location = useLocation()
 
   const hideFooterPaths = [
-    '/restaurant-register',
-    '/restaurant-login',
-    '/restaurant-dashboard',
-    '/restaurant-payment',
-    '/restaurant-payment-history',
-    '/restaurant-payment-details/:id',
+    '/restaurant/register',
+    '/restaurant/login',
+    '/restaurant/dashboard',
+    '/restaurant/menus',
+    '/restaurant/menus/add',
+    '/restaurant/menus/edit/:id',
+    '/restaurant/payments',
+    '/restaurant/payments/history',
+    '/restaurant/payments/:id',
     '/restaurant-location',
-    '/restaurant-add-menu',
-    '/restaurant-menu-list',
-    '/restaurant-edit-menu/:id',
-    '/order-list-page',
-    '/restaurant-customers',
+    '/restaurant/orders',
+    '/restaurant/customers',
 
-    '/admin-dashboard',
+    '/admin/dashboard',
     '/admin/restaurants',
     '/admin/customers',
     '/admin/restaurants/:id',
-    '/admin/restaurants/subscription',
+    '/admin/restaurants/subscriptions',
     '/admin/payments',
-    '/admin/deliveryBoy/zone',
-    '/admin/zone-list',
-    '/admin/Delivery-Boy',
+    '/admin/zone/create',
+    '/admin/zones',
+    '/admin/delivery-boy',
     '/admin/delivery-boys/:id',
-    '/admin/ride-payment',
-    '/admin/partner-earnings-payment',
-    '/admin/partner/helpcenter',
+    '/admin/ride-payments',
+    '/admin/partner-payments',
+    '/admin/partner/help-center',
     '/admin/partner/concern',
 
-    '/deliveryBoy-login',
-    '/deliveryBoy-Home',
-    '/deliveryBoy-Earnings',
-    '/deliveryBoy/Need-Help',
-    '/deliveryBoy/Concern-Page',
+    '/delivery-boy/login',
+    '/delivery-boy/home',
+    '/delivery-boy/earnings',
+    '/delivery-boy/help',
+    '/delivery-boy/concerns',
   ]
   // const showFooter = !hideFooterPaths.includes(location.pathname)
   const showFooter = !hideFooterPaths.some((path) =>
@@ -96,57 +96,57 @@ function App() {
             <Route path="/signup" element={user ? <Navigate to={'/'} /> : <SignupPage />} />
             <Route path="/otp" element={user ? <Navigate to={'/'} /> : <OtpPage />} />
             <Route path="/forgot-password" element={user ? <Navigate to={'/'} /> : <ForgotPassword />} />
-            <Route path="/food-list-page" element={user ? <FoodDeliveryPage /> : <Navigate to="/login" />} />
-            <Route path="/user-profile-page" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
-            <Route path="/user-cart-page" element={user ? <CartPage /> : <Navigate to="/login" />} />
-            <Route path="/user-check-out-page" element={user ? <Checkout /> : <Navigate to="/login" />} />
-            <Route path="/order-history" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
-            <Route path="/order-details-page/:id" element={user ? <OrderTrackingUI /> : <Navigate to="/login" />} />
+            <Route path="/foods" element={user ? <FoodDeliveryPage /> : <Navigate to="/login" />} />
+            <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/cart" element={user ? <CartPage /> : <Navigate to="/login" />} />
+            <Route path="/checkout" element={user ? <Checkout /> : <Navigate to="/login" />} />
+            <Route path="/orders" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/orders/:id" element={user ? <OrderTrackingUI /> : <Navigate to="/login" />} />
             <Route path="/dish/:dishId" element={user ? <FoodDetailModal /> : <Navigate to="/login" />} />
 
 
             {/* ---------- RESTAURANT ROUTES ---------- */}
-            <Route path="/restaurant-register" element={restaurant ? <Navigate to="/restaurant-dashboard" /> : <Register />} />
-            <Route path="/restaurant-login" element={restaurant ? <Navigate to="/restaurant-dashboard" /> : <Login />} />
-            <Route path="/restaurant-dashboard" element={restaurant ? <RestaurantDashboard /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-add-menu" element={restaurant ? <AddMenuItems /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-menu-list" element={restaurant ? <MenuList /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-edit-menu/:id" element={restaurant ? <EditMenuItems /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-payment" element={restaurant ? <PaymentPage /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-payment-history" element={restaurant ? <TransactionHistory /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-payment-details/:id" element={restaurant ? <TransactionDetails /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/order-list-page" element={restaurant ? <OrderList /> : <Navigate to="/restaurant-login" />} />
-            <Route path="/restaurant-customers" element={restaurant ? <CustomerListUI /> : <Navigate to="/restaurant-login" />} />
+            <Route path="/restaurant/register" element={restaurant ? <Navigate to="/restaurant/dashboard" /> : <Register />} />
+            <Route path="/restaurant/login" element={restaurant ? <Navigate to="/restaurant/dashboard" /> : <Login />} />
+            <Route path="/restaurant/dashboard" element={restaurant ? <RestaurantDashboard /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/menus" element={restaurant ? <MenuList /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/menus/add" element={restaurant ? <AddMenuItems /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/menus/edit/:id" element={restaurant ? <EditMenuItems /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/payments" element={restaurant ? <PaymentPage /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/payments/history" element={restaurant ? <TransactionHistory /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/payments/:id" element={restaurant ? <TransactionDetails /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/orders" element={restaurant ? <OrderList /> : <Navigate to="/restaurant/login" />} />
+            <Route path="/restaurant/customers" element={restaurant ? <CustomerListUI /> : <Navigate to="/restaurant/login" />} />
 
             {/* ---------- ADMIN ROUTES ---------- */}
-            <Route path="/admin-dashboard" element={admin ? <AdminDashboard /> : <Navigate to="/" />} />
+            <Route path="/admin/dashboard" element={admin ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/admin/customers" element={admin ? <AdminDashboard initialPage="Customers" /> : <Navigate to="/" />} />
             <Route path="/admin/restaurants" element={admin ? <AdminDashboard initialPage="Restaurants" /> : <Navigate to="/" />} />
             <Route path="/admin/restaurants/:id" element={admin ? <AdminDashboard initialPage="RestaurantDetails" /> : <Navigate to="/" />} />
-            <Route path="/admin/restaurants/subscription" element={admin ? <AdminDashboard initialPage="Subscription-Plan" /> : <Navigate to="/" />} />
+            <Route path="/admin/restaurants/subscriptions" element={admin ? <AdminDashboard initialPage="Subscription-Plan" /> : <Navigate to="/" />} />
             <Route path="/admin/payments" element={admin ? <AdminDashboard initialPage="Payments" /> : <Navigate to="/" />} />
-            <Route path="/admin/deliveryBoy/zone" element={admin ? <AdminDashboard initialPage="Zone-Creation" /> : <Navigate to="/" />} />
-            <Route path="/admin/zone-list" element={admin ? <AdminDashboard initialPage="Zone-List" /> : <Navigate to="/" />} />
-            <Route path="/admin/Delivery-Boy" element={admin ? <AdminDashboard initialPage="DeliveryBoy" /> : <Navigate to="/" />} />
+            <Route path="/admin/zone/create" element={admin ? <AdminDashboard initialPage="Zone-Creation" /> : <Navigate to="/" />} />
+            <Route path="/admin/zones" element={admin ? <AdminDashboard initialPage="Zone-List" /> : <Navigate to="/" />} />
+            <Route path="/admin/delivery-boy" element={admin ? <AdminDashboard initialPage="DeliveryBoy" /> : <Navigate to="/" />} />
             <Route path="/admin/delivery-boys/:id" element={admin ? <AdminDashboard initialPage="DeliveryBoyDetails" /> : <Navigate to="/" />} />
-            <Route path="/admin/ride-payment" element={admin ? <AdminDashboard initialPage="RidePayment" /> : <Navigate to="/" />} />
-            <Route path="/admin/partner-earnings-payment" element={admin ? <AdminDashboard initialPage="PartnerPayment" /> : <Navigate to="/" />} />
-            <Route path="/admin/partner/helpcenter" element={admin ? <AdminDashboard initialPage="Help Center" /> : <Navigate to="/" />} />
+            <Route path="/admin/ride-payments" element={admin ? <AdminDashboard initialPage="RidePayment" /> : <Navigate to="/" />} />
+            <Route path="/admin/partner-payments" element={admin ? <AdminDashboard initialPage="PartnerPayment" /> : <Navigate to="/" />} />
+            <Route path="/admin/partner/help-center" element={admin ? <AdminDashboard initialPage="Help Center" /> : <Navigate to="/" />} />
             <Route path="/admin/partner/concern" element={admin ? <AdminDashboard initialPage="Concern" /> : <Navigate to="/" />} />
 
             {/* ---------- DELIVER_BOY ROUTES ---------- */}
-            <Route path="/deliveryBoy-Home" element={deliveryBoy ? <DeliveryPartnerHomepage /> : <Navigate to="/deliveryBoy-login" />} />
-            <Route path="/deliveryBoy-login" element={deliveryBoy ? <Navigate to="/deliveryBoy-Home" /> : <DeliveryBoyLogin />} />
-            <Route path="/location-map" element={deliveryBoy ? (
+            <Route path="/delivery-boy/home" element={deliveryBoy ? <DeliveryPartnerHomepage /> : <Navigate to="/delivery-boy/login" />} />
+            <Route path="/delivery-boy/login" element={deliveryBoy ? <Navigate to="/delivery-boy/home" /> : <DeliveryBoyLogin />} />
+            <Route path="/delivery-boy/map" element={deliveryBoy ? (
               <DeliveryMapPage origin={location.state?.origin || { latitude: 0, longitude: 0 }}
                 destination={location.state?.destination || { latitude: 0, longitude: 0 }}
                 orderId={location.state?.orderId || ''}
                 deliveryBoyId={location.state?.deliveryBoyId || ''}
               />
             ) : (<DeliveryBoyLogin />)} />
-            <Route path='/deliveryBoy-Earnings' element={deliveryBoy ? <DeliveryPartnerEarnings /> : <Navigate to="/deliveryBoy-login" />} />
-            <Route path='/deliveryBoy/Need-Help' element={deliveryBoy ? <DeliveryHelpChat /> : <Navigate to="/deliveryBoy-login" />} />
-            <Route path='/deliveryBoy/Concern-Page' element={deliveryBoy ? <ConcernsPage /> : <Navigate to="/deliveryBoy-login" />} />
+            <Route path='/delivery-boy/earnings' element={deliveryBoy ? <DeliveryPartnerEarnings /> : <Navigate to="/delivery-boy/login" />} />
+            <Route path='/delivery-boy/help' element={deliveryBoy ? <DeliveryHelpChat /> : <Navigate to="/delivery-boy/login" />} />
+            <Route path='/delivery-boy/concerns' element={deliveryBoy ? <ConcernsPage /> : <Navigate to="/delivery-boy/login" />} />
           </Routes>
         </div>
         {showFooter && <Footer />}

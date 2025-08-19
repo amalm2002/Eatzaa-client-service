@@ -75,7 +75,7 @@ const MenuList: React.FC = () => {
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/restaurant-edit-menu/${id}`);
+    navigate(`/restaurant/menus/edit/${id}`);
   };
 
   const handleToggleActive = async (id: string, isActive: boolean) => {

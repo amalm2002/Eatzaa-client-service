@@ -14,7 +14,7 @@ const CheckoutButton: React.FC<CheckoutButtonProps> = ({
 
   const handleCheckout = () => {
     console.log('Proceeding to checkout with total:', total, itemCount, cartItems);
-    navigate('/user-check-out-page', {
+    navigate('/checkout', {
       state: {
         cartItems,
         subtotal,

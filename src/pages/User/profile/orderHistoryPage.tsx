@@ -64,7 +64,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ tealColor = '#2C938C' }) =>
     }, [userId]);
 
     const handleViewOrderDetails = (orderId: string) => {
-        navigate(`/order-details-page/${orderId}`);
+        navigate(`/orders/${orderId}`);
         toast.info(`Order ${orderId} details would be shown here.`);
     };
 

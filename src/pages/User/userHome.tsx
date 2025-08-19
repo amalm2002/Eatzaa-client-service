@@ -26,7 +26,7 @@ const Index = () => {
   }, []);
 
   const handleClick = (item: any) => {
-    navigate('/food-list-page')
+    navigate('/foods')
   }
 
   return (

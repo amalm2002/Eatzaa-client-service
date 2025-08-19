@@ -196,7 +196,7 @@ const DeliveryPartnerEarnings = () => {
         localStorage.removeItem('deliveryBoyToken');
         localStorage.removeItem('deliveryBoyRefreshToken');
         Cookies.remove('deliveryBoyData');
-        navigate('/deliveryBoy-login');
+        navigate('/delivery-boy/login');
 
     };
 
@@ -247,7 +247,7 @@ const DeliveryPartnerEarnings = () => {
                     <div className="bg-white rounded-xl shadow-md">
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                             <div className="flex items-center">
-                                <button onClick={() => navigate('/deliveryBoy-home')} className="p-2 mr-2">
+                                <button onClick={() => navigate('/delivery-boy/home')} className="p-2 mr-2">
                                     <ArrowLeft className="w-6 h-6 text-gray-600 hover:text-orange-500 transition-colors" />
                                 </button>
                                 <h1 className="text-2xl font-semibold text-gray-900">Earnings</h1>

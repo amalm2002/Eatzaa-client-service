@@ -46,11 +46,11 @@ const Sidebar = ({ sidebarOpen, toggleSidebar, partnerData, handleLogout }: Side
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul>
                     {[
-                        { icon: <Package size={20} />, label: 'Dashboard', path: '/deliveryBoy-Home' },
-                        { icon: <DollarSign size={20} />, label: 'Earnings', path: '/deliveryBoy-Earnings' },
-                        { icon: <Clock size={20} />, label: 'My Activity', path: '/deliveryBoy/Concern-Page' },
+                        { icon: <Package size={20} />, label: 'Dashboard', path: '/delivery-boy/home' },
+                        { icon: <DollarSign size={20} />, label: 'Earnings', path: '/delivery-boy/earnings' },
+                        { icon: <Clock size={20} />, label: 'My Activity', path: '/delivery-boy/concerns' },
                         { icon: <MapPin size={20} />, label: 'Order History' },
-                        { icon: <HelpCircleIcon size={20} />, label: 'Need Help', path: '/deliveryBoy/Need-Help' },
+                        { icon: <HelpCircleIcon size={20} />, label: 'Need Help', path: '/delivery-boy/help' },
                     ].map((item, index) => {
                         const isActive = location.pathname === item.path;
                         return (

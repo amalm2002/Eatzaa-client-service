@@ -22,12 +22,12 @@ const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuO
     const location = useLocation();
 
     const menuItems = [
-        { icon: <LayoutGrid size={20} />, label: 'Dashboard', path: '/restaurant-dashboard' },
-        { icon: <BarChart2 size={20} />, label: 'Payment', path: '/restaurant-payment' },
-        { icon: <ShoppingCart size={20} />, label: 'Orders', path: '/order-list-page' },
-        { icon: <Utensils size={20} />, label: 'Menu Items', path: '/restaurant-menu-list' },
-        { icon: <Users size={20} />, label: 'Customers', path: '/restaurant-customers' },
-        { icon: <History size={20} />, label: 'PaymentHistory', path: '/restaurant-payment-history' },
+        { icon: <LayoutGrid size={20} />, label: 'Dashboard', path: '/restaurant/dashboard' },
+        { icon: <BarChart2 size={20} />, label: 'Payment', path: '/restaurant/payments' },
+        { icon: <ShoppingCart size={20} />, label: 'Orders', path: '/restaurant/orders' },
+        { icon: <Utensils size={20} />, label: 'Menu Items', path: '/restaurant/menus' },
+        { icon: <Users size={20} />, label: 'Customers', path: '/restaurant/customers' },
+        { icon: <History size={20} />, label: 'PaymentHistory', path: '/restaurant/payments/history' },
     ];
 
     const handleLogout = () => {
@@ -50,7 +50,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, isMobileMenuOpen, setIsMobileMenuO
                 dispatch(restaurantLogout());
                 localStorage.removeItem('restaurantToken');
                 localStorage.removeItem('restaurantRefreshToken');
-                navigate('/restaurant-login');
+                navigate('/restaurant/login');
             });
         }
     };

@@ -362,25 +362,25 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
     } else if (page === 'Restaurants') {
       navigate('/admin/restaurants');
     } else if (page === 'Subscription-Plan') {
-      navigate('/admin/restaurants/subscription');
+      navigate('/admin/restaurants/subscriptions');
     } else if (page === 'Payments') {
       navigate('/admin/payments');
     } else if (page === 'Zone-Creation') {
-      navigate('/admin/deliveryBoy/zone');
+      navigate('/admin/zone/create');
     } else if (page === 'DeliveryBoy') {
-      navigate('/admin/Delivery-Boy');
+      navigate('/admin/delivery-boy');
     } else if (page === 'Zone-List') {
-      navigate('/admin/zone-list');
+      navigate('/admin/zones');
     } else if (page === 'RidePayment') {
-      navigate('/admin/ride-payment');
+      navigate('/admin/ride-payments');
     } else if (page === 'PartnerPayment') {
-      navigate('/admin/partner-earnings-payment');
+      navigate('/admin/partner-payments');
     } else if (page === 'Help Center') {
-      navigate('/admin/partner/helpcenter');
+      navigate('/admin/partner/help-center');
     } else if (page === 'Concern') {
       navigate('/admin/partner/concern');
     } else {
-      navigate('/admin-dashboard');
+      navigate('/admin/dashboard');
     }
   };
 

@@ -51,7 +51,7 @@ const DeliveryBoyZoneCreation: React.FC = () => {
         });
         setNewZone({ name: '', coordinates: [] });
         toast.success('Zone Added Successfully!');
-        navigate('/admin/zone-list');
+        navigate('/admin/zones');
       } catch (error) {
         console.error('Error saving zone:', error);
         toast.error('Failed to save zone. Please try again.');
