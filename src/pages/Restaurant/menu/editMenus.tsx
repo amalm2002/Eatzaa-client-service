@@ -208,7 +208,7 @@ export const EditMenuItems = () => {
       });
 
       toast.success('Menu item updated successfully!');
-      navigate('/restaurant-menu-list');
+      navigate('/restaurant/menus');
     } catch (error) {
       console.error('Error updating menu item:', error);
       toast.error('Failed to update menu item.');

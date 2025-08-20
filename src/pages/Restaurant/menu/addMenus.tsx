@@ -158,7 +158,7 @@ export const AddMenuItems = () => {
       await restaurantApi.submitMenuItem(dispatch, formData);
 
       toast.success('Menu item saved successfully!');
-      navigate('/restaurant-menu-list');
+      navigate('/restaurant/menus');
     } catch (error: any) {
       console.error('Error saving menu item:', error);
       toast.error(error.message);
