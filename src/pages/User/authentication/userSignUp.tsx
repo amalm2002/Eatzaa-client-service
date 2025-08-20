@@ -57,17 +57,20 @@ const SignupPage: React.FC = () => {
     } else {
       try {
         setIsLoading(true);
-        await userApi.checkUser(dispatch, {
+        const response = await userApi.checkUser(dispatch, {
           email: formData.email,
           name: formData.name,
         });
+
+        console.log('response :', response);
+
 
         toast.success('Signup successful! Redirecting to OTP...', {
           position: 'top-right',
           autoClose: 3000,
         });
         setTimeout(() => {
-          navigate('/otp', { state: { email: formData.email, formData } });
+          navigate('/otp', { state: { email: formData.email, formData, token: response.token } });
         }, 3000);
       } catch (error: any) {
         toast.error(error.response?.data?.message || 'Signup failed');

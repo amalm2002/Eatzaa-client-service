@@ -61,7 +61,6 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
     const fetchRestaurantChartData = async () => {
       try {
         setLoading(true);
-        // const axiosInstance = createAxios(dispatch);
         const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getRestaurantChartData', {
           params: { startDate: filter.startDate, endDate: filter.endDate },
@@ -94,7 +93,6 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
     const fetchDeliveryBoyChartData = async () => {
       try {
         setLoading(true);
-        // const axiosInstance = createAxios(dispatch);
         const axiosInstance = createAxiosInstance('Admin',dispatch);
         const response = await axiosInstance.get('/getDeliveryBoyChartData', {
           params: { startDate: filter.startDate, endDate: filter.endDate },
@@ -210,7 +208,6 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
               beginAtZero: true,
               grid: {
                 color: 'rgba(156, 163, 175, 0.2)',
-                // drawBorder: false,
               },
               border: {
                 display: false,
@@ -326,7 +323,6 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
               beginAtZero: true,
               grid: {
                 color: 'rgba(156, 163, 175, 0.2)',
-                // drawBorder: false,
               },
               border: {
                 display: false,
