@@ -164,7 +164,7 @@ export const SocketProvider: React.FC<SocketContextProps> = ({ children }) => {
             navigate("/login");
         });
 
-        newSocket.on("order-created", (data: { orderId: string, restaurantId: string }) => {
+        newSocket.on("order-created", (data: { orderId: string, restaurantId: string,}) => {
             console.log(`Order-Created event received for ${role}:${id} with data:`, JSON.stringify(data));
             console.log('Dispatching showNotification with payload:', {
                 type: 'order-created',
@@ -205,7 +205,7 @@ export const SocketProvider: React.FC<SocketContextProps> = ({ children }) => {
             }
         });
 
-     
+
 
         return () => {
             console.log(`Cleaning up socket for ${role}: ${id}`);

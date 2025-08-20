@@ -11,8 +11,6 @@ import DeliveryBoyZoneCreation from './delivery-boy/deliveryBoyZoneAddPage';
 import DeliveryBoyListPage from './delivery-boy/deliveryBoyListPage';
 import DeliveryBoyDetails from './delivery-boy/deliveryBoyDetailsPage';
 import ZoneListPage from './delivery-boy/zoneList';
-import { OrderSchedule } from '../../interfaces/admin/dashboard/order-schedule.types';
-import { FoodCategory } from '../../interfaces/admin/dashboard/food-category.types';
 import { FoodDeliveryDashboardProps } from '../../interfaces/admin/dashboard/food-delivery-dash.types';
 import RidePaymentManagement from './delivery-boy/ridePayment';
 import DeliveryPaymentManagement from './delivery-boy/deliveryPartnerPayment';
@@ -23,8 +21,8 @@ import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
-
 interface RestaurantChartData {
+  id: string;
   name: string;
   orderVolume: number;
   revenue: number;
@@ -41,10 +39,15 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
   const [activePage, setActivePage] = useState(initialPage);
   const [restaurantData, setRestaurantData] = useState<RestaurantChartData[]>([]);
   const [deliveryBoyData, setDeliveryBoyData] = useState<DeliveryBoyChartData[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [restaurantLoading, setRestaurantLoading] = useState(false);
+  const [deliveryBoyLoading, setDeliveryBoyLoading] = useState(false);
   const [filter, setFilter] = useState({ startDate: '', endDate: '' });
+  const [restaurantSortBy, setRestaurantSortBy] = useState('revenue');
+  const [restaurantTopN, setRestaurantTopN] = useState(10);
+  const [deliverySortBy, setDeliverySortBy] = useState('totalEarnings');
+  const [deliveryTopN, setDeliveryTopN] = useState(10);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
@@ -60,18 +63,25 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
   useEffect(() => {
     const fetchRestaurantChartData = async () => {
       try {
-        setLoading(true);
-        const axiosInstance = createAxiosInstance('Admin',dispatch);
+        setRestaurantLoading(true);
+        const axiosInstance = createAxiosInstance('Admin', dispatch);
         const response = await axiosInstance.get('/getRestaurantChartData', {
-          params: { startDate: filter.startDate, endDate: filter.endDate },
+          params: {
+            startDate: filter.startDate,
+            endDate: filter.endDate,
+            sortBy: restaurantSortBy,
+            order: 'desc',
+            limit: restaurantTopN,
+          },
         });
 
-        console.log('response restaurant :', response);
+        console.log('response restaurant:', response);
 
         if (response.data.message !== 'success') {
           throw new Error(response.data.message || 'Failed to load restaurant chart data');
         }
         const mappedData: RestaurantChartData[] = response.data.response.map((item: any) => ({
+          id: item.restaurantId,
           name: item.restaurantName,
           orderVolume: item.orderVolume || 0,
           revenue: item.revenue || 0,
@@ -81,23 +91,29 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
         toast.error('Failed to load restaurant chart data');
         console.log('Error fetching restaurant chart data:', error);
       } finally {
-        setLoading(false);
+        setRestaurantLoading(false);
       }
     };
     if (activePage === 'Dashboard') {
       fetchRestaurantChartData();
     }
-  }, [filter, activePage]);
+  }, [filter, activePage, restaurantSortBy, restaurantTopN, dispatch]);
 
   useEffect(() => {
     const fetchDeliveryBoyChartData = async () => {
       try {
-        setLoading(true);
-        const axiosInstance = createAxiosInstance('Admin',dispatch);
+        setDeliveryBoyLoading(true);
+        const axiosInstance = createAxiosInstance('Admin', dispatch);
         const response = await axiosInstance.get('/getDeliveryBoyChartData', {
-          params: { startDate: filter.startDate, endDate: filter.endDate },
+          params: {
+            startDate: filter.startDate,
+            endDate: filter.endDate,
+            sortBy: deliverySortBy,
+            order: 'desc',
+            limit: deliveryTopN,
+          },
         });
-        console.log('response delivery :', response);
+        console.log('response delivery:', response);
 
         if (response.data.message !== 'success') {
           throw new Error(response.data.message || 'Failed to load delivery boy chart data');
@@ -113,16 +129,16 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
         toast.error('Failed to load delivery boy chart data');
         console.log('Error fetching delivery boy chart data:', error);
       } finally {
-        setLoading(false);
+        setDeliveryBoyLoading(false);
       }
     };
     if (activePage === 'Dashboard') {
       fetchDeliveryBoyChartData();
     }
-  }, [filter, activePage]);
+  }, [filter, activePage, deliverySortBy, deliveryTopN, dispatch]);
 
   useEffect(() => {
-    if (restaurantData.length > 0 && activePage === 'Dashboard') {
+    if (restaurantData.length > 0 && activePage === 'Dashboard' && !restaurantLoading) {
       const ctx = document.getElementById('restaurantChart') as HTMLCanvasElement;
       const existingChart = Chart.getChart(ctx);
       if (existingChart) {
@@ -234,10 +250,10 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
         },
       });
     }
-  }, [restaurantData, activePage]);
+  }, [restaurantData, activePage, restaurantLoading]);
 
   useEffect(() => {
-    if (deliveryBoyData.length > 0 && activePage === 'Dashboard') {
+    if (deliveryBoyData.length > 0 && activePage === 'Dashboard' && !deliveryBoyLoading) {
       const ctx = document.getElementById('deliveryBoyChart') as HTMLCanvasElement;
       const existingChart = Chart.getChart(ctx);
       if (existingChart) {
@@ -349,7 +365,7 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
         },
       });
     }
-  }, [deliveryBoyData, activePage]);
+  }, [deliveryBoyData, activePage, deliveryBoyLoading]);
 
   const handleSetActivePage = (page: string) => {
     setActivePage(page);
@@ -383,31 +399,6 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter({ ...filter, [e.target.name]: e.target.value });
   };
-
-  const orderStats = {
-    active: 83,
-    pending: 47,
-    cancelled: 12,
-    successRate: '78%',
-  };
-
-  const orderSources = {
-    app: 70,
-    website: 24,
-    phone: 6,
-  };
-
-  const foodCategories: FoodCategory[] = [
-    { name: 'Pizza', totalOrders: 245, percentageGrowth: 8.3 },
-    { name: 'Burgers', totalOrders: 558, percentageGrowth: 12.7 },
-    { name: 'Sushi', totalOrders: 412, percentageGrowth: -2.1 },
-  ];
-
-  const orderSchedule: OrderSchedule[] = [
-    { id: 'O1', type: 'Delivery', status: 'Pending', dateTime: '01.12.23' },
-    { id: 'O2', type: 'Pickup', status: 'Processing', dateTime: '01.12.23' },
-    { id: 'O3', type: 'Delivery', status: 'Delivered', dateTime: '01.12.23' },
-  ];
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -502,25 +493,54 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                         <p className="text-sm text-gray-600">Order volume & revenue comparison</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Orders</span>
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm text-gray-700">Sort By:</label>
+                        <select
+                          value={restaurantSortBy}
+                          onChange={(e) => setRestaurantSortBy(e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="orderVolume">Order Volume</option>
+                          <option value="revenue">Revenue</option>
+                        </select>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Revenue</span>
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm text-gray-700">Show:</label>
+                        <select
+                          value={restaurantTopN}
+                          onChange={(e) => setRestaurantTopN(Number(e.target.value))}
+                          className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value={5}>Top 5</option>
+                          <option value={10}>Top 10</option>
+                          <option value={20}>Top 20</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                          <span className="text-xs text-gray-600">Orders</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          <span className="text-xs text-gray-600">Revenue</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="p-6">
-                  {loading ? (
+                  {restaurantLoading ? (
                     <div className="flex items-center justify-center h-80">
                       <div className="flex flex-col items-center space-y-4">
                         <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-                        <p className="text-gray-600 font-medium">Loading analytics data...</p>
+                        <p className="text-gray-600 font-medium">Loading restaurant analytics data...</p>
                       </div>
+                    </div>
+                  ) : restaurantData.length === 0 ? (
+                    <div className="flex items-center justify-center h-80">
+                      <p className="text-gray-600 font-medium">No restaurant data available</p>
                     </div>
                   ) : (
                     <div className="relative h-80">
@@ -546,188 +566,60 @@ const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPa
                         <p className="text-sm text-gray-600">Deliveries & earnings analysis</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Deliveries</span>
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm text-gray-700">Sort By:</label>
+                        <select
+                          value={deliverySortBy}
+                          onChange={(e) => setDeliverySortBy(e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="completedDeliveries">Completed Deliveries</option>
+                          <option value="totalEarnings">Total Earnings</option>
+                        </select>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600">Earnings</span>
+                      <div className="flex items-center space-x-2">
+                        <label className="text-sm text-gray-700">Show:</label>
+                        <select
+                          value={deliveryTopN}
+                          onChange={(e) => setDeliveryTopN(Number(e.target.value))}
+                          className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value={5}>Top 5</option>
+                          <option value={10}>Top 10</option>
+                          <option value={20}>Top 20</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
+                          <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                          <span className="text-xs text-gray-600">Deliveries</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                          <span className="text-xs text-gray-600">Earnings</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="p-6">
-                  {loading ? (
+                  {deliveryBoyLoading ? (
                     <div className="flex items-center justify-center h-80">
                       <div className="flex flex-col items-center space-y-4">
                         <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin"></div>
-                        <p className="text-gray-600 font-medium">Loading performance data...</p>
+                        <p className="text-gray-600 font-medium">Loading delivery partner data...</p>
                       </div>
+                    </div>
+                  ) : deliveryBoyData.length === 0 ? (
+                    <div className="flex items-center justify-center h-80">
+                      <p className="text-gray-600 font-medium">No delivery partner data available</p>
                     </div>
                   ) : (
                     <div className="relative h-80">
                       <canvas id="deliveryBoyChart" className="w-full h-full"></canvas>
                     </div>
                   )}
-                </div>
-              </div>
-
-              {/* Order Overview */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-blue-200 transition-all duration-300">
-                <h2 className="text-lg font-semibold text-black mb-4">Order Overview</h2>
-                <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                  {orderStats.active}
-                  <span className="text-sm text-gray-600 font-normal ml-2">Active Orders</span>
-                </div>
-                <div className="flex flex-wrap text-sm text-gray-700 gap-4">
-                  <div className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md">{orderStats.pending} Pending</div>
-                  <div className="px-2 py-1 bg-red-50 text-red-700 rounded-md">{orderStats.cancelled} Cancelled</div>
-                  <div className="px-2 py-1 bg-green-50 text-green-700 rounded-md">{orderStats.successRate} Success rate</div>
-                </div>
-              </div>
-
-              {/* Order Sources */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-purple-200 transition-all duration-300">
-                <h2 className="text-lg font-semibold text-black mb-4">Order Sources</h2>
-                <div className="space-y-4">
-                  {[
-                    { name: 'App', value: orderSources.app, color: 'bg-gradient-to-r from-blue-500 to-blue-600' },
-                    { name: 'Website', value: orderSources.website, color: 'bg-gradient-to-r from-purple-500 to-purple-600' },
-                    { name: 'Phone', value: orderSources.phone, color: 'bg-gradient-to-r from-green-500 to-green-600' },
-                  ].map((source) => (
-                    <div key={source.name}>
-                      <div className="flex justify-between mb-2 text-sm">
-                        <span className="font-medium text-gray-800">{source.name}</span>
-                        <span className="font-semibold text-black">{source.value}%</span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                        <div
-                          className={`${source.color} h-3 rounded-full transition-all duration-500 shadow-sm`}
-                          style={{ width: `${source.value}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Food Categories */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-green-200 transition-all duration-300 xl:col-span-3">
-                <h2 className="text-lg font-semibold text-black mb-6">Popular Food Categories</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {foodCategories.map((category, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-gray-300 transition-all duration-300 group"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center">
-                          <div
-                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${index === 0
-                                ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-600'
-                                : index === 1
-                                  ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-indigo-600'
-                                  : 'bg-gradient-to-r from-pink-100 to-red-100 text-red-600'
-                              }`}
-                          >
-                            {index === 0 ? '🍕' : index === 1 ? '🍔' : '🍣'}
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-black">{category.name}</div>
-                            <div className="text-xs text-gray-600">#{index + 1} Popular</div>
-                          </div>
-                        </div>
-                        <span
-                          className={`text-xs px-3 py-1 rounded-full font-medium ${index === 0
-                              ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-                              : index === 1
-                                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
-                                : 'bg-gradient-to-r from-pink-500 to-red-500 text-white'
-                            }`}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div className="text-2xl font-bold text-black">{category.totalOrders}k</div>
-                      <div className="text-xs text-gray-600">Total Orders</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Order Schedule */}
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 xl:col-span-3">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                  <h2 className="text-lg font-semibold text-black">Order Schedule</h2>
-                  <div className="flex space-x-3">
-                    <button className="px-4 py-2 text-sm rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105">
-                      Filter
-                    </button>
-                    <button className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black hover:bg-gray-50 hover:border-gray-400 transition-all duration-300">
-                      Export
-                    </button>
-                  </div>
-                </div>
-                <div className="overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                  <style>{`
-                    div::-webkit-scrollbar {
-                      display: none;
-                    }
-                  `}</style>
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                      <tr>
-                        {['ID', 'Type', 'Status', 'Date & Time', 'Action'].map((header) => (
-                          <th
-                            key={header}
-                            className="px-4 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider"
-                          >
-                            {header}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {orderSchedule.map((order) => (
-                        <tr
-                          key={order.id}
-                          className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
-                        >
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-black font-medium">{order.id}</td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span
-                              className={`px-3 py-1 text-xs rounded-full font-medium ${order.type === 'Delivery'
-                                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm'
-                                  : 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-sm'
-                                }`}
-                            >
-                              {order.type}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <span
-                              className={`px-3 py-1 text-xs rounded-full font-medium shadow-sm ${order.status === 'Pending'
-                                  ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white'
-                                  : order.status === 'Processing'
-                                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
-                                    : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-                                }`}
-                            >
-                              {order.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{order.dateTime}</td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <button className="w-8 h-8 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600 transition-all duration-300 flex items-center justify-center text-xs hover:scale-110">
-                              •••
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>

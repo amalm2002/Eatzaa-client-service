@@ -389,7 +389,7 @@ const NotificationPopup: React.FC = () => {
                 <span className="text-[#6589f6]">🆔</span>
                 <span className="font-semibold text-[#6589f6]">Order Details</span>
               </div>
-              <p className="text-[#6589f6] font-mono text-lg">{data?.orderId}</p>
+              <p className="text-[#6589f6] font-mono text-lg">{data?.orderId?.toUpperCase()}</p>
               <p className="text-gray-600 text-sm mt-2 font-medium">{message}</p>
             </div>
             <button

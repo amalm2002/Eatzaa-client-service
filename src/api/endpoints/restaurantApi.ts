@@ -142,26 +142,71 @@ export const restaurantApi = {
         return response.data;
     },
 
-    fetchOrders: async (dispatch: Dispatch, restaurantId: string): Promise<Order[]> => {
+    // fetchOrders: async (dispatch: Dispatch, restaurantId: string): Promise<Order[]> => {
+    //     const axiosInstance = createAxiosInstance('Restaurant', dispatch);
+    //     const response = await axiosInstance.get(`/orders/${restaurantId}`);
+    //     return response.data.data.map((order: any) => ({
+    //         ...order,
+    //         orderId: order._id,
+    //         items: order.items.map((item: any) => ({
+    //             foodId: item.foodId,
+    //             name: item.name,
+    //             quantity: item.quantity,
+    //             price: item.price,
+    //             category: item.category,
+    //             description: item.description,
+    //             images: item.images || [],
+    //             hasVariants: item.hasVariants,
+    //             variants: item.variants || [],
+    //             restaurantId: item.restaurantId,
+    //             restaurantName: item.restaurantName,
+    //         })),
+    //     }));
+    // },
+
+    fetchOrders: async (
+        dispatch: Dispatch,
+        restaurantId: string,
+        page: number = 1,
+        limit: number = 10,
+        statusFilter: string = 'all',
+        searchTerm: string = '',
+        sortField: string = 'createdAt',
+        sortDirection: 'asc' | 'desc' = 'desc'
+    ): Promise<any> => {
         const axiosInstance = createAxiosInstance('Restaurant', dispatch);
-        const response = await axiosInstance.get(`/orders/${restaurantId}`);
-        return response.data.data.map((order: any) => ({
-            ...order,
-            orderId: order._id,
-            items: order.items.map((item: any) => ({
-                foodId: item.foodId,
-                name: item.name,
-                quantity: item.quantity,
-                price: item.price,
-                category: item.category,
-                description: item.description,
-                images: item.images || [],
-                hasVariants: item.hasVariants,
-                variants: item.variants || [],
-                restaurantId: item.restaurantId,
-                restaurantName: item.restaurantName,
-            })),
-        }));
+        const response = await axiosInstance.get(`/orders/${restaurantId}`, {
+            params: { page, limit, statusFilter, searchTerm, sortField, sortDirection },
+        });
+        const data = response.data;
+        if (data.success) {
+            return {
+                success: true,
+                data: {
+                    orders: data.data.orders.map((order: any) => ({
+                        ...order,
+                        orderId: order._id,
+                        items: order.items.map((item: any) => ({
+                            foodId: item.foodId,
+                            name: item.name,
+                            quantity: item.quantity,
+                            price: item.price,
+                            category: item.category,
+                            description: item.description,
+                            images: item.images || [],
+                            hasVariants: item.hasVariants,
+                            variants: item.variants || [],
+                            restaurantId: item.restaurantId,
+                            restaurantName: item.restaurantName,
+                        })),
+                    })),
+                    totalOrders: data.data.totalOrders,
+                    currentPage: data.data.currentPage,
+                    totalPages: data.data.totalPages,
+                },
+            };
+        }
+        return response.data;
     },
 
     fetchDashboardStats: async (dispatch: Dispatch, restaurantId: string, params: { period: string; startDate?: string; endDate?: string }) => {

@@ -208,9 +208,11 @@ export const userApi = {
         return response.data;
     },
 
-    getUserOrders: async (dispatch: Dispatch, userId: string) => {
+    getUserOrders: async (dispatch: Dispatch, userId: string, page: number = 1, limit: number = 10) => {
         const axiosInstance = createAxiosInstance("User", dispatch);
-        const response = await axiosInstance.get(`/get-orders/${userId}`);
+        const response = await axiosInstance.get(`/get-orders/${userId}`, {
+            params: { page, limit }
+        });
         return response.data.data || [];
     },
 

@@ -24,7 +24,7 @@ export interface CartItem {
 
 export interface OrderData {
   userId: string;
-  userName?:string
+  userName?: string
   cartItems: CartItem[];
   subtotal: number;
   deliveryFee: number;
@@ -47,11 +47,13 @@ export interface CreateOrderResponse {
 export interface VerifyPaymentResponse {
   success: boolean;
   orderId: string;
+  orderNumber?:number
 }
 
 export interface PlaceOrderResponse {
   success?: boolean;
   orderId: string;
+  orderNumber?: number;
   paymentId?: string;
   message?: string
 }

@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import useRestaurantStatus from '../../hooks/useRestaurantStatus';
 import Header from './navbar/header';
 import Sidebar from './navbar/sidebar';
-// import OrderFilters from '../../components/restaurant/order-management/OrderFilters';
 import OrderCard from '../../components/restaurant/order-management/OrderCard';
 import Pagination from '../../components/ui/Pagination';
 import EmptyState from '../../components/restaurant/order-management/EmptyState';
@@ -16,12 +15,9 @@ const OrderList: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeMenu, setActiveMenu] = useState('Orders');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [sortField, setSortField] = useState<keyof Order>('createdAt');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(4); 
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -36,85 +32,55 @@ const OrderList: React.FC = () => {
       if (!restaurantId) return;
       try {
         setLoading(true);
-        const transformedOrders = await restaurantApi.fetchOrders(dispatch, restaurantId);
-        
-        setOrders(transformedOrders);
+        const response = await restaurantApi.fetchOrders(dispatch, restaurantId, currentPage, itemsPerPage);
+        console.log('response:', response);
+
+        if (!response.success) {
+          throw new Error(response.error || 'Failed to fetch orders');
+        }
+
+        setOrders(response.data.orders);
+        setTotalPages(response.data.totalPages || 1);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching orders:', error);
         toast.error('Failed to fetch orders.');
+        setOrders([]);
+        setTotalPages(1);
         setLoading(false);
       }
     };
     fetchOrders();
-  }, [restaurantId]);
-
-  const handleSort = (field: keyof Order) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const filteredOrders: Order[] = useMemo(() => {
-    return orders
-      .filter(
-        (order) =>
-          (statusFilter === 'all' || order.orderStatus === statusFilter) &&
-          (order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.phoneNumber.includes(searchTerm))
-      )
-      .sort((a, b) => {
-        if (sortField === 'totalAmount') {
-          return sortDirection === 'asc'
-            ? a[sortField] - b[sortField]
-            : b[sortField] - a[sortField];
-        } else {
-          const aValue = String(a[sortField]).toLowerCase();
-          const bValue = String(b[sortField]).toLowerCase();
-          return sortDirection === 'asc'
-            ? aValue.localeCompare(bValue)
-            : bValue.localeCompare(aValue);
-        }
-      });
-  }, [orders, statusFilter, searchTerm, sortField, sortDirection]);
-
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-  const paginatedOrders = filteredOrders.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  }, [restaurantId, currentPage, itemsPerPage, dispatch]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <style>
         {`
-            .card-hover {
-              transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-            .card-hover:hover {
-              transform: translateY(-4px);
-              box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-            }
-            .filter-input {
-              transition: all 0.3s ease;
-            }
-            .filter-input:focus {
-              box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-            }
-            .gradient-border {
-              position: relative;
-              background: linear-gradient(to right, #6366f1, #a855f7);
-              padding: 2px;
-              border-radius: 1rem;
-            }
-            .gradient-border > div {
-              background: white;
-              border-radius: 0.875rem;
-            }
-          `}
+          .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+          .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+          }
+          .filter-input {
+            transition: all 0.3s ease;
+          }
+          .filter-input:focus {
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+          }
+          .gradient-border {
+            position: relative;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            padding: 2px;
+            border-radius: 1rem;
+          }
+          .gradient-border > div {
+            background: white;
+            border-radius: 0.875rem;
+          }
+        `}
       </style>
       <Sidebar
         activeMenu={activeMenu}
@@ -129,17 +95,6 @@ const OrderList: React.FC = () => {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
       <div className="md:ml-64 p-4 sm:p-6 lg:p-8">
-        {/* <OrderFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          itemsPerPage={itemsPerPage}
-          setItemsPerPage={setItemsPerPage}
-          sortField={sortField}
-          sortDirection={sortDirection}
-          handleSort={handleSort}
-        /> */}
         <div className="space-y-6 max-w-7xl mx-auto">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
@@ -150,10 +105,10 @@ const OrderList: React.FC = () => {
               <h3 className="text-2xl font-bold text-gray-900">Loading Your Orders...</h3>
               <p className="text-gray-600 mt-2">Fetching the latest orders for your restaurant.</p>
             </div>
-          ) : paginatedOrders.length === 0 ? (
+          ) : orders.length === 0 ? (
             <EmptyState />
           ) : (
-            paginatedOrders.map((order) => (
+            orders.map((order) => (
               <OrderCard key={order._id} order={order} axiosInstance={axiosInstance} setOrders={setOrders} />
             ))
           )}

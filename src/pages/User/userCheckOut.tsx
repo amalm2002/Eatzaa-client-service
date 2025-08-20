@@ -143,7 +143,7 @@ const Checkout = () => {
                 await userApi.updateUserCart(dispatch, userId);
                 toast.success('Payment verified and order placed successfully!');
                 if (socket && isConnected && restaurant_id) {
-                  socket.emit('order-placed', { restaurantId: restaurant_id, orderId: verifyResponse.data.orderId });
+                  socket.emit('order-placed', { restaurantId: restaurant_id, orderId: verifyResponse.data.orderId, });
                 }
                 navigate('/orders', { state: { activeTab: 'orders' } });
               } else {
