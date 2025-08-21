@@ -6,6 +6,7 @@ interface NotificationState {
   message: string;
   navigate?: string;
   data?: {
+    orderNumber?:number;
     orderId?: string;
     restaurantId?: string;
     restaurantDetails?: {

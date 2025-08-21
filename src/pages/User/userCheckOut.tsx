@@ -143,7 +143,7 @@ const Checkout = () => {
                 await userApi.updateUserCart(dispatch, userId);
                 toast.success('Payment verified and order placed successfully!');
                 if (socket && isConnected && restaurant_id) {
-                  socket.emit('order-placed', { restaurantId: restaurant_id, orderId: verifyResponse.data.orderId, });
+                  socket.emit('order-placed', { restaurantId: restaurant_id, orderId: verifyResponse.data.orderId, orderNumber: verifyResponse.data.orderNumber });
                 }
                 navigate('/orders', { state: { activeTab: 'orders' } });
               } else {
@@ -175,7 +175,7 @@ const Checkout = () => {
               error_description: response.error.description,
               error_code: response.error.code,
             });
-            console.log('response :', failedPaymentResponse);
+            // console.log('response :', failedPaymentResponse);
             if (failedPaymentResponse.success) {
               toast.error(`Payment failed: ${failedPaymentResponse.message}. Please try again or choose another payment method.`,
                 {
@@ -198,7 +198,7 @@ const Checkout = () => {
           await userApi.updateUserCart(dispatch, userId);
           toast.success('Order placed successfully!');
           if (socket && isConnected && restaurant_id) {
-            socket.emit('order-placed', { restaurantId: restaurant_id, orderId: orderResponse.data.orderId });
+            socket.emit('order-placed', { restaurantId: restaurant_id, orderId: orderResponse.data.orderId, orderNumber: orderResponse.data.orderNumber });
           }
           navigate('/orders', { state: { activeTab: 'orders' } });
         } else {
