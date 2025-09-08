@@ -7,29 +7,29 @@ import { toast } from 'sonner';
 import { useSocket } from '../../context/SocketContext';
 import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
 
-interface NotificationState {
-  isOpen: boolean;
-  type: string;
-  message: string;
-  navigate?: string;
-  data?: {
-    orderId?: string;
-    restaurantId?: string;
-    restaurantDetails?: {
-      restaurantName: string;
-      location?: { latitude: number; longitude: number };
-      email: string;
-      mobile: string;
-    };
-    deliveryBoys?: Array<{
-      _id: string;
-      name: string;
-      mobile: string;
-      location: { latitude: number; longitude: number };
-      rating: number;
-    }>;
-  } | null;
-}
+// interface NotificationState {
+//   isOpen: boolean;
+//   type: string;
+//   message: string;
+//   navigate?: string;
+//   data?: {
+//     orderId?: string;
+//     restaurantId?: string;
+//     restaurantDetails?: {
+//       restaurantName: string;
+//       location?: { latitude: number; longitude: number };
+//       email: string;
+//       mobile: string;
+//     };
+//     deliveryBoys?: Array<{
+//       _id: string;
+//       name: string;
+//       mobile: string;
+//       location: { latitude: number; longitude: number };
+//       rating: number;
+//     }>;
+//   } | null;
+// }
 
 const NotificationPopup: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

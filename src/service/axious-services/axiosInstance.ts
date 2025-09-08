@@ -35,7 +35,7 @@ export const createAxiosInstance = (
       const originalRequest = error.config;
       console.error(`${role} API error:`, error.response?.data || error.message);
 
-      // Handle 401 → refresh
+      // Handle 401 refresh token error
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         const refreshToken = localStorage.getItem(config.refreshTokenKey);

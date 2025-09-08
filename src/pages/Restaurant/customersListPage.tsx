@@ -36,6 +36,7 @@ const CustomerListUI: React.FC = () => {
         setLoading(true);
 
         const orders: Order[] = await restaurantApi.fetchOrders(dispatch, restaurantId);
+        console.log('orders :',orders)
         const customerMap = new Map<string, Customer>();
         orders.forEach((order) => {
           if (!customerMap.has(order.userId)) {
