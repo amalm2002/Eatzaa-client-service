@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import './App.css'
 import Footer from './components/user/layouts/Footer'
-import Index from './pages/user/UserHome'
+import Index from './pages/user/UserHome.tsx'
 import SignupPage from './pages/user/authentication/UserSignUp'
 import SigninPage from './pages/user/authentication/UserSignIn'
 import OtpPage from './pages/user/authentication/userOtpPage'
