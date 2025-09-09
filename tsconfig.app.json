@@ -26,6 +26,7 @@
     "types": ["node"]
   },
   "include": [
-    "src"
+    "src",
+    "src/vite-env.d.ts"
   ]
 }
