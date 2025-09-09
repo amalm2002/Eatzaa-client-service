@@ -1,4 +1,4 @@
-import { Header } from "../../../../pages/admin/header/header";
+import { Header } from "../../../../pages/A/header/header";
 import { PaymentListHeaderProps } from "../../../../interfaces/admin/restaurants/restaurant-payments.types";
 
 const PaymentListHeader = ({ totalAmount, paidAmount }: PaymentListHeaderProps) => {

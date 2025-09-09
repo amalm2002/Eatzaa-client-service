@@ -1,4 +1,4 @@
-import { Header } from "../../../../pages/admin/header/header";
+import { Header } from "../../../../pages/A/header/header";
 import { DeliveryBoyDetailsHeaderProps } from "../../../../interfaces/admin/delivery-boys/delivery-boy-details.types";
 import { Bike, MapPin, Check, X } from 'lucide-react';
 
