@@ -17,8 +17,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  build: {
-    outDir: 'dist',
-  },
-  base: '/', 
+  // build: {
+  //   outDir: 'dist',
+  // },
+  // base: '/', 
 });
