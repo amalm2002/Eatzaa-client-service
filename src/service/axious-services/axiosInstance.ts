@@ -8,8 +8,7 @@ export const createAxiosInstance = (
   dispatch: any
 ) => {
   const config = roleConfig[role];
-  const url = import.meta.env.VITE_API_GATEWAY_URL
-  console.log('===', `${import.meta.env.VITE_API_GATEWAY_URL}/${config.basePath}`)
+  const url = import.meta.env.VITE_API_GATEWAY_URL as string
   const instance = axios.create({
     baseURL: `${url}/${config.basePath}`,
     headers: {
