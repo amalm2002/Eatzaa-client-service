@@ -1,5 +1,5 @@
 import { Star, Clock, DollarSign, MapPin, Truck, Award, Percent } from 'lucide-react'
-import { Badge } from '../../ui/B'
+import { Badge } from '../../ui/Badge'
 import { useState } from 'react'
 import { RestaurantCardProps } from '../../../interfaces/user/home/restaurant-card.types'
 

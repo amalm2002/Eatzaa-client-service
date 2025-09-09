@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { Input } from "../../ui/I";
+import { Input } from "../../ui/Input";
 
 const Hero = () => {
     return (
