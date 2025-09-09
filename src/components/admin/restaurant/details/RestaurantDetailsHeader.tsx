@@ -1,4 +1,4 @@
-import { Header } from "../../../../pages/A/header/header";
+import { Header } from "../../../../pages/admin/header/header";
 import { Check, X, Star, Clock } from 'lucide-react';
 import { RestaurantDetailsHeaderProps } from "../../../../interfaces/admin/restaurants/restaurant-details.types";
 
