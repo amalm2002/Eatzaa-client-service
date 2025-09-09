@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_GATEWAY_URL: string;
-  // add other env variables here if needed
+ 
 }
 
 interface ImportMeta {

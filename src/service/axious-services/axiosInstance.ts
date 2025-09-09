@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import logoutLocalStorage from "../../utils/localStorage";
 import { roleConfig } from "./config/axiosConfig";
 
@@ -8,9 +8,10 @@ export const createAxiosInstance = (
   dispatch: any
 ) => {
   const config = roleConfig[role];
-
+  const url = import.meta.env.VITE_API_GATEWAY_URL
+  console.log('===', `${import.meta.env.VITE_API_GATEWAY_URL}/${config.basePath}`)
   const instance = axios.create({
-    baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/${config.basePath}`,
+    baseURL: `${url}/${config.basePath}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -49,7 +50,7 @@ export const createAxiosInstance = (
 
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_GATEWAY_URL}/auth/refresh`,
+            `${url}/auth/refresh`,
             { token: refreshToken }
           );
 
