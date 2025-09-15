@@ -6,23 +6,52 @@ import {
 } from "firebase/auth";
 import { toast } from "sonner";
 
+// export const onCaptchaVerify = (auth: Auth) => {
+//   if (window.recaptchaVerifier) {
+//     window.recaptchaVerifier.clear();
+//   }
+
+//   // Ensure the container exists before initializing
+//   if (!document.getElementById("recaptcha-container")) {
+//     console.error("Recaptcha container not found");
+//     return;
+//   }
+//   window.recaptchaVerifier = new RecaptchaVerifier(
+//     auth,
+//     "recaptcha-container",
+//     {
+//       size: "invisible",
+//       callback: (respose: any) => {
+//       },
+//       "expired-callback": () => {
+//         toast.error("Verification Expired");
+//         window.recaptchaVerifier?.clear();
+//       },
+//       "error-callback": (error: any) => {
+//         console.error("Recaptcha Error:", error);
+//         toast.error("Verification failed");
+//       },
+//     }
+//   );
+
+// };
+
 export const onCaptchaVerify = (auth: Auth) => {
   if (window.recaptchaVerifier) {
     window.recaptchaVerifier.clear();
   }
 
-  // Ensure the container exists before initializing
   if (!document.getElementById("recaptcha-container")) {
     console.error("Recaptcha container not found");
     return;
   }
+
   window.recaptchaVerifier = new RecaptchaVerifier(
     auth,
     "recaptcha-container",
     {
       size: "invisible",
-      callback: (respose: any) => {
-      },
+      callback: (response: any) => { },
       "expired-callback": () => {
         toast.error("Verification Expired");
         window.recaptchaVerifier?.clear();
@@ -31,10 +60,11 @@ export const onCaptchaVerify = (auth: Auth) => {
         console.error("Recaptcha Error:", error);
         toast.error("Verification failed");
       },
-    }
-  );
+    },
 
+  );
 };
+
 
 export const sendOtp = async (
   setotpInput: any,
@@ -58,7 +88,7 @@ export const sendOtp = async (
       throw new Error("RecaptchaVerifier could not be created");
     }
 
-    const result = await signInWithPhoneNumber(auth, number, appVerifier);    
+    const result = await signInWithPhoneNumber(auth, number, appVerifier);
     setConfirmationResult(result);
     toast.success("OTP sent successfully");
     setotpInput("otp")
