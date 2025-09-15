@@ -16,15 +16,15 @@ import { Page } from "../../../interfaces/delivery-boy/authentication/login.type
 import { LoginPageProps } from "../../../interfaces/delivery-boy/authentication/login.types";
 import { deliveryBoyApi } from "../../../api/endpoints/deliveryBoyApi";
 
-declare global {
-    interface Window {
-        recaptchaVerifier?: RecaptchaVerifier;
-    }
-}
+// declare global {
+//     interface Window {
+//         recaptchaVerifier?: RecaptchaVerifier;
+//     }
+// }
 
-if (window.recaptchaVerifier) {
-    window.recaptchaVerifier.clear();
-}
+// if (window.recaptchaVerifier) {
+//     window.recaptchaVerifier.clear();
+// }
 
 const DeliveryBoyLogin: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('login');
