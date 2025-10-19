@@ -99,6 +99,7 @@ export const SocketProvider: React.FC<SocketContextProps> = ({ children }) => {
         }
         // console.log(`Establishing socket connection for ${role} with id: ${id}`);
         const newSocket = io(SOCKET_URL, {
+            path:"/socket.io",
             query: { token, refreshToken },
             transports: ["websocket"],
             reconnection: true,
