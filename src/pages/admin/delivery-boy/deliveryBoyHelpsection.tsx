@@ -2,15 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, Save, X, HelpCircle } from 'lucide-react';
 import { adminApi } from '../../../api/endpoints/adminApi';
 import { useDispatch } from 'react-redux';
+import { HelpOption } from 'src/interfaces/admin/delivery-boys/delivery-boy-details.types';
 
-interface HelpOption {
-    _id: string;
-    title: string;
-    description: string;
-    category: string;
-    isActive: boolean;
-    createdAt?: string;
-}
+
 
 const DeliveryHelpAdmin: React.FC = () => {
     const [helpOptions, setHelpOptions] = useState<HelpOption[]>([]);

@@ -7,13 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { restaurantApi } from '../../api/endpoints/restaurantApi';
 import { Order } from '../../interfaces/restaurant/order/order.types';
+import { Customer } from 'src/interfaces/restaurant/customer/customer-list.types';
 
-interface Customer {
-  id: string;
-  name: string;
-  mobile: string;
-  address: string;
-}
+
 
 const CustomerListUI: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('Customers');

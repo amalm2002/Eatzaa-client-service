@@ -3,24 +3,8 @@ import { Search, Eye, Check, X, User, Phone, MapPin, AlertCircle, Calendar } fro
 import { toast } from 'sonner';
 import { adminApi } from '../../../api/endpoints/adminApi';
 import { useDispatch } from 'react-redux';
+import { DeliveryBoy } from 'src/interfaces/admin/delivery-boys/delivery-boy-details.types';
 
-interface DeliveryBoy {
-    id: string;
-    name: string;
-    phone: string;
-    email: string;
-    location: string;
-    concernType: 'payment' | 'route' | 'vehicle' | 'support' | 'other' | 'Zone Changing';
-    concern: string;
-    status: 'pending' | 'approved' | 'rejected'; 
-    submittedAt: string;
-    lastActive: string;
-    completedDeliveries: number;
-    rating: number;
-    zoneId?: string;
-    zoneName?: string;
-    deliveryBoyId?: string;
-}
 
 const DeliveryCincernPanel: React.FC = () => {
     const [deliveryBoys, setDeliveryBoys] = useState<DeliveryBoy[]>([]);
@@ -85,8 +69,6 @@ const DeliveryCincernPanel: React.FC = () => {
                 toast.error('Concern not found');
                 return;
             }
-            console.log('resonssssssss :', reason);
-
             const payload: any = { id, newStatus: newStatus === 'verified' ? 'approved' : 'rejected' };
             if (newStatus === 'rejected' && reason) {
                 payload.rejectionReason = reason;
@@ -96,8 +78,6 @@ const DeliveryCincernPanel: React.FC = () => {
                 payload.zoneName = concern.zoneName;
                 payload.deliveryBoyId = concern.deliveryBoyId;
             }
-            console.log('payloaddddddddd :', payload);
-
             const response = await adminApi.verifyTheConcern(dispatch, payload);
 
             if (response.success) {

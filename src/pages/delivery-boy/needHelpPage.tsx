@@ -12,16 +12,7 @@ import { PartnerData } from '../../interfaces/delivery-boy/dashboard/partner-dat
 import { deliveryBoyApi } from '../../api/endpoints/deliveryBoyApi';
 import { RootState } from '../../interfaces/delivery-boy/dashboard/root-state.types';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
-
-interface Message {
-    id: string;
-    text: string;
-    isBot: boolean;
-    timestamp: string;
-    options?: string[];
-    showForm?: boolean;
-    showZoneSelection?: boolean;
-}
+import { ConcernForm, Message, Zone } from 'src/interfaces/delivery-boy/dashboard/help-option.types';
 
 export interface HelpOption {
     _id?: string;
@@ -32,15 +23,6 @@ export interface HelpOption {
     responseMessage?: string;
 }
 
-interface Zone {
-    _id: string;
-    name: string;
-}
-
-interface ConcernForm {
-    reason: string;
-    description: string;
-}
 
 const DeliveryHelpChat: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);

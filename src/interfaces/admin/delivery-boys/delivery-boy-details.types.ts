@@ -55,3 +55,30 @@ export interface DeliveryBoyDetailsImageModalProps {
     zoomedImage: string | null;
     setZoomedImage: (url: string | null) => void;
 }
+
+export interface DeliveryBoy {
+    id: string;
+    name: string;
+    phone: string;
+    email: string;
+    location: string;
+    concernType: 'payment' | 'route' | 'vehicle' | 'support' | 'other' | 'Zone Changing';
+    concern: string;
+    status: 'pending' | 'approved' | 'rejected';
+    submittedAt: string;
+    lastActive: string;
+    completedDeliveries: number;
+    rating: number;
+    zoneId?: string;
+    zoneName?: string;
+    deliveryBoyId?: string;
+}
+
+export interface HelpOption {
+    _id: string;
+    title: string;
+    description: string;
+    category: string;
+    isActive: boolean;
+    createdAt?: string;
+}

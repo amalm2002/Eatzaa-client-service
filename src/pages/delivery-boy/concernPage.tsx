@@ -10,16 +10,9 @@ import Header from '../../components/delivery-boy/Header';
 import { PartnerData } from '../../interfaces/delivery-boy/dashboard/partner-data.types';
 import { RootState } from '../../interfaces/delivery-boy/dashboard/root-state.types';
 import { deliveryBoyApi } from '../../api/endpoints/deliveryBoyApi';
+import { Concern } from 'src/interfaces/delivery-boy/dashboard/help-option.types';
 
-interface Concern {
-    id: string; 
-    title: string;
-    description: string;
-    status: 'pending' | 'approved' | 'rejected';
-    submittedBy: string;
-    submittedDate: string;
-    category: string;
-}
+
 
 const ConcernsPage: React.FC = () => {
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);

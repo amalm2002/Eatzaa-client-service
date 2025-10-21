@@ -1,27 +1,3 @@
-// import { configureStore } from "@reduxjs/toolkit";
-// import userAuthReducer from "./slices/userAuthSlice";
-// import restaurantAuthReducer from "./slices/restaurantSlice";
-// import admnAuthReducer from "./slices/adminSlice";
-// import deliveryBoyAuthReducer from "./slices/deliveryBoySlice";
-// import notificationReducer from "./slices/notificationSlice";
-// import orderReducer from './slices/orderSlice';
-
-// export const store = configureStore({
-//     reducer: {
-//         userAuth: userAuthReducer,
-//         restaurantAuth: restaurantAuthReducer,
-//         adminAuth: admnAuthReducer,
-//         deliveryBoyAuth: deliveryBoyAuthReducer,
-//         notification: notificationReducer,
-//         order: orderReducer,
-//     }
-// });
-
-
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
-
-
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';

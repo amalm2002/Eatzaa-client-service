@@ -26,7 +26,6 @@ const UserList: React.FC = () => {
   const { socket, isConnected } = useSocket();
 
   const dispatch = useDispatch();
-  // const axiosInstance = createAxios(dispatch)
   const axiosInstance = createAxiosInstance('Admin',dispatch);
 
   const fetchUsers = async () => {

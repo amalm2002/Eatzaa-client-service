@@ -20,20 +20,9 @@ import Chart from 'chart.js/auto';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { createAxiosInstance } from '../../service/axious-services/axiosInstance';
+import { DeliveryBoyChartData } from 'src/interfaces/admin/dashboard/delivery-boy-chart.types';
+import { RestaurantChartData } from 'src/interfaces/admin/dashboard/restaurant-chart.types';
 
-interface RestaurantChartData {
-  id: string;
-  name: string;
-  orderVolume: number;
-  revenue: number;
-}
-
-interface DeliveryBoyChartData {
-  id: string;
-  name: string;
-  completedDeliveries: number;
-  totalEarnings: number;
-}
 
 const FoodDeliveryDashboard: React.FC<FoodDeliveryDashboardProps> = ({ initialPage = 'Dashboard' }) => {
   const [activePage, setActivePage] = useState(initialPage);
